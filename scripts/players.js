@@ -46,6 +46,45 @@ function sortPlayers(players, sortKey, direction) {
     });
 }
 
+function showGameModal(game, rating) {
+    const content = `
+        <div class="row">
+            <div class="col-6">
+                <p class="mb-1"><strong>Date:</strong> ${game.date}</p>
+                <p class="mb-1"><strong>Opponent:</strong> ${game.opponent}</p>
+                <p class="mb-1"><strong>Result:</strong> ${game.result}</p>
+                <p class="mb-1"><strong>Rating:</strong> 
+                    <span class="rating-cell rating-${Math.floor(rating)}">
+                        ${rating.toFixed(1)}
+                    </span>
+                </p>
+            </div>
+            <div class="col-6">
+                <p class="mb-1"><strong>Minutes:</strong> ${game.min.toFixed(1)}</p>
+                <p class="mb-1"><strong>PTS:</strong> ${game.pts}</p>
+                <p class="mb-1"><strong>REB:</strong> ${game.reb}</p>
+                <p class="mb-1"><strong>AST:</strong> ${game.ast}</p>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col-12">
+                <p class="mb-1"><strong>Shooting:</strong> 
+                    ${game.fgm}/${game.fga} FG • 
+                    ${game.threeFgm}/${game.threeFga} 3PT • 
+                    ${game.ftm}/${game.fta} FT
+                </p>
+                <p class="mb-1"><strong>Defense:</strong> 
+                    ${game.stl} STL • ${game.blk} BLK • ${game.to} TO
+                </p>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('gameStatsContent').innerHTML = content;
+    const modal = new bootstrap.Modal('#gameStatsModal');
+    modal.show();
+}
+
 function calculateGameRating(game) {
     try {
         // Slightly reduced weights from previous version
@@ -316,9 +355,11 @@ function showPlayerDetail(player, gameRatings = [], season) {
         // Update game logs
         const gameLogsBody = document.getElementById('gameLogsBody');
         gameLogsBody.innerHTML = player.gameLogs.map((game, index) => {
-            if (Object.keys(game).length === 0) return ''; // Skip empty game logs
+            if (Object.keys(game).length === 0) return '';
             return `
-                <tr class="game-log-row">
+                <tr class="game-log-row" 
+                    data-game='${JSON.stringify(game)}'
+                    data-rating='${gameRatings[index] || 0}'>
                     <td>${game.date || '-'}</td>
                     <td>${game.opponent || '-'}</td>
                     <td>${game.min ? game.min.toFixed(1) : '-'}</td>
@@ -331,6 +372,21 @@ function showPlayerDetail(player, gameRatings = [], season) {
                 </tr>
             `;
         }).join('');
+
+        const gameLogRows = document.querySelectorAll('.game-log-row');
+        gameLogRows.forEach(row => {
+            const game = JSON.parse(row.dataset.game);
+            const rating = parseFloat(row.dataset.rating);
+            
+            // Click handler
+            row.addEventListener('click', () => showGameModal(game, rating));
+            
+            // Hover tooltip
+            row.setAttribute('title', `Click to view ${game.opponent} details`);
+            new bootstrap.Tooltip(row, {
+                trigger: 'hover'
+            });
+        });
 
         // Show detail section
         document.getElementById('playerListSection').style.display = 'none';
