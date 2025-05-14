@@ -48,42 +48,58 @@ function sortPlayers(players, sortKey, direction) {
 
 function calculateGameRating(game) {
     try {
-        // Adjusted weights - still generous but more balanced
-        let score = (game.pts * 0.6) + (game.reb * 0.9) + (game.ast * 1.0) +
-                   (game.stl * 1.8) + (game.blk * 1.8) - (game.to * 1.0);
+        // Slightly reduced weights from previous version
+        let score = (game.pts * 0.65) + (game.reb * 1.0) + (game.ast * 1.0) +
+                   (game.stl * 1.8) + (game.blk * 1.8) - (game.to * 0.7);
 
-        // Shooting adjustments - still rewarding but with slightly higher standards
+        // Tightened shooting efficiency requirements
         const fgPct = game.fga > 0 ? game.fgm / game.fga : 0;
         if (game.fga > 4) {
-            if (fgPct > 0.55) score += 3;
-            else if (fgPct > 0.45) score += 2;
-            else if (fgPct > 0.35) score += 1;
-            else if (fgPct < 0.3) score -= 1.5;
+            if (fgPct > 0.60) score += 3;
+            else if (fgPct > 0.55) score += 2;
+            else if (fgPct > 0.50) score += 1;
+            else if (fgPct < 0.35) score -= 1;
         }
 
         const threePct = game.threeFga > 0 ? game.threeFgm / game.threeFga : 0;
         if (game.threeFga > 3) {
-            if (threePct > 0.4) score += 2;
-            else if (threePct > 0.35) score += 1;
-            else if (threePct > 0.25) score += 0.5;
-            else if (threePct < 0.2) score -= 1;
+            if (threePct > 0.45) score += 2.5;
+            else if (threePct > 0.40) score += 1.5;
+            else if (threePct > 0.35) score += 0.5;
+            else if (threePct < 0.25) score -= 0.5;
         }
 
         const ftPct = game.fta > 0 ? game.ftm / game.fta : 0;
         if (game.fta > 3) {
-            if (ftPct > 0.85) score += 1.5;
-            else if (ftPct > 0.75) score += 1;
-            else if (ftPct < 0.6) score -= 1;
+            if (ftPct > 0.90) score += 1.5;
+            else if (ftPct > 0.80) score += 1;
+            else if (ftPct < 0.65) score -= 0.5;
         }
 
-        // Final scaling adjustment
-        let rating = score / 3.2;  // Between previous 3 and original 4
-        return Math.min(10, Math.max(0, Math.round(rating * 10) / 10));
+        // Adjusted scaling and clamping
+        let rating = score / 3.0;  // Increased divisor from 2.8
+        rating = Math.min(9.9, Math.max(0, Math.round(rating * 10) / 10)); // Hard cap at 9.9
+        
+        return rating;
     } catch (e) {
         console.error('Error calculating game rating:', e);
         return 0;
     }
 }
+
+function calculateAverageRating(gameRatings) {
+    if (gameRatings.length < 5) {
+        return gameRatings.length ? 
+            gameRatings.reduce((a, b) => a + b, 0) / gameRatings.length : 0;
+    }
+    
+    const sorted = [...gameRatings].sort((a, b) => a - b);
+    const trimCount = Math.floor(sorted.length * 0.15); // Trim 15% lowest
+    const trimmed = sorted.slice(trimCount);
+    
+    return trimmed.reduce((a, b) => a + b, 0) / trimmed.length;
+}
+
 
 
 
@@ -110,8 +126,13 @@ function loadPlayerStats(season) {
 
         players.forEach(player => {
             const gameRatings = (player.gameLogs || []).map(calculateGameRating);
-            const avgRating = gameRatings.length ? 
-                gameRatings.reduce((a, b) => a + b, 0) / gameRatings.length : 0;
+            const sortedRatings = gameRatings.slice().sort((a, b) => a - b);
+            const trimCount = Math.floor(sortedRatings.length * 0.1);
+            const trimmedRatings = sortedRatings.slice(trimCount);
+            const avgRating = trimmedRatings.length ? 
+            trimmedRatings.reduce((a, b) => a + b, 0) / trimmedRatings.length : 
+            gameRatings.length ? (gameRatings.reduce((a, b) => a + b, 0) / gameRatings.length) : 0;
+            
 
             const row = document.createElement('tr');
             row.innerHTML = `
