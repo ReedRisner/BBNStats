@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Sample data for both seasons
     const statsData = {
         '2024': {
-            'Offensive Rating': '123.7 (10)',
-            'Defensive Rating': '99.2 (51)',
-            'Net Rating': '+24.54 (16)',
-            'Pace': '70.9 (30)',
+            'Offensive Rating': '123.7',
+            'Defensive Rating': '99.2',
+            'Net Rating': '+24.54',
+            'Pace': '70.9',
             'Offensive TOV%': '15.0',
             'Defensive TOV%': '14.1',
             '3P%': '37.5',
