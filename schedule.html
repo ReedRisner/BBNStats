@@ -79,6 +79,67 @@
                 color: var(--uk-blue);
             }
         }
+
+        .schedule-table tbody tr {
+        background: white;
+        transition: all 0.3s ease;
+        border-left: 4px solid transparent;
+        position: relative;
+    }
+
+    @media (max-width: 768px) {
+        .schedule-table thead {
+            display: none;
+        }
+        
+        .schedule-table tbody tr {
+            display: block;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--uk-silver);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .schedule-table td {
+            display: block;
+            text-align: right;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .schedule-table td::before {
+            content: attr(data-label);
+            float: left;
+            font-weight: bold;
+            color: var(--uk-blue);
+            width: 45%;
+            text-align: left;
+        }
+
+        .schedule-table td:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            left: 1rem;
+            right: 1rem;
+            bottom: 0;
+            border-bottom: 1px solid var(--uk-silver);
+        }
+
+        /* Remove hover effects on mobile */
+        .schedule-table tbody tr:hover {
+            transform: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left-color: transparent;
+        }
+    }
+
+    /* Add subtle separator lines for desktop */
+    @media (min-width: 769px) {
+        .schedule-table tbody tr:not(:last-child) td {
+            border-bottom: 1px solid var(--uk-silver);
+        }
+    }
     </style>
 </head>
 <body>
