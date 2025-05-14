@@ -1,1 +1,222 @@
-<hr>still working on this page<hr>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kentucky Basketball History - BBN Stats</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --uk-blue: #0033A0;
+            --uk-white: #FFFFFF;
+            --uk-silver: #808080;
+        }
+
+        .history-header {
+            background: var(--uk-blue);
+            color: white;
+            padding: 2rem 0;
+            border-bottom: 5px solid var(--uk-silver);
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .header-content h1 {
+            flex: 1;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .history-card {
+            background: white;
+            border: 2px solid var(--uk-blue);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 2rem;
+                margin-right: 0.5rem;
+            }
+        }
+
+        .history-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 51, 160, 0.2);
+            background: var(--uk-blue);
+            color: white;
+        }
+
+        .history-card:hover h3 {
+            color: var(--uk-white) !important;
+        }
+
+        .history-card:hover .history-stat {
+            color: var(--uk-silver) !important;
+        }
+
+        .history-stat {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: var(--uk-blue);
+            transition: all 0.3s ease;
+            margin: 1rem 0;
+        }
+
+        .glow-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 51, 160, 0);
+            transition: all 0.3s ease;
+        }
+
+        .history-card:hover .glow-border {
+            box-shadow: 0 0 15px rgba(0, 51, 160, 0.4);
+        }
+
+        .history-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--uk-blue);
+            transition: all 0.3s ease;
+        }
+
+        .history-card:hover .history-icon {
+            color: var(--uk-white);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg py-3 bg-white">
+        <div class="container">
+            <!-- Dropdown Menu -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    More
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="index.html">Home</a></li>
+                    <li><a class="dropdown-item" href="players.html">Players</a></li>
+                    <li><a class="dropdown-item" href="schedule.html">Schedule</a></li>
+                    <li><a class="dropdown-item" href="stats.html">Statistics</a></li>
+                    <li><a class="dropdown-item" href="History.html">History</a></li>
+                    <li><a class="dropdown-item" href="rankings.html">Rankings</a></li>
+                </ul>
+            </div>
+
+            <!-- Back Button -->
+            <a href="index.html" class="btn btn-primary ms-3">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="history-header text-center mb-5">
+        <div class="container">
+            <div class="d-flex justify-content-center align-items-center">
+                <h1 class="display-4 fw-bold mb-0 me-3">Kentucky Basketball History</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- History Stats Grid -->
+    <main class="container mb-5">
+        <div class="row g-4">
+            <!-- National Championships -->
+            <div class="col-md-4">
+                <div class="history-card">
+                    <div class="glow-border"></div>
+                    <i class="fas fa-trophy history-icon"></i>
+                    <h3 class="text-uk-blue mb-3">National Championships</h3>
+                    <div class="history-stat">8</div>
+                    <p>Kentucky has won 8 NCAA Championships (1948, 1949, 1951, 1958, 1978, 1996, 1998, 2012)</p>
+                </div>
+            </div>
+
+            <!-- Final Fours -->
+            <div class="col-md-4">
+                <div class="history-card">
+                    <div class="glow-border"></div>
+                    <i class="fas fa-basketball-ball history-icon"></i>
+                    <h3 class="text-uk-blue mb-3">Final Fours</h3>
+                    <div class="history-stat">17</div>
+                    <p>The Wildcats have reached the NCAA Final Four 17 times, 4th most in NCAA history</p>
+                </div>
+            </div>
+
+            <!-- Elite Eights -->
+            <div class="col-md-4">
+                <div class="history-card">
+                    <div class="glow-border"></div>
+                    <i class="fas fa-flag history-icon"></i>
+                    <h3 class="text-uk-blue mb-3">Elite Eights</h3>
+                    <div class="history-stat">38</div>
+                    <p>Kentucky has reached the Elite Eight 38 times, more than any other program</p>
+                </div>
+            </div>
+
+            <!-- Sweet Sixteens -->
+            <div class="col-md-4">
+                <div class="history-card">
+                    <div class="glow-border"></div>
+                    <i class="fas fa-star history-icon"></i>
+                    <h3 class="text-uk-blue mb-3">Sweet Sixteens</h3>
+                    <div class="history-stat">45</div>
+                    <p>The Wildcats have advanced to the Sweet Sixteen 45 times in tournament history</p>
+                </div>
+            </div>
+
+            <!-- Tournament Appearances -->
+            <div class="col-md-4">
+                <div class="history-card">
+                    <div class="glow-border"></div>
+                    <i class="fas fa-clipboard-list history-icon"></i>
+                    <h3 class="text-uk-blue mb-3">Tournament Appearances</h3>
+                    <div class="history-stat">60</div>
+                    <p>Kentucky has made 59 NCAA Tournament appearances, 2nd only to North Carolina</p>
+                </div>
+            </div>
+
+            <!-- Total Wins -->
+            <div class="col-md-4">
+                <div class="history-card">
+                    <div class="glow-border"></div>
+                    <i class="fas fa-basketball-ball history-icon"></i>
+                    <h3 class="text-uk-blue mb-3">Total Wins</h3>
+                    <div class="history-stat">2,424</div>
+                    <p>The winningest program in college basketball history with over 2,300 all-time victories</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 BBN Stats. All rights reserved.<br>
+            University of Kentucky Basketball Statistics</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

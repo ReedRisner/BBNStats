@@ -377,6 +377,24 @@
               "threeFga": 0,
               "ftm": 2,
               "fta": 3
+            },
+            {
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 16.98,
+              "pts": 14,
+              "reb": 3,
+              "ast": 3,
+              "stl": 2,
+              "blk": 1,
+              "to": 0,
+              "fgm": 5,
+              "fga": 7,
+              "threeFgm": 0,
+              "threeFga": 1,
+              "ftm": 4,
+              "fta": 4
             }
           ]
         },
@@ -419,6 +437,24 @@
               "threeFga": 0,
               "ftm": 2,
               "fta": 3
+            },
+            {
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 3.47,
+              "pts": 0,
+              "reb": 0,
+              "ast": 0,
+              "stl": 0,
+              "blk": 0,
+              "to": 0,
+              "fgm": 0,
+              "fga": 0,
+              "threeFgm": 0,
+              "threeFga": 0,
+              "ftm": 0,
+              "fta": 0
             }
           ]
         },
@@ -461,6 +497,24 @@
               "threeFga": 2,
               "ftm": 2,
               "fta": 2
+            },
+            {
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 19.55,
+              "pts": 15,
+              "reb": 3,
+              "ast": 6,
+              "stl": 3,
+              "blk": 0,
+              "to": 0,
+              "fgm": 7,
+              "fga": 8,
+              "threeFgm": 0,
+              "threeFga": 1,
+              "ftm": 1,
+              "fta": 1
             }
           ]
         },
@@ -503,6 +557,24 @@
               "threeFga": 4,
               "ftm": 0,
               "fta": 0
+            },
+            {
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 20.73,
+              "pts": 5,
+              "reb": 3,
+              "ast": 1,
+              "stl": 1,
+              "blk": 0,
+              "to": 3,
+              "fgm": 2,
+              "fga": 4,
+              "threeFgm": 1,
+              "threeFga": 1,
+              "ftm": 1,
+              "fta": 2
             }
           ]
         },
@@ -543,6 +615,24 @@
               "fga": 12,
               "threeFgm": 5,
               "threeFga": 9,
+              "ftm": 0,
+              "fta": 0
+            },
+            {
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 24.03,
+              "pts": 24,
+              "reb": 6,
+              "ast": 3,
+              "stl": 2,
+              "blk": 0,
+              "to": 3,
+              "fgm": 8,
+              "fga": 13,
+              "threeFgm": 8,
+              "threeFga": 12,
               "ftm": 0,
               "fta": 0
             }
@@ -587,6 +677,24 @@
               "threeFga": 5,
               "ftm": 0,
               "fta": 0
+            },
+            {
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 18.60,
+              "pts": 7,
+              "reb": 1,
+              "ast": 0,
+              "stl": 1,
+              "blk": 0,
+              "to": 1,
+              "fgm": 2,
+              "fga": 8,
+              "threeFgm": 1,
+              "threeFga": 5,
+              "ftm": 2,
+              "fta": 2
             }
           ]
         },
@@ -629,7 +737,26 @@
               "threeFga": 2,
               "ftm": 0,
               "fta": 0
+            },
+            {
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 18.70,
+              "pts": 12,
+              "reb": 4,
+              "ast": 1,
+              "stl": 0,
+              "blk": 0,
+              "to": 1,
+              "fgm": 6,
+              "fga": 9,
+              "threeFgm": 0,
+              "threeFga": 1,
+              "ftm": 0,
+              "fta": 0
             }
+
           ]
         },
         {
@@ -671,7 +798,26 @@
               "threeFga": 7,
               "ftm": 0,
               "fta": 1
+            },
+            {
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 19.03,
+              "pts": 7,
+              "reb": 5,
+              "ast": 1,
+              "stl": 0,
+              "blk": 0,
+              "to": 1,
+              "fgm": 3,
+              "fga": 6,
+              "threeFgm": 0,
+              "threeFga": 3,
+              "ftm": 1,
+              "fta": 4
             }
+
           ]
         },
         {
@@ -695,7 +841,26 @@
           "threeFga": 38,
           "ftm": 6,
           "fta": 7,
-          "gameLogs": []
+          "gameLogs": [
+            {  
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 16.02,
+              "pts": 6,
+              "reb": 4,
+              "ast": 0,
+              "stl": 0,
+              "blk": 0,
+              "to": 0,
+              "fgm": 1,
+              "fga": 4,
+              "threeFgm": 1,
+              "threeFga": 4,
+              "ftm": 0,
+              "fta": 0
+            }
+          ]
         },
         {
           "number": 5,
@@ -736,6 +901,24 @@
               "threeFga": 4,
               "ftm": 0,
               "fta": 0
+            },
+            {
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 18.25,
+              "pts": 7,
+              "reb": 4,
+              "ast": 3,
+              "stl": 0,
+              "blk": 0,
+              "to": 1,
+              "fgm": 2,
+              "fga": 5,
+              "threeFgm": 1,
+              "threeFga": 4,
+              "ftm": 2,
+              "fta": 2
             }
           ]
         },
@@ -778,6 +961,24 @@
               "threeFga": 4,
               "ftm": 0,
               "fta": 0
+            },
+            {
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 6.30,
+              "pts": 0,
+              "reb": 0,
+              "ast": 0,
+              "stl": 0,
+              "blk": 0,
+              "to": 0,
+              "fgm": 0,
+              "fga": 2,
+              "threeFgm": 0,
+              "threeFga": 2,
+              "ftm": 0,
+              "fta": 0
             }
           ]
         },
@@ -818,6 +1019,24 @@
               "fga": 5,
               "threeFgm": 4,
               "threeFga": 5,
+              "ftm": 0,
+              "fta": 0
+            },
+            {
+              "date": "2024-10-29",
+              "opponent": "Minnesota St.",
+              "result": "W",
+              "min": 16.83,
+              "pts": 3,
+              "reb": 4,
+              "ast": 3,
+              "stl": 0,
+              "blk": 0,
+              "to": 0,
+              "fgm": 1,
+              "fga": 3,
+              "threeFgm": 1,
+              "threeFga": 3,
               "ftm": 0,
               "fta": 0
             }

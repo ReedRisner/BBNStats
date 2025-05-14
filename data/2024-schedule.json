@@ -1,6 +1,6 @@
 [
     {
-        "date": "OCTOBER 23",
+        "date": "October 23, 2024",
         "opponent": "vs Kentucky Wesleyan (EXH)",
         "logo": "kentucky-wesleyan.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -8,7 +8,7 @@
         ,"conference": false
     },
     {
-        "date": "OCTOBER 29",
+        "date": "October 29, 2024",
         "opponent": "vs Minnesota State (EXH)",
         "logo": "minnesota-state.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -16,7 +16,7 @@
         ,"conference": false
     },
     {
-        "date": "NOVEMBER 4",
+        "date": "November 4, 2024",
         "opponent": "vs Wright State",
         "logo": "wright-state.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -24,7 +24,7 @@
         ,"conference": false
     },
     {
-        "date": "NOVEMBER 9",
+        "date": "November 9, 2024",
         "opponent": "vs Bucknell",
         "logo": "bucknell.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -32,7 +32,7 @@
         ,"conference": false
     },
     {
-        "date": "NOVEMBER 12",
+        "date": "November 12, 2024",
         "opponent": "vs Duke",
         "logo": "duke.png",
         "location": "State Farm Arena | Atlanta, Ga.",
@@ -42,7 +42,7 @@
         ,"opponentRank": 6
     },
     {
-        "date": "NOVEMBER 19",
+        "date": "November 19, 2024",
         "opponent": "vs Lipscomb",
         "logo": "lipscomb.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -50,7 +50,7 @@
         ,"conference": false
     },
     {
-        "date": "NOVEMBER 22",
+        "date": "November 22, 2024",
         "opponent": "vs Jackson State",
         "logo": "jackson-state.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -58,7 +58,7 @@
         ,"conference": false
     },
     {
-        "date": "NOVEMBER 26",
+        "date": "November 26, 2024",
         "opponent": "vs Western Kentucky",
         "logo": "western-kentucky.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -66,7 +66,7 @@
         ,"conference": false
     },
     {
-        "date": "NOVEMBER 29",
+        "date": "November 29, 2024",
         "opponent": "vs Georgia State",
         "logo": "georgia-state.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -74,7 +74,7 @@
         ,"conference": false
     },
     {
-        "date": "DECEMBER 3",
+        "date": "December 3, 2024",
         "opponent": "at Clemson",
         "logo": "clemson.png",
         "location": "Littlejohn Coliseum | Clemson, S.C.",
@@ -83,7 +83,7 @@
         ,"quad": 1
     },
     {
-        "date": "DECEMBER 7",
+        "date": "December 7, 2024",
         "opponent": "vs Gonzaga",
         "logo": "gonzaga.png",
         "location": "Climate Pledge Arena | Seattle, Wash.",
@@ -93,7 +93,7 @@
         ,"opponentRank": 7
     },
     {
-        "date": "DECEMBER 11",
+        "date": "December 11, 2024",
         "opponent": "vs Colgate",
         "logo": "colgate.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -101,7 +101,7 @@
         ,"conference": false
     },
     {
-        "date": "DECEMBER 14",
+        "date": "December 14, 2024",
         "opponent": "vs Louisville",
         "logo": "louisville.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -110,7 +110,7 @@
         ,"quad": 1
     },
     {
-        "date": "DECEMBER 21",
+        "date": "December 21, 2024",
         "opponent": "vs Ohio State",
         "logo": "ohio-state.png",
         "location": "Madison Square Garden | New York, N.Y.",
@@ -119,7 +119,7 @@
         ,"quad": 1
     },
     {
-        "date": "DECEMBER 31",
+        "date": "December 31, 2024",
         "opponent": "vs Brown",
         "logo": "brown.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -127,7 +127,7 @@
         ,"conference": false
     },
     {
-        "date": "JANUARY 4",
+        "date": "January 4, 2025",
         "opponent": "vs Florida",
         "logo": "florida.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -137,7 +137,7 @@
         ,"opponentRank": 6
     },
     {
-        "date": "JANUARY 7",
+        "date": "January 7, 2025",
         "opponent": "at Georgia",
         "logo": "georgia.png",
         "location": "Stegeman Coliseum | Athens, Ga.",
@@ -146,7 +146,7 @@
         ,"quad": 1
     },
     {
-        "date": "JANUARY 11",
+        "date": "January 11, 2025",
         "opponent": "at Mississippi State",
         "logo": "mississippi-state.png",
         "location": "Humphrey Coliseum | Starkville, Miss.",
@@ -156,7 +156,7 @@
         ,"opponentRank": 14
     },
     {
-        "date": "JANUARY 14",
+        "date": "January 14, 2025",
         "opponent": "vs Texas A&M",
         "logo": "texas-am.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -166,7 +166,7 @@
         ,"opponentRank": 11
     },
     {
-        "date": "JANUARY 18",
+        "date": "January 18, 2025",
         "opponent": "vs Alabama",
         "logo": "alabama.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -176,7 +176,7 @@
         ,"opponentRank": 4
     },
     {
-        "date": "JANUARY 25",
+        "date": "January 25, 2025",
         "opponent": "at Vanderbilt",
         "logo": "vanderbilt.png",
         "location": "Memorial Gymnasium | Nashville, Tenn.",
@@ -185,7 +185,7 @@
         ,"quad": 1
     },
     {
-        "date": "JANUARY 28",
+        "date": "January 28, 2025",
         "opponent": "at Tennessee",
         "logo": "tennessee.png",
         "location": "Thompson-Boling Arena | Knoxville, Tenn.",
@@ -195,7 +195,7 @@
         ,"opponentRank": 8
     },
     {
-        "date": "FEBRUARY 1",
+        "date": "February 1, 2025",
         "opponent": "vs Arkansas",
         "logo": "arkansas.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -203,7 +203,7 @@
         ,"conference": true
     },
     {
-        "date": "FEBRUARY 4",
+        "date": "February 4, 2025",
         "opponent": "at Ole Miss",
         "logo": "ole-miss.png",
         "location": "Sandy and John Black Pavilion | Oxford, Miss.",
@@ -213,7 +213,7 @@
         ,"opponentRank": 25
     },
     {
-        "date": "FEBRUARY 8",
+        "date": "February 8, 2025",
         "opponent": "vs South Carolina",
         "logo": "south-carolina.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -221,7 +221,7 @@
         ,"conference": true
     },
     {
-        "date": "FEBRUARY 11",
+        "date": "February 11, 2025",
         "opponent": "vs Tennessee",
         "logo": "tennessee.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -231,7 +231,7 @@
         ,"opponentRank": 5
     },
     {
-        "date": "FEBRUARY 15",
+        "date": "February 15, 2025",
         "opponent": "at Texas",
         "logo": "texas.png",
         "location": "Moody Center | Austin, Texas",
@@ -240,7 +240,7 @@
         ,"quad": 1
     },
     {
-        "date": "FEBRUARY 19",
+        "date": "February 19, 2025",
         "opponent": "vs Vanderbilt",
         "logo": "vanderbilt.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -248,7 +248,7 @@
         ,"conference": true
     },
     {
-        "date": "FEBRUARY 22",
+        "date": "February 22, 2025",
         "opponent": "at Alabama",
         "logo": "alabama.png",
         "location": "Coleman Coliseum | Tuscaloosa, Ala.",
@@ -258,7 +258,7 @@
         ,"opponentRank": 4
     },
     {
-        "date": "FEBRUARY 26",
+        "date": "February 26, 2025",
         "opponent": "at Oklahoma",
         "logo": "oklahoma.png",
         "location": "Lloyd Noble Center | Norman, Okla.",
@@ -267,7 +267,7 @@
         ,"quad": 1
     },
     {
-        "date": "MARCH 1",
+        "date": "March 1, 2025",
         "opponent": "vs Auburn",
         "logo": "auburn.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -277,7 +277,7 @@
         ,"opponentRank": 1
     },
     {
-        "date": "MARCH 4",
+        "date": "March 4, 2025",
         "opponent": "vs LSU",
         "logo": "lsu.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -286,7 +286,7 @@
         
     },
     {
-        "date": "MARCH 8",
+        "date": "March 8, 2025",
         "opponent": "at Missouri",
         "logo": "missouri.png",
         "location": "Mizzou Arena | Columbia, Mo.",
@@ -296,7 +296,7 @@
         ,"opponentRank": 15
     },
     {
-        "date": "MARCH 13",
+        "date": "March 13, 2025",
         "opponent": "vs Oklahoma (SEC Tournament)",
         "logo": "oklahoma.png",
         "location": "Bridgestone Arena | Nashville, Tenn.",
@@ -305,7 +305,7 @@
         ,"quad": 1
     },
     {
-        "date": "MARCH 14",
+        "date": "March 14, 2025",
         "opponent": "vs Alabama (SEC Tournament)",
         "logo": "alabama.png",
         "location": "Bridgestone Arena | Nashville, Tenn.",
@@ -315,7 +315,7 @@
         ,"opponentRank": 5
     },
     {
-        "date": "MARCH 21",
+        "date": "March 21, 2025",
         "opponent": "vs Troy (NCAA Tournament)",
         "logo": "troy.png",
         "location": "Fiserv Forum | Milwaukee, Wis.",
@@ -323,7 +323,7 @@
         ,"conference": false
     },
     {
-        "date": "MARCH 23",
+        "date": "March 23, 2025",
         "opponent": "vs Illinois (NCAA Tournament)",
         "logo": "illinois.png",
         "location": "Fiserv Forum | Milwaukee, Wis.",
@@ -332,7 +332,7 @@
         ,"quad": 1
     },
     {
-        "date": "MARCH 28",
+        "date": "March 28, 2025",
         "opponent": "vs Tennessee (NCAA Tournament)",
         "logo": "tennessee.png",
         "location": "Lucas Oil Stadium | Indianapolis, Ind.",
