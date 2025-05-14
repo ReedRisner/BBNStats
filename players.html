@@ -98,6 +98,7 @@
         .rating-0 { background-color: #721c24; color: white; }
 
         .player-detail-header {
+            position: relative;
             background: linear-gradient(135deg, var(--uk-blue) 0%, #0056b3 100%);
             color: white;
             padding: 2rem 0;
@@ -109,6 +110,7 @@
             position: absolute;
             left: 20px;
             top: 20px;
+            z-index: 1;
         }
 
         .stat-pill {
@@ -179,6 +181,12 @@
             .player-photo-lg {
                 width: 80px;
                 height: 80px;
+            }
+            .back-button {
+                left: 10px;
+                top: 10px;
+                padding: 0.375rem 0.75rem; /* Smaller padding on mobile */
+                font-size: 0.875rem; /* Smaller font size */
             }
         }
     </style>
@@ -259,11 +267,14 @@
 
         <!-- Player Detail Section -->
         <section id="playerDetailSection">
-            <button id="backButton" class="btn btn-primary back-button">
-                <i class="fas fa-arrow-left"></i> Back to Players
-            </button>
+            
 
             <div class="player-detail-header text-center">
+        <!-- Moved back button INSIDE the header -->
+                <button id="backButton" class="btn btn-primary back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Players
+                </button>
+        
                 <div class="container">
                     <img id="detailPlayerPhoto" src="" class="player-photo-lg" alt="Player Photo">
                     <h2 id="detailPlayerName" class="mb-1"></h2>
