@@ -22,19 +22,7 @@
         
         .season-selector {
             max-width: 200px;
-            background: white;
-            color: var(--uk-blue) !important;
-            border: 2px solid var(--uk-silver);
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%230033A0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 0.75rem center;
-            background-size: 16px 12px;
-            padding-right: 2rem;
+            margin-left: 1rem;
         }
 
         .stat-card {
@@ -131,15 +119,14 @@
 
     <!-- Header -->
     <header class="stats-header text-center mb-5">
-        <div class="container position-relative">
-            <div class="header-content">
-                <h1 class="display-4 fw-bold mb-0">Team Statistics</h1>
-                <select class="form-select season-selector" id="seasonSelect">
-                    <option value="2025">2025-2026</option>
+        <div class="container">
+            <div class="d-flex justify-content-center align-items-center">
+                <h1 class="display-4 fw-bold mb-0 me-3">Kentucky Team Statistics</h1>
+                <select class="form-select season-selector bg-white text-uk-blue" id="seasonSelect">
+                    <option value="2025" selected>2025-2026</option>
                     <option value="2024">2024-2025</option>
                 </select>
             </div>
-            <p class="lead mt-2">Advanced Team Performance Metrics</p>
         </div>
     </header>
 

@@ -1,5 +1,8 @@
 // Initialize data and load default season
 let allPlayersData = null;
+// In players.js, add at the top
+let currentSortKey = null;
+let currentSortDirection = 'desc'; // Default to descending
 
 async function loadPlayerData() {
     try {
@@ -13,6 +16,34 @@ async function loadPlayerData() {
         console.error('Error loading player data:', error);
         alert('Failed to load player data. Please check console for details.');
     }
+}
+// In players.js, add this function
+function sortPlayers(players, sortKey, direction) {
+    return players.slice().sort((a, b) => {
+        const aGp = a.gp || 1;
+        const bGp = b.gp || 1;
+        let aValue, bValue;
+
+        switch (sortKey) {
+            case 'ppg':
+                aValue = a.pts / aGp;
+                bValue = b.pts / bGp;
+                break;
+            case 'rpg':
+                aValue = a.reb / aGp;
+                bValue = b.reb / bGp;
+                break;
+            case 'apg':
+                aValue = a.ast / aGp;
+                bValue = b.ast / bGp;
+                break;
+            default:
+                aValue = 0;
+                bValue = 0;
+        }
+
+        return direction === 'asc' ? aValue - bValue : bValue - aValue;
+    });
 }
 
 function calculateGameRating(game) {
@@ -62,9 +93,18 @@ function loadPlayerStats(season) {
             console.error('Player data not loaded');
             return;
         }
+        let players = allPlayersData.seasons[season]?.players || [];
         
-        const players = allPlayersData.seasons[season]?.players || [];
+        // Apply sorting if a sort key is selected
+        if (currentSortKey) {
+            players = sortPlayers(players, currentSortKey, currentSortDirection);
+        }
+
+        // Rest of the function remains the same...
         const tbody = document.getElementById('playersTableBody');
+        tbody.innerHTML = '';
+        
+        
         tbody.innerHTML = '';
 
         players.forEach(player => {
@@ -282,6 +322,19 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
         console.error('Initialization error:', e);
     }
+});
+
+document.querySelectorAll('[data-sort-key]').forEach(header => {
+    header.addEventListener('click', function() {
+        const sortKey = this.dataset.sortKey;
+        if (currentSortKey === sortKey) {
+            currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            currentSortKey = sortKey;
+            currentSortDirection = 'desc';
+        }
+        loadPlayerStats(document.getElementById('seasonSelect').value);
+    });
 });
 
 document.getElementById('seasonSelect').addEventListener('change', function() {
