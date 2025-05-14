@@ -1,0 +1,43 @@
+[
+
+    {
+        "date": "OCTOBER 14",
+        "opponent": "vs Purdue (EXH)",
+        "logo": "purdue.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+    },
+    {
+        "date": "NOVEMBER 11",
+        "opponent": "at Louisville",
+        "logo": "louisville.png",
+        "location": "KFC Yum! Center | Louisville, Ky.",
+        "result": "TBD",
+        "quad": 1
+    },
+    {
+        "date": "NOVEMBER 18",
+        "opponent": "vs Michigan State",
+        "logo": "michigan-state.png",
+        "location": "Madison Square Garden | New York, NY.",
+        "result": "TBD",
+        "quad": 1
+    },
+    {
+        "date": "DECEMBER 5",
+        "opponent": "vs Gonzaga",
+        "logo": "gonzaga.png",
+        "location": "Bridgestone Arena | Nashville, TN.",
+        "result": "TBD",
+        "quad": 1
+    },
+    {
+        "date": "DECEMBER 20",
+        "opponent": "vs St. Johns",
+        "logo": "st-johns.png",
+        "location": "State Farm Arena | Atlanta, GA.",
+        "result": "TBD",
+        "quad": 1
+    }
+]

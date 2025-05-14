@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kentucky Basketball Rankings - BBN Stats</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --uk-blue: #0033A0;
+            --uk-white: #FFFFFF;
+            --uk-silver: #808080;
+        }
+
+        .rankings-header {
+            background: var(--uk-blue);
+            color: white;
+            padding: 2rem 0;
+            border-bottom: 5px solid var(--uk-silver);
+        }
+        
+        .season-selector {
+            max-width: 200px;
+            background: white;
+            color: var(--uk-blue) !important;
+            border: 2px solid var(--uk-silver);
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            /* Custom dropdown arrow */
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%230033A0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px 12px;
+            padding-right: 2rem;
+        }
+        .ranking-card {
+            background: white;
+            border: 2px solid var(--uk-blue);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ranking-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 51, 160, 0.2);
+            background: var(--uk-blue);
+            color: white;
+        }
+
+        .ranking-card:hover h3 {
+            color: var(--uk-white) !important;
+        }
+
+        .ranking-card:hover .ranking-value {
+            color: var(--uk-silver) !important;
+        }
+
+        .ranking-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--uk-blue);
+            transition: all 0.3s ease;
+        }
+
+        .ranking-source {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .glow-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 51, 160, 0);
+            transition: all 0.3s ease;
+        }
+
+        .ranking-card:hover .glow-border {
+            box-shadow: 0 0 15px rgba(0, 51, 160, 0.4);
+        }
+
+        
+
+        @media (max-width: 768px) {
+            .ranking-value {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg py-3 bg-white">
+        <div class="container">
+            <!-- Dropdown Menu -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    More
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="index.html">Home</a></li>
+                    <li><a class="dropdown-item" href="players.html">Players</a></li>
+                    <li><a class="dropdown-item active" href="schedule.html">Schedule</a></li>
+                    <li><a class="dropdown-item" href="stats.html">Statistics</a></li>
+                    <li><a class="dropdown-item" href="History.html">History</a></li>
+                    <li><a class="dropdown-item" href="News.html">News</a></li>
+                </ul>
+            </div>
+
+            <!-- Back Button -->
+            <a href="index.html" class="btn btn-primary ms-3">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="rankings-header text-center mb-5">
+        <div class="container position-relative">
+            <div class="header-content">
+                <h1 class="display-4 fw-bold mb-0">Team Rankings</h1>
+                <select class="form-select season-selector" id="seasonSelect">
+                    <option value="2025">2025-2026</option>
+                    <option value="2024">2024-2025</option>
+                </select>
+            </div>
+            <p class="lead mt-2">Current Season Performance Metrics</p>
+        </div>
+    </header>
+
+    <!-- Rankings Grid -->
+    <main class="container mb-5">
+        <div class="row g-4">
+            <!-- Overall Record -->
+            <div class="col-md-4">
+                <a href="https://ukathletics.com/sports/mbball/schedule/" class="text-decoration-none" target="_blank">
+                    <div class="ranking-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">Overall Record</h3>
+                        <div class="ranking-value">0-0</div>
+                        <div class="ranking-source text-muted">NCAA Official</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Conference Record -->
+            <div class="col-md-4">
+                <a href="https://www.secsports.com/standings/basketball-m" class="text-decoration-none" target="_blank">
+                    <div class="ranking-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">Conference Record</h3>
+                        <div class="ranking-value">0-0</div>
+                        <div class="ranking-source text-muted">SEC Official</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- AP Poll -->
+            <div class="col-md-4">
+                <a href="https://apnews.com/hub/ap-top-25-college-basketball-poll" class="text-decoration-none" target="_blank">
+                    <div class="ranking-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">AP Poll</h3>
+                        <div class="ranking-value">#0</div>
+                        <div class="ranking-source text-muted">Associated Press</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- KenPom -->
+            <div class="col-md-4">
+                <a href="https://kenpom.com" class="text-decoration-none" target="_blank">
+                    <div class="ranking-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">KenPom</h3>
+                        <div class="ranking-value">#0</div>
+                        <div class="ranking-source text-muted">Ken Pomeroy</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- NET Rankings -->
+            <div class="col-md-4">
+                <a href="https://www.ncaa.com/rankings/basketball-men/d1/ncaa-mens-basketball-net-rankings" class="text-decoration-none" target="_blank">
+                    <div class="ranking-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">NET Rankings</h3>
+                        <div class="ranking-value">#0</div>
+                        <div class="ranking-source text-muted">NCAA Evaluation Tool</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Evan Miya -->
+            <div class="col-md-4">
+                <a href="https://evanmiya.com" class="text-decoration-none" target="_blank">
+                    <div class="ranking-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">Evan Miya</h3>
+                        <div class="ranking-value">#0</div>
+                        <div class="ranking-source text-muted">Analytics Ranking</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Barttorvik -->
+            <div class="col-md-4">
+                <a href="https://barttorvik.com" class="text-decoration-none" target="_blank">
+                    <div class="ranking-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">Barttorvik</h3>
+                        <div class="ranking-value">#0</div>
+                        <div class="ranking-source text-muted">Advanced Metrics</div>
+                    </div>
+                </a>
+            </div>
+
+             <!-- New Bracketology Box -->
+            <div class="col-md-4">
+                <a href="https://www.espn.com/espn/feature/story/_/page/bracketology/ncaa-bracketology-2026-march-madness-men-field-predictions" class="text-decoration-none" target="_blank">
+                    <div class="ranking-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">Bracketology</h3>
+                        <div class="ranking-value">No. 2 Seed</div>
+                        <div class="ranking-source text-muted">Current Projection</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- New AP Top 25 Record Box -->
+            <div class="col-md-4">
+                <a href="https://apnews.com/hub/ap-top-25-college-basketball-poll" class="text-decoration-none" target="_blank">
+                    <div class="ranking-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">AP Top 25 Record</h3>
+                        <div class="ranking-value">0-0</div>
+                        <div class="ranking-source text-muted">vs Ranked Teams</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 BBN Stats. All rights reserved.<br>
+            University of Kentucky Basketball Statistics</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/rankings.js"></script>
+    
+</body>
+</html>
