@@ -1,7 +1,7 @@
 [
 
     {
-        "date": "OCTOBER 14",
+        "date": "October 14, 2025",
         "opponent": "vs Purdue (EXH)",
         "logo": "purdue.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -9,7 +9,7 @@
         "quad": 1
     },
     {
-        "date": "NOVEMBER 11",
+        "date": "November 11, 2025",
         "opponent": "at Louisville",
         "logo": "louisville.png",
         "location": "KFC Yum! Center | Louisville, Ky.",
@@ -17,7 +17,7 @@
         "quad": 1
     },
     {
-        "date": "NOVEMBER 18",
+        "date": "November 18, 2025",
         "opponent": "vs Michigan State",
         "logo": "michigan-state.png",
         "location": "Madison Square Garden | New York, NY.",
@@ -25,7 +25,7 @@
         "quad": 1
     },
     {
-        "date": "DECEMBER 5",
+        "date": "December 5, 2025",
         "opponent": "vs Gonzaga",
         "logo": "gonzaga.png",
         "location": "Bridgestone Arena | Nashville, TN.",
@@ -33,7 +33,7 @@
         "quad": 1
     },
     {
-        "date": "DECEMBER 20",
+        "date": "December 20, 2025",
         "opponent": "vs St. Johns",
         "logo": "st-johns.png",
         "location": "State Farm Arena | Atlanta, GA.",
