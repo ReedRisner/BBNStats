@@ -95,6 +95,7 @@ function loadPlayerStats(season) {
         }
         let players = allPlayersData.seasons[season]?.players || [];
         
+        
         // Apply sorting if a sort key is selected
         if (currentSortKey) {
             players = sortPlayers(players, currentSortKey, currentSortDirection);
@@ -190,6 +191,15 @@ function calculateAdvancedStats(player) {
         console.error('Error calculating advanced stats:', e);
         return {};
     }
+}
+
+function updateSortArrows(sortKey, direction) {
+    document.querySelectorAll('[data-sort-key]').forEach(header => {
+        header.classList.remove('active-sort', 'asc', 'desc');
+        if (header.dataset.sortKey === sortKey) {
+            header.classList.add('active-sort', direction);
+        }
+    });
 }
 
 
@@ -333,6 +343,7 @@ document.querySelectorAll('[data-sort-key]').forEach(header => {
             currentSortKey = sortKey;
             currentSortDirection = 'desc';
         }
+        updateSortArrows(currentSortKey, currentSortDirection);
         loadPlayerStats(document.getElementById('seasonSelect').value);
     });
 });

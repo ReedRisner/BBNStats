@@ -143,6 +143,29 @@
             transition: opacity 0.3s ease;
         }
 
+        .sort-arrow {
+        display: inline-block;
+        width: 15px;
+        margin-left: 5px;
+        }
+
+        .sort-arrow::after {
+        content: "↕";
+        color: var(--uk-silver);
+        }
+
+        .active-sort .sort-arrow::after {
+        color: var(--uk-white);
+        }
+
+        .asc .sort-arrow::after {
+        content: "↑";
+        }
+
+        .desc .sort-arrow::after {
+        content: "↓";
+        }
+
         @media (max-width: 768px) {
             .stats-table {
                 font-size: 0.8rem;
@@ -215,9 +238,15 @@
                             <th>HT</th>
                             <th>WT</th>
                             <!-- In players.html, modify the PPG, RPG, APG headers -->
-                            <th data-sort-key="ppg" style="cursor: pointer;">PPG</th>
-                            <th data-sort-key="rpg" style="cursor: pointer;">RPG</th>
-                            <th data-sort-key="apg" style="cursor: pointer;">APG</th>
+                            <th data-sort-key="ppg" style="cursor: pointer;">
+                            PPG<span class="sort-arrow"></span>
+                            </th>
+                            <th data-sort-key="rpg" style="cursor: pointer;">
+                            RPG<span class="sort-arrow"></span>
+                            </th>
+                            <th data-sort-key="apg" style="cursor: pointer;">
+                            APG<span class="sort-arrow"></span>
+                            </th>
                             <th>Rating</th>
                         </tr>
                     </thead>
@@ -258,7 +287,7 @@
                 </div>
                 <div class="col-md-3">
                     <div class="stat-card p-3 text-center">
-                        <h6>Assits</h6>
+                        <h6>Assists</h6>
                         <p id="statAssists" class="fw-bold fs-4 text-uk-blue">-</p>
                     </div>
                 </div>
