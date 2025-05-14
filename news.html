@@ -1,1 +1,272 @@
-<hr>still working on this page<hr>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kentucky Basketball News - BBN Stats</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --uk-blue: #0033A0;
+            --uk-white: #FFFFFF;
+            --uk-silver: #808080;
+        }
+
+        .news-header {
+            background: var(--uk-blue);
+            color: white;
+            padding: 2rem 0;
+            border-bottom: 5px solid var(--uk-silver);
+        }
+        
+        
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .header-content h1 {
+            flex: 1;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .news-card {
+            background: white;
+            border: 2px solid var(--uk-blue);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .header-content h1 {
+                font-size: 2rem;
+                margin-right: 0.5rem;
+            }
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 51, 160, 0.2);
+            background: var(--uk-blue);
+            color: white;
+        }
+
+        .news-card:hover h3 {
+            color: var(--uk-white) !important;
+        }
+
+        .news-card:hover .news-source {
+            color: var(--uk-silver) !important;
+        }
+
+        .news-source {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--uk-blue);
+            transition: all 0.3s ease;
+        }
+
+        .glow-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 51, 160, 0);
+            transition: all 0.3s ease;
+        }
+
+        .news-card:hover .glow-border {
+            box-shadow: 0 0 15px rgba(0, 51, 160, 0.4);
+        }
+
+        .news-logo {
+            height: 60px;
+            margin-bottom: 1rem;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg py-3 bg-white">
+        <div class="container">
+            <!-- Dropdown Menu -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    More
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="index.html">Home</a></li>
+                    <li><a class="dropdown-item" href="players.html">Players</a></li>
+                    <li><a class="dropdown-item" href="schedule.html">Schedule</a></li>
+                    <li><a class="dropdown-item" href="stats.html">Statistics</a></li>
+                    <li><a class="dropdown-item" href="History.html">History</a></li>
+                    <li><a class="dropdown-item" href="rankings.html">Rankings</a></li>
+                </ul>
+            </div>
+
+            <!-- Back Button -->
+            <a href="index.html" class="btn btn-primary ms-3">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <header class="news-header text-center mb-5">
+        <div class="container">
+            <div class="d-flex justify-content-center align-items-center">
+                <h1 class="display-4 fw-bold mb-0 me-3">Kentucky Basketball News</h1>
+            </div>
+        </div>
+    </header>
+
+    <!-- News Sources Grid -->
+    <main class="container mb-5">
+        <div class="row g-4">
+            <!-- Kentucky Sports Radio -->
+            <div class="col-md-4">
+                <a href="https://kentuckysportsradio.com" class="text-decoration-none" target="_blank">
+                    <div class="news-card">
+                        <div class="glow-border"></div>
+                        <img src="/images/news/ksr.jpg" alt="KSR Logo" class="news-logo">
+                        <h3 class="text-uk-blue mb-3">Kentucky Sports Radio</h3>
+                        <p>The most popular independent Kentucky sports site featuring news, analysis, and fan discussion.</p>
+                        <div class="news-source text-muted">KSR</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- A Sea Of Blue -->
+            <div class="col-md-4">
+                <a href="https://www.aseaofblue.com" class="text-decoration-none" target="_blank">
+                    <div class="news-card">
+                        <div class="glow-border"></div>
+                        <img src="/images/news/aseaofblue.png" alt="A Sea Of Blue Logo" class="news-logo">
+                        <h3 class="text-uk-blue mb-3">A Sea Of Blue</h3>
+                        <p>SB Nation's Kentucky Wildcats community featuring news, analysis, and commentary.</p>
+                        <div class="news-source text-muted">SB Nation</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Rupp Rafters -->
+            <div class="col-md-4">
+                <a href="https://kentucky.forums.rivals.com/forums/rupp-rafters-basketball-forum.26/" class="text-decoration-none" target="_blank">
+                    <div class="news-card">
+                        <div class="glow-border"></div>
+                        <img src="/images/news/rupprafters.png" alt="Rupp Rafters Logo" class="news-logo">
+                        <h3 class="text-uk-blue mb-3">Rupp Rafters</h3>
+                        <p>Kentucky Basketball's #1 Community Discussion Forum.</p>
+                        <div class="news-source text-muted">Discussion</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Cats Illustrated -->
+            <div class="col-md-4">
+                <a href="https://kentucky.rivals.com" class="text-decoration-none" target="_blank">
+                    <div class="news-card">
+                        <div class="glow-border"></div>
+                        <img src="/images/news/catsilllusrated.png" alt="Cats Illustrated Logo" class="news-logo">
+                        <h3 class="text-uk-blue mb-3">Cats Illustrated</h3>
+                        <p>Premium Kentucky sports coverage including recruiting, team news, and insider information.</p>
+                        <div class="news-source text-muted">Rivals</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Kentucky Kernel -->
+            <div class="col-md-4">
+                <a href="https://kykernel.com" class="text-decoration-none" target="_blank">
+                    <div class="news-card">
+                        <div class="glow-border"></div>
+                        <img src="/images/news/kentuckykernel.jpg" alt="Kentucky Kernel Logo" class="news-logo">
+                        <h3 class="text-uk-blue mb-3">Kentucky Kernel</h3>
+                        <p>The University of Kentucky's independent student newspaper with sports coverage.</p>
+                        <div class="news-source text-muted">Student Newspaper</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- The Athletic -->
+            <div class="col-md-4">
+                <a href="https://www.nytimes.com/athletic/college-basketball/team/kentucky-wildcats-college-basketball/" class="text-decoration-none" target="_blank">
+                    <div class="news-card">
+                        <div class="glow-border"></div>
+                        <img src="/images/news/theathletic.png" alt="The Athletic Logo" class="news-logo">
+                        <h3 class="text-uk-blue mb-3">The Athletic</h3>
+                        <p>Premium sports journalism with in-depth Kentucky basketball coverage and analysis.</p>
+                        <div class="news-source text-muted">Subscription Required</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Lexington Herald-Leader -->
+            <div class="col-md-4">
+                <a href="https://www.kentucky.com/sports/college/kentucky-sports" class="text-decoration-none" target="_blank">
+                    <div class="news-card">
+                        <div class="glow-border"></div>
+                        <img src="/images/news/lexherald.png" alt="Herald-Leader Logo" class="news-logo">
+                        <h3 class="text-uk-blue mb-3">Herald-Leader</h3>
+                        <p>Local newspaper coverage of Kentucky basketball with beat reporters and game coverage.</p>
+                        <div class="news-source text-muted">Lexington Newspaper</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- UK Athletics Official -->
+            <div class="col-md-4">
+                <a href="https://ukathletics.com/sports/mbball/" class="text-decoration-none" target="_blank">
+                    <div class="news-card">
+                        <div class="glow-border"></div>
+                        <img src="/images/uk-logo/uk-logo-white.png" alt="UK Athletics Logo" class="news-logo">
+                        <h3 class="text-uk-blue mb-3">UK Athletics</h3>
+                        <p>Official news, press releases, and updates directly from the University of Kentucky.</p>
+                        <div class="news-source text-muted">Official Site</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- 247Sports Kentucky -->
+            <div class="col-md-4">
+                <a href="https://247sports.com/college/kentucky/" class="text-decoration-none" target="_blank">
+                    <div class="news-card">
+                        <div class="glow-border"></div>
+                        <img src="/images/news/247.jpg" alt="247Sports Logo" class="news-logo">
+                        <h3 class="text-uk-blue mb-3">247Sports</h3>
+                        <p>Recruiting news, team coverage, and insider information on Kentucky basketball.</p>
+                        <div class="news-source text-muted">247Sports</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container text-center">
+            <p class="mb-0">Click on squares to access news sources<br>
+            &copy; 2025 BBN Stats. All rights reserved.<br>
+            University of Kentucky Basketball Statistics</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/news.js"></script>
+    
+</body>
+</html>
