@@ -29,17 +29,30 @@
         .hero-section {
             background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('path-to-uk-background.jpg');
             background-size: cover;
-            padding: 4rem 0;
+            padding: 2.5rem 0;
         }
         
         .stat-card {
             border: 2px solid var(--uk-blue);
             border-radius: 10px;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
         }
         
         .stat-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 51, 160, 0.15);
+        }
+        
+        .stats-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         .schedule-table th {
@@ -50,6 +63,31 @@
         .uk-badge {
             background-color: var(--uk-gold);
             color: var(--uk-blue);
+        }
+        #recent-games tr {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #recent-games tr:hover {
+            background-color: rgba(0, 51, 160, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 1.5rem;
         }
     </style>
 </head>
@@ -87,37 +125,47 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container text-center">
-            <img src="./images/uk-logo/wildcats-logo.png" alt="Kentucky Wildcats Logo" height="120" class="mb-4">
-            <h2 class="text-dark mb-4">2025-26 Season Statistics</h2>
+            <img src="./images/uk-logo/wildcats-logo.png" alt="Kentucky Wildcats Logo" height="120" class="mb-3">
+            <h2 class="text-dark mb-2">Kentucky Basketball Statistics</h2>
+            <p class="subtitle">Click "More" to see Players, Schedule, Rankings, Statistics, History, and News</p>
             
             <!-- Quick Stats Cards -->
-            <div class="row g-4 mb-5">
-                <div class="col-md-3">
-                    <div class="stat-card p-3">
-                        <h5 class="text-muted">Record</h5>
-                        <h2 id="indexTotalRecord" class="text-primary">-</h2>
-                        <small class="text-muted">Overall</small>
+            <div class="stats-container">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-15 col-lg">
+                        <div class="stat-card p-3 h-100">
+                            <h5 class="text-muted">Record</h5>
+                            <h2 id="indexTotalRecord" class="text-primary">-</h2>
+                            <small class="stat-label">Overall</small>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card p-3">
-                        <h5 class="text-muted">National Rank</h5>
-                        <h2 class="text-primary">#N/A</h2>
-                        <small class="text-muted">AP Poll</small>
+                    <div class="col-md-15 col-lg">
+                        <div class="stat-card p-3 h-100" onclick="window.open('https://apnews.com/hub/ap-top-25-college-basketball-poll', '_blank')">
+                            <h5 class="text-muted">AP Poll</h5>
+                            <div class="stat-value text-primary">#N/A</div>
+                            <small class="stat-label">Click for details</small>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card p-3">
-                        <h5 class="text-muted">KenPom</h5>
-                        <h2 class="text-primary">#N/A</h2>
-                        <small class="text-muted">Adjusted Efficiency</small>
+                    <div class="col-md-15 col-lg">
+                        <div class="stat-card p-3 h-100" onclick="window.open('https://kenpom.com', '_blank')">
+                            <h5 class="text-muted">KenPom</h5>
+                            <div class="stat-value text-primary">#N/A</div>
+                            <small class="stat-label">Click for details</small>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card p-3">
-                        <h5 class="text-muted">Next Game</h5>
-                        <h2 class="text-primary">vs Purdue</h2>
-                        <small class="text-muted">October 24, 2025</small>
+                    <div class="col-md-15 col-lg">
+                        <div class="stat-card p-3 h-100" onclick="window.open('https://www.espn.com/mens-college-basketball/bracketology', '_blank')">
+                            <h5 class="text-muted">Bracketology</h5>
+                            <div class="stat-value text-primary">N/A</div>
+                            <small class="stat-label">Projected Seed</small>
+                        </div>
+                    </div>
+                    <div class="col-md-15 col-lg">
+                        <div class="stat-card p-3 h-100">
+                            <h5 class="text-muted">Next Game</h5>
+                            <div class="stat-value text-primary">vs Purdue</div>
+                            <small class="stat-label">October 24, 2025</small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -125,10 +173,10 @@
     </section>
 
     <!-- Main Content -->
-    <main class="container my-5">
+    <main class="container my-4">
         <!-- Recent Games Section -->
-        <section class="mb-5">
-            <h3 class="mb-4">Recent Games</h3>
+        <section class="mb-4">
+            <h3 class="mb-3">Recent Games</h3>
             <div class="table-responsive">
                 <table class="table schedule-table table-hover">
                     <thead>
@@ -139,7 +187,7 @@
                             <th>Score</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="recent-games">
                         <tr>
                             <td>March 21, 2025</td>
                             <td>vs 14 Troy</td>
@@ -162,12 +210,8 @@
                     </tbody>
                 </table>
             </div>
-            
-            
         </section>
-        
-
-       
+    </main>
 
     <!-- Footer -->
     <footer class="bg-dark text-white py-4">
@@ -187,6 +231,5 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="scripts/index.js"></script>
-    
 </body>
 </html>
