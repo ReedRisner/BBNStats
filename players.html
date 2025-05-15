@@ -211,6 +211,7 @@
                 <li><a class="dropdown-item" href="schedule.html">Schedule</a></li>
                 <li><a class="dropdown-item" href="rankings.html">Rankings</a></li>
                 <li><a class="dropdown-item" href="stats.html">Statistics</a></li>
+                <li><a class="dropdown-item" href="comparison.html">Compare</a></li>
                 <li><a class="dropdown-item" href="history.html">History</a></li>
                 <li><a class="dropdown-item" href="news.html">News</a></li>
             </ul>
@@ -271,137 +272,168 @@
             </div>
         </section>
 
-        <!-- Player Detail Section -->
-        <section id="playerDetailSection">
-            
+<!-- Player Detail Section -->
+<section id="playerDetailSection">
+    <div class="player-detail-header text-center">
+        <button id="backButton" class="btn btn-primary back-button">
+            <i class="fas fa-arrow-left"></i> Back to Players
+        </button>
+        <div class="container">
+            <img id="detailPlayerPhoto" src="" class="player-photo-lg" alt="Player Photo">
+            <h2 id="detailPlayerName" class="mb-1"></h2>
+            <div id="detailPlayerInfo" class="mb-3"></div>
+            <div id="detailPlayerRating" class="fs-4 fw-bold"></div>
+        </div>
+    </div>
 
-            <div class="player-detail-header text-center">
-        <!-- Moved back button INSIDE the header -->
-                <button id="backButton" class="btn btn-primary back-button">
-                    <i class="fas fa-arrow-left"></i> Back to Players
-                </button>
-        
-                <div class="container">
-                    <img id="detailPlayerPhoto" src="" class="player-photo-lg" alt="Player Photo">
-                    <h2 id="detailPlayerName" class="mb-1"></h2>
-                    <div id="detailPlayerInfo" class="mb-3"></div>
-                    <div id="detailPlayerRating" class="fs-4 fw-bold"></div>
+    <div class="container">
+        <!-- Main Stats Cards -->
+        <div class="row mb-4 g-3">
+            <div class="col-md-3">
+                <div class="stat-card p-3 text-center h-100">
+                    <h6>Minutes</h6>
+                    <p id="statMinutes" class="fw-bold fs-4 text-uk-blue mb-0">-</p>
                 </div>
             </div>
-
-            <div class="row mb-4">
-                <div class="col-md-3">
-                    <div class="stat-card p-3 text-center">
-                        <h6>Minutes</h6>
-                        <p id="statMinutes" class="fw-bold fs-4 text-uk-blue">-</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card p-3 text-center">
-                        <h6>Points</h6>
-                        <p id="statPoints" class="fw-bold fs-4 text-uk-blue">-</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card p-3 text-center">
-                        <h6>Assists</h6>
-                        <p id="statAssists" class="fw-bold fs-4 text-uk-blue">-</p>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-card p-3 text-center">
-                        <h6>Rebounds</h6>
-                        <p id="statRebounds" class="fw-bold fs-4 text-uk-blue">-</p>
-                    </div>
+            <div class="col-md-3">
+                <div class="stat-card p-3 text-center h-100">
+                    <h6>Points</h6>
+                    <p id="statPoints" class="fw-bold fs-4 text-uk-blue mb-0">-</p>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card mb-4">
-                        <div class="card-header bg-uk-blue text-white">
-                            <h5 class="mb-0">Shooting Stats</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-6">
-                                    <p>FG%: <span id="statFgPct" class="fw-bold">-</span></p>
-                                    <p>3P%: <span id="statThreePct" class="fw-bold">-</span></p>
-                                    <p>FT%: <span id="statFtPct" class="fw-bold">-</span></p>
-                                </div>
-                                <div class="col-6">
-                                    <p>eFG%: <span id="statEfgPct" class="fw-bold">-</span></p>
-                                    <p>TS%: <span id="statTsPct" class="fw-bold">-</span></p>
-                                    <p>USG%: <span id="statUsgRate" class="fw-bold">-</span></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card mb-4">
-                        <div class="card-header bg-uk-blue text-white">
-                            <h5 class="mb-0">Advanced Stats</h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-6">
-                                    <p>PER: <span id="statPer" class="fw-bold">-</span></p>
-                                    <p>ORtg: <span id="statOrtg" class="fw-bold">-</span></p>
-                                    <p>DRtg: <span id="statDrtg" class="fw-bold">-</span></p>
-                                </div>
-                                <div class="col-6">
-                                    <p>BPM: <span id="statBpm" class="fw-bold">-</span></p>
-                                    <p>VORP: <span id="statVorp" class="fw-bold">-</span></p>
-                                    <p>WS: <span id="statWs" class="fw-bold">-</span></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="col-md-3">
+                <div class="stat-card p-3 text-center h-100">
+                    <h6>Assists</h6>
+                    <p id="statAssists" class="fw-bold fs-4 text-uk-blue mb-0">-</p>
                 </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card p-3 text-center h-100">
+                    <h6>Rebounds</h6>
+                    <p id="statRebounds" class="fw-bold fs-4 text-uk-blue mb-0">-</p>
+                </div>
+            </div>
+        </div>
 
-                <div class="col-md-6">
-                    <div class="card mb-4">
-                        <div class="card-header bg-uk-blue text-white">
-                            <h5 class="mb-0">Recent Performance</h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="recentRatings" class="d-flex flex-wrap">
-                                <!-- Recent ratings will go here -->
-                            </div>
-                            <div class="mt-3">
-                                <p>Best Rating: <span id="statBestRating" class="fw-bold">-</span></p>
-                                <p>Worst Rating: <span id="statWorstRating" class="fw-bold">-</span></p>
-                                <p>Consistency: <span id="statConsistency" class="fw-bold">-</span></p>
-                            </div>
-                        </div>
+        <!-- Shooting Stats -->
+        <div class="card mb-4">
+            <div class="card-header bg-uk-blue text-white">
+                <h5 class="mb-0">Shooting Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6 col-md-4 mb-3">
+                        <p class="mb-1" title="Field Goal Percentage">FG%</p>
+                        <span id="statFgPct" class="fw-bold fs-5 d-block">-</span>
                     </div>
-
-                    <div class="card">
-                        <div class="card-header bg-uk-blue text-white">
-                            <h5 class="mb-0">Game Logs</h5>
-                        </div>
-                        <div class="card-body p-0">
-                            <div class="table-responsive">
-                                <table class="table table-hover mb-0">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th>Date</th>
-                                            <th>Opponent</th>
-                                            <th>MIN</th>
-                                            <th>PTS</th>
-                                            <th>Rating</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="gameLogsBody">
-                                        <!-- Game logs will go here -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <p class="mb-1" title="Three Point Percentage">3P%</p>
+                        <span id="statThreePct" class="fw-bold fs-5 d-block">-</span>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <p class="mb-1" title="Free Throw Percentage">FT%</p>
+                        <span id="statFtPct" class="fw-bold fs-5 d-block">-</span>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <p class="mb-1" title="True Shooting Percentage">TS%</p>
+                        <span id="statTsPct" class="fw-bold fs-5 d-block">-</span>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+
+        <!-- Advanced Stats -->
+        <div class="card mb-4">
+            <div class="card-header bg-uk-blue text-white">
+                <h5 class="mb-0">Advanced Stats</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6 col-md-4 mb-3">
+                        <p class="mb-1" title="Player Efficiency Rating">PER</p>
+                        <span id="statPer" class="fw-bold fs-5 d-block">-</span>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <p class="mb-1" title="Efficiency">EFF</p>
+                        <span id="statEff" class="fw-bold fs-5 d-block">-</span>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <p class="mb-1" title="Offensive Rating">ORtg</p>
+                        <span id="statOrtg" class="fw-bold fs-5 d-block">-</span>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <p class="mb-1" title="Defensive Rating">DRtg</p>
+                        <span id="statDrtg" class="fw-bold fs-5 d-block">-</span>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <p class="mb-1" title="Usage Percentage">USG%</p>
+                        <span id="statUsgRate" class="fw-bold fs-5 d-block">-</span>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <p class="mb-1" title="Box Plus/Minus">BPM</p>
+                        <span id="statBpm" class="fw-bold fs-5 d-block">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Section -->
+        <div class="row g-4 mb-4">
+            <!-- Recent Performance -->
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-header bg-uk-blue text-white">
+                        <h5 class="mb-0">Recent Performance</h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <div id="recentRatings" class="d-flex justify-content-center gap-2 mb-3 flex-wrap"></div>
+                        <div class="row">
+                            <div class="col-4">
+                                <p class="mb-1 small">Best</p>
+                                <div id="statBestRating" class="fw-bold">-</div>
+                            </div>
+                            <div class="col-4">
+                                <p class="mb-1 small">Worst</p>
+                                <div id="statWorstRating" class="fw-bold">-</div>
+                            </div>
+                            <div class="col-4">
+                                <p class="mb-1 small">Consistency</p>
+                                <div id="statConsistency" class="fw-bold">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game Logs -->
+            <div class="col-md-7">
+                <div class="card h-100">
+                    <div class="card-header bg-uk-blue text-white">
+                        <h5 class="mb-0">Game Logs</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Opponent</th>
+                                        <th>MIN</th>
+                                        <th>PTS</th>
+                                        <th>Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gameLogsBody">
+                                    <!-- Game logs populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
     </main>
 
     <!-- Game Stats Modal -->
