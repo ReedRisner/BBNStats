@@ -1,6 +1,10 @@
 {
   "seasons": {
     "2025": {
+      "team": {
+            "pace": 0,
+            "minutes": 0
+      },
       "players": [
         {
           "number": 10,
