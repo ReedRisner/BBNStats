@@ -173,6 +173,12 @@
         .desc .sort-arrow::after {
         content: "↑";
         }
+        .bbn-title {
+            color: var(--uk-blue);
+            font-family: 'Arial Black', sans-serif;
+            font-size: 2.5rem;
+            letter-spacing: 1.5px;
+        }
 
         @media (max-width: 768px) {
             .stats-table {
@@ -216,6 +222,12 @@
                 <li><a class="dropdown-item" href="news.html">News</a></li>
             </ul>
         </div>
+
+        <!-- Centered Title -->
+            <div class="mx-auto">
+                <h1 class="bbn-title mb-0">BBN Stats</h1>
+            </div>
+
         <a href="index.html" class="btn btn-primary ms-3">
             <i class="fas fa-arrow-left"></i> Back to Home
         </a>
@@ -315,26 +327,26 @@
             </div>
         </div>
 
-        <!-- Shooting Stats -->
+<!-- Shooting Stats -->
         <div class="card mb-4">
             <div class="card-header bg-uk-blue text-white">
                 <h5 class="mb-0">Shooting Stats</h5>
             </div>
             <div class="card-body">
                 <div class="row text-center">
-                    <div class="col-6 col-md-4 mb-3">
+                    <div class="col-6 col-md-3 mb-3">
                         <p class="mb-1" title="Field Goal Percentage">FG%</p>
                         <span id="statFgPct" class="fw-bold fs-5 d-block">-</span>
                     </div>
-                    <div class="col-6 col-md-4 mb-3">
+                    <div class="col-6 col-md-3 mb-3">
                         <p class="mb-1" title="Three Point Percentage">3P%</p>
                         <span id="statThreePct" class="fw-bold fs-5 d-block">-</span>
                     </div>
-                    <div class="col-6 col-md-4 mb-3">
+                    <div class="col-6 col-md-3 mb-3">
                         <p class="mb-1" title="Free Throw Percentage">FT%</p>
                         <span id="statFtPct" class="fw-bold fs-5 d-block">-</span>
                     </div>
-                    <div class="col-12 mb-3">
+                    <div class="col-6 col-md-3 mb-3">
                         <p class="mb-1" title="True Shooting Percentage">TS%</p>
                         <span id="statTsPct" class="fw-bold fs-5 d-block">-</span>
                     </div>
