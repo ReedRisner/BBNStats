@@ -25,31 +25,42 @@
             border: 3px solid var(--uk-blue);
             border-radius: 15px;
             background: white;
-            transition: all 0.3s ease;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .comparison-box {
+            border: 3px solid var(--uk-blue);
+            border-radius: 15px;
+            background: white;
+            padding: 2rem;
+            margin-top: 2rem;
         }
 
         .stat-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             align-items: center;
-            padding: 1rem;
+            padding: 0.75rem;
             border-bottom: 1px solid rgba(0, 51, 160, 0.1);
         }
 
         .stat-label {
             font-weight: bold;
             color: var(--uk-blue);
+            text-align: center;
         }
 
         .stat-value {
-            padding: 0.5rem;
-            border-radius: 5px;
             text-align: center;
+            padding: 0.5rem;
+            border-radius: 4px;
         }
 
         .higher-stat {
             background-color: rgba(0, 51, 160, 0.1);
             font-weight: bold;
+            color: var(--uk-blue);
         }
 
         .player-select-container {
@@ -75,7 +86,7 @@
             
             .stat-row {
                 grid-template-columns: 1fr;
-                gap: 0.5rem;
+                text-align: center;
             }
         }
     </style>
@@ -109,8 +120,8 @@
             <h1 class="display-4 fw-bold mb-3">Player Comparison</h1>
             <div class="d-flex justify-content-center">
                 <select class="form-select bg-white text-uk-blue season-selector" id="seasonSelect" style="max-width: 300px;">
-                    <option value="2024">2024-2025 Season</option>
                     <option value="2025" selected>2025-2026 Season</option>
+                    <option value="2024">2024-2025 Season</option>
                 </select>
             </div>
         </div>
@@ -122,22 +133,17 @@
                 <select class="form-select bg-white text-uk-blue" id="player1Select">
                     <option value="">Select First Player</option>
                 </select>
-                <div id="player1Card" class="player-card mt-3 p-3"></div>
+                <div id="player1Card" class="player-card"></div>
             </div>
             <div>
                 <select class="form-select bg-white text-uk-blue" id="player2Select">
                     <option value="">Select Second Player</option>
                 </select>
-                <div id="player2Card" class="player-card mt-3 p-3"></div>
+                <div id="player2Card" class="player-card"></div>
             </div>
         </div>
 
-        <div class="stats-comparison mb-5">
-            <div class="bg-uk-blue text-white p-3 rounded-top">
-                <h4 class="mb-0">Statistical Comparison</h4>
-            </div>
-            <div class="rounded-bottom border border-top-0" id="statsComparison"></div>
-        </div>
+        
     </main>
 
     <footer class="bg-dark text-white py-4">
