@@ -21,6 +21,61 @@
         const threePct = document.getElementById('three-pct');
         const ftPct = document.getElementById('ft-pct');
 
+        // Game rating calculation function (from players.js)
+        function calculateGameRating(game) {
+            try {
+                const {
+                    min, pts, reb, ast, stl, blk, to,
+                    fgm, fga, threeFgm, threeFga, ftm, fta
+                } = game;
+
+                // Adjusted Weights
+                const weight = {
+                    pts: 0.75,
+                    reb: 0.95,
+                    ast: 1.25,
+                    stl: 2.2,
+                    blk: 2.0,
+                    to: -1.2,
+                    fgEff: 1.2,
+                    ftEff: 0.7,
+                    threeEff: 1.0
+                };
+
+                // Efficiency Thresholds
+                const fgEff = fga >= 2 ? (fgm / fga) : 0;
+                const ftEff = fta >= 1 ? (ftm / fta) : 0;
+                const threeEff = threeFga >= 1 ? (threeFgm / threeFga) : 0;
+
+                // Soft Caps with Gradual Diminishing Returns
+                let rawScore = 
+                    pts * weight.pts * Math.min(1, 50/(pts + 25)) +
+                    reb * weight.reb * Math.min(1, 20/(reb + 12)) +
+                    ast * weight.ast * Math.min(1, 15/(ast + 10)) +
+                    stl * weight.stl +
+                    blk * weight.blk +
+                    to * weight.to;
+
+                // Enhanced Efficiency Bonuses
+                rawScore += Math.min(fgEff * weight.fgEff, 2.5);
+                rawScore += Math.min(ftEff * weight.ftEff, 1.5);
+                rawScore += Math.min(threeEff * weight.threeEff, 2.0);
+
+                // Minute Adjustment
+                const minuteFactor = Math.cbrt(min + 4) + 1.5;
+                const scaled = (rawScore / minuteFactor) * 2.8;
+
+                // Balanced Final Curve
+                const curvedScore = 10 * (scaled / (scaled + 3.2));
+                
+                // Final Clamping
+                return Math.max(0.0, Math.min(10.0, parseFloat(curvedScore.toFixed(2))));
+            } catch (e) {
+                console.error('Error calculating game rating:', e);
+                return 0;
+            }
+        }
+
         async function loadBoxScore() {
             try {
                 // Load players data
@@ -70,6 +125,9 @@
                     const gameLog = player.gameLogs?.find(log => log.date === date);
                     if (!gameLog) return;
                     
+                    // Calculate game rating
+                    const gameRating = calculateGameRating(gameLog);
+                    
                     // Add to team totals
                     teamStats.min += gameLog.min || 0;
                     teamStats.pts += gameLog.pts || 0;
@@ -90,7 +148,7 @@
                     const threePctVal = gameLog.threeFga > 0 ? (gameLog.threeFgm / gameLog.threeFga * 100).toFixed(1) : '0.0';
                     const ftPctVal = gameLog.fta > 0 ? (gameLog.ftm / gameLog.fta * 100).toFixed(1) : '0.0';
                     
-                    // Create player row
+                    // Create player row with rating
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td class="player-name">${player.number}. ${player.name}</td>
@@ -104,6 +162,11 @@
                         <td>${gameLog.fgm || 0}-${gameLog.fga || 0}<br><small>${fgPctVal}%</small></td>
                         <td>${gameLog.threeFgm || 0}-${gameLog.threeFga || 0}<br><small>${threePctVal}%</small></td>
                         <td>${gameLog.ftm || 0}-${gameLog.fta || 0}<br><small>${ftPctVal}%</small></td>
+                        <td>
+                            <span class="rating-cell rating-${Math.floor(gameRating)}">
+                                ${gameRating.toFixed(1)}
+                            </span>
+                        </td>
                     `;
                     playerStats.appendChild(row);
                 });
@@ -126,6 +189,7 @@
                     <td>${teamStats.fgm}-${teamStats.fga}<br><small>${teamFgPct}%</small></td>
                     <td>${teamStats.threeFgm}-${teamStats.threeFga}<br><small>${teamThreePct}%</small></td>
                     <td>${teamStats.ftm}-${teamStats.fta}<br><small>${teamFtPct}%</small></td>
+                    <td>-</td>
                 `;
                 playerStats.appendChild(totalsRow);
                 
