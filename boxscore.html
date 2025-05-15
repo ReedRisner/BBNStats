@@ -119,6 +119,29 @@
             border-left: 1px solid rgba(0, 0, 0, 0.05);
         }
 
+        /* Rating cell styles */
+        .rating-cell {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: bold;
+            color: white;
+            min-width: 40px;
+            text-align: center;
+        }
+        
+        .rating-0 { background-color: #6c757d; }
+        .rating-1 { background-color: #6c757d; }
+        .rating-2 { background-color: #dc3545; }
+        .rating-3 { background-color: #dc3545; }
+        .rating-4 { background-color: #fd7e14; }
+        .rating-5 { background-color: #ffc107; }
+        .rating-6 { background-color: #ffc107; }
+        .rating-7 { background-color: #28a745; }
+        .rating-8 { background-color: #28a745; }
+        .rating-9 { background-color: #007bff; }
+        .rating-10 { background-color: #007bff; }
+
         @media (max-width: 768px) {
             .boxscore-table {
                 font-size: 0.85rem;
@@ -177,6 +200,7 @@
                                 <th>FG</th>
                                 <th>3PT</th>
                                 <th>FT</th>
+                                <th>Rating</th>
                             </tr>
                         </thead>
                         <tbody id="player-stats">
