@@ -337,6 +337,10 @@
       ]
     },
     "2024": {
+      "team": {
+            "pace": 73.7,
+            "minutes": 7200
+      },
       "players": [
         {
           "number": 7,
