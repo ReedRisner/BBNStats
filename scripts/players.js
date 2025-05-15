@@ -85,6 +85,7 @@ function showGameModal(game, rating) {
     modal.show();
 }
 
+/* This is old calcuate rating system
 function calculateGameRating(game) {
     try {
         // Slightly reduced weights from previous version
@@ -125,6 +126,62 @@ function calculateGameRating(game) {
         return 0;
     }
 }
+*/
+
+function calculateGameRating(game) {
+    try {
+        const {
+            min, pts, reb, ast, stl, blk, to,
+            fgm, fga, threeFgm, threeFga, ftm, fta
+        } = game;
+
+        // === Adjusted Weights ===
+        const weight = {
+            pts: 0.75,     // Slight increase from 0.65
+            reb: 0.95,     // Increased from 0.85
+            ast: 1.25,     // Increased from 1.1
+            stl: 2.2,      // Increased from 2.0
+            blk: 2.0,      // Increased from 1.8
+            to: -1.2,      // Slightly less punitive
+            fgEff: 1.2,    // Increased from 1.0
+            ftEff: 0.7,     // Increased from 0.6
+            threeEff: 1.0    // Increased from 0.8
+        };
+
+        // === Efficiency Thresholds ===
+        const fgEff = fga >= 2 ? (fgm / fga) : 0;  // Lower threshold to 2 attempts
+        const ftEff = fta >= 1 ? (ftm / fta) : 0;   // Lower threshold to 1 attempt
+        const threeEff = threeFga >= 1 ? (threeFgm / threeFga) : 0;
+
+        // === Soft Caps with Gradual Diminishing Returns ===
+        let rawScore = 
+            pts * weight.pts * Math.min(1, 50/(pts + 25)) + // Softer diminishing returns
+            reb * weight.reb * Math.min(1, 20/(reb + 12)) +
+            ast * weight.ast * Math.min(1, 15/(ast + 10)) +
+            stl * weight.stl +
+            blk * weight.blk +
+            to * weight.to;
+
+        // === Enhanced Efficiency Bonuses ===
+        rawScore += Math.min(fgEff * weight.fgEff, 2.5);  // Increased cap
+        rawScore += Math.min(ftEff * weight.ftEff, 1.5);
+        rawScore += Math.min(threeEff * weight.threeEff, 2.0);
+
+        // === Minute Adjustment ===
+        const minuteFactor = Math.cbrt(min + 4) + 1.5;  // Reduced minute impact
+        const scaled = (rawScore / minuteFactor) * 2.8;  // Increased from 2.5
+
+        // === Balanced Final Curve ===
+        const curvedScore = 10 * (scaled / (scaled + 3.2));  // Adjusted S-curve
+        
+        // === Final Clamping ===
+        return Math.max(0.0, Math.min(10.0, parseFloat(curvedScore.toFixed(2))));
+    } catch (e) {
+        console.error('Error calculating game rating:', e);
+        return 0;
+    }
+}
+
 
 function calculateAverageRating(gameRatings) {
     if (gameRatings.length < 5) {
@@ -150,28 +207,19 @@ function loadPlayerStats(season) {
         }
         let players = allPlayersData.seasons[season]?.players || [];
         
-        
         // Apply sorting if a sort key is selected
         if (currentSortKey) {
             players = sortPlayers(players, currentSortKey, currentSortDirection);
         }
 
-        // Rest of the function remains the same...
         const tbody = document.getElementById('playersTableBody');
-        tbody.innerHTML = '';
-        
-        
         tbody.innerHTML = '';
 
         players.forEach(player => {
             const gameRatings = (player.gameLogs || []).map(calculateGameRating);
-            const sortedRatings = gameRatings.slice().sort((a, b) => a - b);
-            const trimCount = Math.floor(sortedRatings.length * 0.1);
-            const trimmedRatings = sortedRatings.slice(trimCount);
-            const avgRating = trimmedRatings.length ? 
-            trimmedRatings.reduce((a, b) => a + b, 0) / trimmedRatings.length : 
-            gameRatings.length ? (gameRatings.reduce((a, b) => a + b, 0) / gameRatings.length) : 0;
-            
+            // Changed to use simple average like the profile screen
+            const avgRating = gameRatings.length ? 
+                gameRatings.reduce((a, b) => a + b, 0) / gameRatings.length : 0;
 
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -181,7 +229,7 @@ function loadPlayerStats(season) {
                         onerror="this.src='images/players/default.jpg'">
                     <strong>#${player.number} ${player.name}</strong>
                 </td>
-                <td>${player.grade || ''}</td>  <!-- Add this line -->
+                <td>${player.grade || ''}</td>
                 <td>${player.pos}</td>
                 <td>${player.ht}</td>
                 <td>${player.wt}</td>
