@@ -281,23 +281,35 @@ function calculateAdvancedStats(player) {
         // Advanced metrics
         const tsPct = player.pts / (2 * (player.fga + 0.44 * player.fta)) || 0;
         
-        // Usage rate (placeholder team totals)
-        const teamFga = 237 + 246 + 415 + 209 + 257 + 313 + 167 + 121 + 43 + 72 + 80 + 51;
+        // Usage rate (simplified team context)
+        const teamFga = 2000; // Example team total for season
         const usgRate = 100 * ((player.fga + 0.44 * player.fta) / teamFga) || 0;
 
-        // Efficiency (EFF) - Basic box score efficiency
-        const eff = (
-            player.pts + 
-            player.reb + 
-            player.ast + 
-            player.stl + 
-            player.blk - 
-            (player.fga - player.fgm) - 
-            (player.fta - player.ftm) - 
-            player.to
-        ) / (player.gp || 1);
+        // New BPM Formula --------------------------------------------------------
+        const weight = {
+            pts: 2.8,
+            reb: 1.8,
+            ast: 3.2,
+            stl: 6.0,
+            blk: 5.5,
+            to: -3.5,
+            fgMiss: -1.8,
+            ftMiss: -1.2
+        };
 
-        // Player Efficiency Rating (PER) - Weighted version
+        const rawBPM = 
+            (player.pts * weight.pts) +
+            (player.reb * weight.reb) +
+            (player.ast * weight.ast) +
+            (player.stl * weight.stl) +
+            (player.blk * weight.blk) +
+            (player.to * weight.to) +
+            ((player.fga - player.fgm) * weight.fgMiss) +
+            ((player.fta - player.ftm) * weight.ftMiss);
+
+        const bpm = (rawBPM / (player.gp || 1)) * 0.18;
+
+        // Add PER calculation
         const per = (
             (player.pts * 1.2) + 
             (player.reb * 1.0) + 
@@ -309,33 +321,28 @@ function calculateAdvancedStats(player) {
             ((player.fta - player.ftm) * 0.5)
         ) / (player.gp || 1);
 
-        // Offensive Rating (ORtg)
-        const ortgDenominator = player.fga + 0.44 * player.fta + player.to;
-        const ortg = ortgDenominator !== 0 ? (player.pts / ortgDenominator) * 100 : 0;
+        // Efficiency Rating (EFF)
+        const eff = (
+            player.pts + 
+            (player.reb * 1.2) + 
+            (player.ast * 1.5) + 
+            (player.stl * 3) + 
+            (player.blk * 3) - 
+            (player.to * 2) - 
+            ((player.fga - player.fgm) * 0.7)
+        ) / (player.gp || 1);
 
-        // Defensive Rating (DRtg) - Based on defensive contributions
-        const drtg = 100 - ((player.stl + player.blk * 1.5) / (player.gp || 1) * 2.5);
-
-        // Box Plus/Minus (BPM) - Aligned with tier ranges
-        const rawBPM = (
-            (player.pts * 1.0) + 
-            (player.reb * 0.8) + 
-            (player.ast * 2.0) + 
-            (player.stl * 3.5) + 
-            (player.blk * 3.5) - 
-            (player.to * 2.0) - 
-            ((player.fga - player.fgm) * 0.5) - 
-            ((player.fta - player.ftm) * 0.5)
-        );
-        const bpm = (rawBPM / (player.gp || 1)) * 0.1; // Scaled to target range
+        // Offensive/Defensive Ratings
+        const ortg = (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 || 0;
+        const drtg = 95 - ((player.stl + player.blk * 1.2) / (player.gp || 1) * 4);
 
         return {
-            fgPct: (fgPct),
-            threePct: (threePct),
-            ftPct: (ftPct ),
-            tsPct: (tsPct ),
+            fgPct: fgPct,
+            threePct: threePct,
+            ftPct: ftPct,
+            tsPct: tsPct,
             usgRate: usgRate,
-            per: per,
+            per: per, // Added back PER
             eff: eff,
             ortg: ortg,
             drtg: drtg,

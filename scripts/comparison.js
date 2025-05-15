@@ -81,49 +81,45 @@ function renderComparison() {
     if (!player1 || !player2) return;
     
     renderPlayerCards();
-    updateStatsComparison();
 }
 
 function renderPlayerCards() {
-    renderPlayerCard(player1, 'player1Card');
-    renderPlayerCard(player2, 'player2Card');
+    renderPlayerCard(player1, 'player1Card', player2);
+    renderPlayerCard(player2, 'player2Card', player1);
 }
 
-function renderPlayerCard(player, elementId) {
+function renderPlayerCard(player, elementId, comparisonPlayer) {
     const container = document.getElementById(elementId);
     container.innerHTML = `
         <div class="text-center">
             <img src="images/${document.getElementById('seasonSelect').value}/players/${player.number}.jpg" 
-                class="player-photo-lg" alt="${player.name}"
-                onerror="this.src='images/players/default.jpg'">
+                 class="player-photo-lg" alt="${player.name}"
+                 onerror="this.src='images/players/default.jpg'">
             <h3 class="text-uk-blue mt-3 mb-1">#${player.number} ${player.name}</h3>
             <div class="text-muted mb-3">${player.pos} | ${player.ht} | ${player.wt}</div>
-            <div class="rating-cell rating-${Math.floor(player.rating)} mb-3">
-                ${player.rating.toFixed(1)}
+            <div class="stats-box">
+                ${generateStatsList(player, comparisonPlayer)}
             </div>
         </div>
     `;
 }
 
-function updateStatsComparison() {
-    const statsGrid = document.getElementById('statsComparison');
+function generateStatsList(player, comparisonPlayer) {
     const statsToCompare = [
         'ppg', 'rpg', 'apg', 'fg%', '3p%', 
         'blk', 'stl', 'ft%', 'per', 'eff'
     ];
     
-    statsGrid.innerHTML = statsToCompare.map(stat => {
-        const p1Value = getStatValue(player1, stat);
-        const p2Value = getStatValue(player2, stat);
-        const p1Num = parseFloat(p1Value) || 0;
-        const p2Num = parseFloat(p2Value) || 0;
-        
+    return statsToCompare.map(stat => {
+        const value = getStatValue(player, stat);
+        const comparisonValue = comparisonPlayer ? getStatValue(comparisonPlayer, stat) : null;
+        const isHigher = comparisonPlayer && (parseFloat(value) > parseFloat(comparisonValue));
+
         return `
-        <div class="stat-row p-3">
-            <div class="stat-label">${stat.toUpperCase()}</div>
-            <div class="stat-value ${p1Num > p2Num ? 'higher-stat' : ''}">${p1Value}</div>
-            <div class="stat-value ${p2Num > p1Num ? 'higher-stat' : ''}">${p2Value}</div>
-        </div>
+            <div class="stat-row">
+                <div class="stat-label">${stat.toUpperCase()}</div>
+                <div class="stat-value ${isHigher ? 'higher-stat' : ''}">${value}</div>
+            </div>
         `;
     }).join('');
 }
@@ -150,7 +146,6 @@ function getStatValue(player, stat) {
 function clearComparison() {
     document.getElementById('player1Card').innerHTML = '';
     document.getElementById('player2Card').innerHTML = '';
-    document.getElementById('statsComparison').innerHTML = '';
 }
 
 // Initialize
@@ -160,11 +155,23 @@ document.addEventListener('DOMContentLoaded', loadPlayerData);
 function calculateGameRating(game) {
     try {
         const { pts, reb, ast, stl, blk, to, fgm, fga, threeFgm, threeFga, ftm, fta } = game;
-        const weight = { pts: 0.75, reb: 0.95, ast: 1.25, stl: 2.2, blk: 2.0, to: -1.2 };
+        const weight = { 
+            pts: 0.75, 
+            reb: 0.95, 
+            ast: 1.25, 
+            stl: 2.2, 
+            blk: 2.0, 
+            to: -1.2 
+        };
         
-        let rawScore = pts * weight.pts + reb * weight.reb + ast * weight.ast +
-                      stl * weight.stl + blk * weight.blk + to * weight.to;
+        let rawScore = pts * weight.pts +
+                      reb * weight.reb +
+                      ast * weight.ast +
+                      stl * weight.stl +
+                      blk * weight.blk +
+                      to * weight.to;
 
+        // Shooting efficiencies
         const fgEff = fga >= 2 ? (fgm / fga) : 0;
         const ftEff = fta >= 1 ? (ftm / fta) : 0;
         const threeEff = threeFga >= 1 ? (threeFgm / threeFga) : 0;
@@ -173,7 +180,9 @@ function calculateGameRating(game) {
         rawScore += Math.min(ftEff * 0.7, 1.5);
         rawScore += Math.min(threeEff * 1.0, 2.0);
 
-        const scaled = (rawScore / (Math.cbrt(game.min + 4) + 1.5) * 2.8);
+        // Normalization
+        const minuteFactor = Math.cbrt(game.min + 4) + 1.5;
+        const scaled = (rawScore / minuteFactor) * 2.8;
         const curvedScore = 10 * (scaled / (scaled + 3.2));
         
         return Math.max(0.0, Math.min(10.0, parseFloat(curvedScore.toFixed(2))));
@@ -192,7 +201,7 @@ function calculateAdvancedStats(player) {
     try {
         const gp = player.gp || 1;
         const per = (player.pts + player.reb + player.ast + player.stl + player.blk -
-                   (player.fga - player.fgm) - (player.fta - player.ftm) - player.to) / gp;
+                    (player.fga - player.fgm) - (player.fta - player.ftm) - player.to) / gp;
         const eff = (player.pts + player.reb + player.ast + player.stl + player.blk) / gp;
         return { per, eff };
     } catch (e) {
