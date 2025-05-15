@@ -183,14 +183,27 @@ function calculateGameRating(game) {
 }
 
 
+
 function calculateAverageRating(gameRatings) {
+    if (!gameRatings.length) return 0;
+    
+    // Weighted average approach - low scores still count but have reduced impact
+    const weightedRatings = gameRatings.map(rating => {
+        if (rating < 2.0) {
+            // For ratings below 2.0, apply a diminishing weight
+            // The lower the rating, the less it affects the average
+            return rating * (0.3 + (rating / 2.0 * 0.7)); // Scales from 30% to 100% weight
+        }
+        return rating; // Full weight for ratings 2.0 and above
+    });
+
+    // Apply trimmed mean for 5+ games
     if (gameRatings.length < 5) {
-        return gameRatings.length ? 
-            gameRatings.reduce((a, b) => a + b, 0) / gameRatings.length : 0;
+        return weightedRatings.reduce((a, b) => a + b, 0) / weightedRatings.length;
     }
     
-    const sorted = [...gameRatings].sort((a, b) => a - b);
-    const trimCount = Math.floor(sorted.length * 0.15); // Trim 15% lowest
+    const sorted = [...weightedRatings].sort((a, b) => a - b);
+    const trimCount = Math.floor(sorted.length * 0.15);
     const trimmed = sorted.slice(trimCount);
     
     return trimmed.reduce((a, b) => a + b, 0) / trimmed.length;
@@ -217,9 +230,7 @@ function loadPlayerStats(season) {
 
         players.forEach(player => {
             const gameRatings = (player.gameLogs || []).map(calculateGameRating);
-            // Changed to use simple average like the profile screen
-            const avgRating = gameRatings.length ? 
-                gameRatings.reduce((a, b) => a + b, 0) / gameRatings.length : 0;
+            const avgRating = calculateAverageRating(gameRatings); // Use the updated function
 
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -320,19 +331,21 @@ function showPlayerDetail(player, gameRatings = [], season) {
         playerImg.src = `images/${season}/players/${player.number}.jpg`;
         playerImg.onerror = () => playerImg.src = 'images/players/default.jpg';
         
-        // Calculate average rating
-        const avgRating = gameRatings.length ? 
-            gameRatings.reduce((a, b) => a + b, 0) / gameRatings.length : 0;
+        // Calculate average rating using the updated function
+        const avgRating = calculateAverageRating(gameRatings);
         
-        // Calculate rating stats
+        // Calculate rating stats (using filtered ratings)
+        const filteredRatings = gameRatings.filter(rating => rating >= 2.0);
+        const ratingsToUse = filteredRatings.length > 0 ? filteredRatings : gameRatings;
+        
         const ratingStats = {
-            bestRating: gameRatings.length ? Math.max(...gameRatings) : 0,
-            worstRating: gameRatings.length ? Math.min(...gameRatings) : 0,
-            consistency: gameRatings.length ? 
-                (10 - Math.sqrt(gameRatings
+            bestRating: ratingsToUse.length ? Math.max(...ratingsToUse) : 0,
+            worstRating: ratingsToUse.length ? Math.min(...ratingsToUse) : 0,
+            consistency: ratingsToUse.length ? 
+                (10 - Math.sqrt(ratingsToUse
                     .map(r => Math.pow(r - avgRating, 2))
-                    .reduce((a, b) => a + b, 0) / gameRatings.length)) : 0,
-            last5: gameRatings.slice(-5)
+                    .reduce((a, b) => a + b, 0) / ratingsToUse.length)) : 0,
+            last5: gameRatings.slice(-5) // Show last 5 including any below 2.0 for transparency
         };
 
         document.getElementById('detailPlayerName').textContent = `#${player.number} ${player.name}`;
