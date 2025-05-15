@@ -273,38 +273,73 @@ function loadPlayerStats(season) {
 
 function calculateAdvancedStats(player) {
     try {
-        // Calculate basic percentages
+        // Basic percentages
         const fgPct = player.fga > 0 ? player.fgm / player.fga : 0;
         const threePct = player.threeFga > 0 ? player.threeFgm / player.threeFga : 0;
         const ftPct = player.fta > 0 ? player.ftm / player.fta : 0;
         
-        // Advanced metrics calculations
-        const efgPct = (player.fgm + 0.5 * player.threeFgm) / player.fga || 0;
+        // Advanced metrics
         const tsPct = player.pts / (2 * (player.fga + 0.44 * player.fta)) || 0;
         
-        // Usage rate calculation (simplified)
+        // Usage rate (placeholder team totals)
         const teamFga = 237 + 246 + 415 + 209 + 257 + 313 + 167 + 121 + 43 + 72 + 80 + 51;
-        const teamFta = 107 + 183 + 192 + 98 + 38 + 35 + 43 + 32 + 7 + 15 + 20 + 8;
-        const usgRate = 100 * ((player.fga + 0.44 * player.fta) / (teamFga + 0.44 * teamFta)) || 0;
+        const usgRate = 100 * ((player.fga + 0.44 * player.fta) / teamFga) || 0;
 
-        // Player Efficiency Rating (simplified)
-        const per = (player.pts + player.reb + player.ast + player.stl + player.blk 
-                   - (player.fga - player.fgm) - (player.fta - player.ftm) - player.to) 
-                   / (player.gp || 1);
+        // Efficiency (EFF) - Basic box score efficiency
+        const eff = (
+            player.pts + 
+            player.reb + 
+            player.ast + 
+            player.stl + 
+            player.blk - 
+            (player.fga - player.fgm) - 
+            (player.fta - player.ftm) - 
+            player.to
+        ) / (player.gp || 1);
+
+        // Player Efficiency Rating (PER) - Weighted version
+        const per = (
+            (player.pts * 1.2) + 
+            (player.reb * 1.0) + 
+            (player.ast * 1.5) + 
+            (player.stl * 2.5) + 
+            (player.blk * 2.5) - 
+            (player.to * 2.0) - 
+            ((player.fga - player.fgm) * 0.5) - 
+            ((player.fta - player.ftm) * 0.5)
+        ) / (player.gp || 1);
+
+        // Offensive Rating (ORtg)
+        const ortgDenominator = player.fga + 0.44 * player.fta + player.to;
+        const ortg = ortgDenominator !== 0 ? (player.pts / ortgDenominator) * 100 : 0;
+
+        // Defensive Rating (DRtg) - Based on defensive contributions
+        const drtg = 100 - ((player.stl + player.blk * 1.5) / (player.gp || 1) * 2.5);
+
+        // Box Plus/Minus (BPM) - Aligned with tier ranges
+        const rawBPM = (
+            (player.pts * 1.0) + 
+            (player.reb * 0.8) + 
+            (player.ast * 2.0) + 
+            (player.stl * 3.5) + 
+            (player.blk * 3.5) - 
+            (player.to * 2.0) - 
+            ((player.fga - player.fgm) * 0.5) - 
+            ((player.fta - player.ftm) * 0.5)
+        );
+        const bpm = (rawBPM / (player.gp || 1)) * 0.1; // Scaled to target range
 
         return {
-            fgPct: fgPct,
-            threePct: threePct,
-            ftPct: ftPct,
-            efgPct: efgPct,
-            tsPct: tsPct,
+            fgPct: (fgPct),
+            threePct: (threePct),
+            ftPct: (ftPct ),
+            tsPct: (tsPct ),
             usgRate: usgRate,
             per: per,
-            ortg: 110,  // Placeholder values
-            drtg: 95,   // for demonstration
-            bpm: 2.5,
-            vorp: 1.8,
-            ws: 3.2
+            eff: eff,
+            ortg: ortg,
+            drtg: drtg,
+            bpm: bpm
         };
     } catch (e) {
         console.error('Error calculating advanced stats:', e);
@@ -370,26 +405,29 @@ function showPlayerDetail(player, gameRatings = [], season) {
             (advancedStats.threePct * 100).toFixed(1) + "%";
         document.getElementById('statFtPct').textContent = 
             (advancedStats.ftPct * 100).toFixed(1) + "%";
-        document.getElementById('statEfgPct').textContent = 
-            (advancedStats.efgPct * 100).toFixed(1) + "%";
         document.getElementById('statTsPct').textContent = 
             (advancedStats.tsPct * 100).toFixed(1) + "%";
-        document.getElementById('statUsgRate').textContent = 
-            advancedStats.usgRate.toFixed(1) + "%";
 
         // Update advanced metrics
         document.getElementById('statPer').textContent = 
             advancedStats.per.toFixed(1);
+        document.getElementById('statEff').textContent = 
+            advancedStats.eff.toFixed(1);
         document.getElementById('statOrtg').textContent = 
             advancedStats.ortg.toFixed(1);
         document.getElementById('statDrtg').textContent = 
             advancedStats.drtg.toFixed(1);
+        document.getElementById('statUsgRate').textContent = 
+            advancedStats.usgRate.toFixed(1) + "%";
         document.getElementById('statBpm').textContent = 
             advancedStats.bpm.toFixed(1);
-        document.getElementById('statVorp').textContent = 
-            advancedStats.vorp.toFixed(1);
-        document.getElementById('statWs').textContent = 
-            advancedStats.ws.toFixed(1);
+        
+            
+
+        // Initialize tooltips
+        document.querySelectorAll('[title]').forEach(el => {
+            new bootstrap.Tooltip(el);
+        });
 
         // Update rating stats
         document.getElementById('statBestRating').innerHTML = `

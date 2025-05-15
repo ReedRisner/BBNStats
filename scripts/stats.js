@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'Offensive Rating': '123.7',
             'Defensive Rating': '99.2',
             'Net Rating': '+24.54',
-            'Pace': '70.9',
+            'Pace': '73.7',
             'Offensive TOV%': '15.0',
             'Defensive TOV%': '14.1',
             '3P%': '37.5',
