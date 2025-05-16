@@ -1,6 +1,8 @@
 let allPlayersData = null;
 let player1 = null;
 let player2 = null;
+let averagesChart = null;
+let shootingChart = null;
 
 async function loadPlayerData() {
     try {
@@ -81,6 +83,7 @@ function renderComparison() {
     if (!player1 || !player2) return;
     
     renderPlayerCards();
+    renderComparisonChart();
 }
 
 function renderPlayerCards() {
@@ -146,6 +149,90 @@ function getStatValue(player, stat) {
 function clearComparison() {
     document.getElementById('player1Card').innerHTML = '';
     document.getElementById('player2Card').innerHTML = '';
+    if (averagesChart) {
+        averagesChart.destroy();
+        averagesChart = null;
+    }
+    if (shootingChart) {
+        shootingChart.destroy();
+        shootingChart = null;
+    }
+}
+
+function renderComparisonChart() {
+    const averagesStats = ['ppg', 'rpg', 'apg', 'blk', 'stl'];
+    const shootingStats = ['fg%', '3p%', 'ft%', 'per', 'eff'];
+    
+    // Destroy existing charts
+    if (averagesChart) averagesChart.destroy();
+    if (shootingChart) shootingChart.destroy();
+    
+    // Create averages chart
+    averagesChart = new Chart(
+        document.getElementById('averagesChart').getContext('2d'),
+        getChartConfig(averagesStats, 'Game Averages', 15)
+    );
+    
+    // Create shooting/advanced stats chart
+    shootingChart = new Chart(
+        document.getElementById('shootingChart').getContext('2d'),
+        getChartConfig(shootingStats, 'Shooting & Advanced Stats', 100)
+    );
+}
+
+function getChartConfig(stats, title, yMax) {
+    return {
+        type: 'bar',
+        data: {
+            labels: stats.map(stat => stat.toUpperCase()),
+            datasets: [{
+                label: player1.name,
+                data: stats.map(stat => parseFloat(getStatValue(player1, stat)) || 0),
+                backgroundColor: 'rgba(0, 51, 160, 0.7)',
+                borderColor: 'rgba(0, 51, 160, 1)',
+                borderWidth: 2
+            }, {
+                label: player2.name,
+                data: stats.map(stat => parseFloat(getStatValue(player2, stat)) || 0),
+                backgroundColor: 'rgba(128, 128, 128, 0.7)',
+                borderColor: 'rgba(128, 128, 128, 1)',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    suggestedMax: yMax,
+                    grid: { color: 'rgba(0,0,0,0.1)' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            },
+            plugins: {
+                legend: { position: 'top' },
+                title: {
+                    display: true,
+                    text: title,
+                    font: { size: 16 }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y;
+                            const stat = stats[context.dataIndex];
+                            const isPercentage = ['fg%', '3p%', 'ft%'].includes(stat);
+                            return `${label}: ${value.toFixed(1)}${isPercentage ? '%' : ''}`;
+                        }
+                    }
+                }
+            }
+        }
+    };
 }
 
 // Initialize
