@@ -121,6 +121,14 @@
                 height: 400px;
             }
         }
+        .chart-container {
+            position: relative;
+            margin: 1rem 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
@@ -162,24 +170,30 @@
     <header class="comparison-header text-center mb-5">
         <div class="container">
             <h1 class="display-4 fw-bold mb-3">Player Comparison</h1>
-            <div class="d-flex justify-content-center">
-                <select class="form-select bg-white text-uk-blue season-selector" id="seasonSelect" style="max-width: 300px;">
-                    <option value="2025" selected>2025-2026 Season</option>
-                    <option value="2024">2024-2025 Season</option>
-                </select>
-            </div>
         </div>
     </header>
 
     <main class="container mb-5">
         <div class="player-select-container">
             <div>
+                <div class="mb-3">
+                    <select class="form-select bg-white text-uk-blue season-selector" id="player1Season">
+                        <option value="2025">2025-2026 Season</option>
+                        <option value="2024">2024-2025 Season</option>
+                    </select>
+                </div>
                 <select class="form-select bg-white text-uk-blue" id="player1Select">
                     <option value="">Select First Player</option>
                 </select>
                 <div id="player1Card" class="player-card"></div>
             </div>
             <div>
+                <div class="mb-3">
+                    <select class="form-select bg-white text-uk-blue season-selector" id="player2Season">
+                        <option value="2025">2025-2026 Season</option>
+                        <option value="2024">2024-2025 Season</option>
+                    </select>
+                </div>
                 <select class="form-select bg-white text-uk-blue" id="player2Select">
                     <option value="">Select Second Player</option>
                 </select>
@@ -189,14 +203,19 @@
         <!-- Updated comparison-box section -->
         <div class="comparison-box mt-4">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="chart-container" style="height: 300px;">
                         <canvas id="averagesChart"></canvas>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="chart-container" style="height: 300px;">
                         <canvas id="shootingChart"></canvas>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="advancedChart"></canvas>
                     </div>
                 </div>
             </div>
