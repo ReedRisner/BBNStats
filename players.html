@@ -233,6 +233,25 @@
                 margin-right: 0 !important;
             }
         }
+        /* Add to existing styles in players.html */
+        .advanced-stat {
+            display: none;
+        }
+
+        .stats-table.show-advanced .advanced-stat {
+            display: table-cell;
+        }
+
+        @media (max-width: 768px) {
+            .stats-table th, 
+            .stats-table td {
+                white-space: nowrap;
+            }
+        }
+        /* Add to the existing styles in players.html */
+        .stats-table thead th[data-sort-key] {
+            cursor: pointer;
+        }
     </style>
     
 </head>
@@ -277,18 +296,20 @@
     
 
         <!-- Header -->
+    <!-- Modify the header section in players.html -->
     <header class="players-header text-center mb-5">
         <div class="container">
-            <!-- Title and dropdown in one line -->
-            <div class="d-flex justify-content-center align-items-center flex-wrap">
-                <h1 class="display-4 fw-bold mb-0 me-3">Kentucky Basketball Players</h1>
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-3">
+                <h1 class="display-4 fw-bold mb-0">Kentucky Basketball Players</h1>
                 <select class="form-select season-selector bg-white text-uk-blue" id="seasonSelect">
                     <option value="2025" selected>2025-2026</option>
                     <option value="2024">2024-2025</option>
                 </select>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="advancedStatsToggle">
+                    <label class="form-check-label text-white" for="advancedStatsToggle">Advanced Stats</label>
+                </div>
             </div>
-            
-            <!-- Subtitle below -->
             <p class="text-white-50 mt-2 mb-0">Click on any player to view detailed profile</p>
         </div>
     </header>
@@ -299,17 +320,25 @@
         <section id="playerListSection">
             <div class="table-responsive">
                 <table class="table stats-table">
+                        <!-- Update the table headers in players.html -->
                         <thead>
                             <tr>
                                 <th>Player</th>
-                                <th data-sort-key="grade" style="cursor: pointer;">Grade<span class="sort-arrow"></span></th>
-                                <th data-sort-key="pos" style="cursor: pointer;">POS<span class="sort-arrow"></span></th>
-                                <th data-sort-key="ht" style="cursor: pointer;">HT<span class="sort-arrow"></span></th>
-                                <th data-sort-key="wt" style="cursor: pointer;">WT<span class="sort-arrow"></span></th>
-                                <th data-sort-key="ppg" style="cursor: pointer;">PPG<span class="sort-arrow"></span></th>
-                                <th data-sort-key="rpg" style="cursor: pointer;">RPG<span class="sort-arrow"></span></th>
-                                <th data-sort-key="apg" style="cursor: pointer;">APG<span class="sort-arrow"></span></th>
-                                <th data-sort-key="rating" style="cursor: pointer;">Rating<span class="sort-arrow"></span></th>
+                                <th data-sort-key="grade">Grade<span class="sort-arrow"></span></th>
+                                <th data-sort-key="pos">POS<span class="sort-arrow"></span></th>
+                                <th data-sort-key="ht">HT<span class="sort-arrow"></span></th>
+                                <th data-sort-key="wt">WT<span class="sort-arrow"></span></th>
+                                <th data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
+                                <th data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
+                                <th data-sort-key="apg">APG<span class="sort-arrow"></span></th>
+                                <!-- Advanced stats columns -->
+                                <th class="advanced-stat" data-sort-key="fgPct">FG%<span class="sort-arrow"></span></th>
+                                <th class="advanced-stat" data-sort-key="threePct">3P%<span class="sort-arrow"></span></th>
+                                <th class="advanced-stat" data-sort-key="ftPct">FT%<span class="sort-arrow"></span></th>
+                                <th class="advanced-stat" data-sort-key="tsPct">TS%<span class="sort-arrow"></span></th>
+                                <th class="advanced-stat" data-sort-key="per">PER<span class="sort-arrow"></span></th>
+                                <th class="advanced-stat" data-sort-key="eff">EFF<span class="sort-arrow"></span></th>
+                                <th data-sort-key="rating">Rating<span class="sort-arrow"></span></th>
                             </tr>
                         </thead>
                     <tbody id="playersTableBody">
