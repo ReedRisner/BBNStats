@@ -216,6 +216,23 @@
                 font-size: 0.9rem;
             }
         }
+        @media (max-width: 768px) {
+            .players-header h1 {
+                font-size: 2rem;
+                margin-bottom: 0.5rem !important;
+            }
+            .season-selector {
+                margin-left: 0 !important;
+                margin-top: 0.5rem;
+                max-width: 100%;
+            }
+            .players-header .d-flex {
+                flex-direction: column;
+            }
+            .players-header .me-3 {
+                margin-right: 0 !important;
+            }
+        }
     </style>
     
 </head>
@@ -259,16 +276,20 @@
 
     
 
-    <!-- Header -->
+        <!-- Header -->
     <header class="players-header text-center mb-5">
         <div class="container">
-            <div class="d-flex justify-content-center align-items-center">
+            <!-- Title and dropdown in one line -->
+            <div class="d-flex justify-content-center align-items-center flex-wrap">
                 <h1 class="display-4 fw-bold mb-0 me-3">Kentucky Basketball Players</h1>
                 <select class="form-select season-selector bg-white text-uk-blue" id="seasonSelect">
                     <option value="2025" selected>2025-2026</option>
                     <option value="2024">2024-2025</option>
                 </select>
             </div>
+            
+            <!-- Subtitle below -->
+            <p class="text-white-50 mt-2 mb-0">Click on any player to view detailed profile</p>
         </div>
     </header>
 
