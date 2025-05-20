@@ -17,6 +17,12 @@ async function loadPlayerData() {
         alert('Failed to load player data. Please check console for details.');
     }
 }
+
+document.getElementById('advancedStatsToggle').addEventListener('change', function() {
+    document.querySelector('.stats-table').classList.toggle('show-advanced');
+    loadPlayerStats(document.getElementById('seasonSelect').value);
+});
+
 // In players.js, add this function
 function sortPlayers(players, sortKey, direction) {
     return players.slice().sort((a, b) => {
@@ -31,21 +37,18 @@ function sortPlayers(players, sortKey, direction) {
                 break;
 
             case 'pos':
-                // Sort order: G (1) -> F (2) -> others (3)
                 const posOrder = { 'G': 1, 'F': 2 };
                 aValue = posOrder[a.pos] || 3;
                 bValue = posOrder[b.pos] || 3;
                 break;
 
             case 'grade':
-                // Handle grades with periods: Fr. -> So. -> Jr. -> Sr.
                 const gradeOrder = { 'Fr.': 1, 'So.': 2, 'Jr.': 3, 'Sr.': 4 };
                 aValue = gradeOrder[a.grade] || 5;
                 bValue = gradeOrder[b.grade] || 5;
                 break;
 
             case 'ht':
-                // Convert "6'5" format to total inches
                 const parseHeight = (ht) => {
                     const match = ht?.match(/(\d+)'(\d+)/);
                     return match ? parseInt(match[1]) * 12 + parseInt(match[2]) : 0;
@@ -55,7 +58,6 @@ function sortPlayers(players, sortKey, direction) {
                 break;
 
             case 'wt':
-                // Parse weight as integer
                 aValue = parseInt(a.wt) || 0;
                 bValue = parseInt(b.wt) || 0;
                 break;
@@ -63,32 +65,61 @@ function sortPlayers(players, sortKey, direction) {
             case 'ppg':
             case 'rpg':
             case 'apg':
-                // Handle per-game stats
+                // Fixed per-game stats calculation
+                const statMap = {
+                    ppg: 'pts',
+                    rpg: 'reb',
+                    apg: 'ast'
+                };
+                const stat = statMap[sortKey];
                 const aGp = a.gp || 1;
                 const bGp = b.gp || 1;
-                const statKey = sortKey.slice(0, -1); // Remove 'g' from key
-                aValue = a[statKey] / aGp;
-                bValue = b[statKey] / bGp;
+                aValue = (a[stat] || 0) / aGp;
+                bValue = (b[stat] || 0) / bGp;
+                break;
+
+            // Advanced stats cases
+            case 'fgPct':
+                aValue = a.fga > 0 ? a.fgm / a.fga : 0;
+                bValue = b.fga > 0 ? b.fgm / b.fga : 0;
+                break;
+            case 'threePct':
+                aValue = a.threeFga > 0 ? a.threeFgm / a.threeFga : 0;
+                bValue = b.threeFga > 0 ? b.threeFgm / b.threeFga : 0;
+                break;
+            case 'ftPct':
+                aValue = a.fta > 0 ? a.ftm / a.fta : 0;
+                bValue = b.fta > 0 ? b.ftm / b.fta : 0;
+                break;
+            case 'tsPct':
+                aValue = a.pts / (2 * (a.fga + 0.44 * a.fta)) || 0;
+                bValue = b.pts / (2 * (b.fga + 0.44 * b.fta)) || 0;
+                break;
+            case 'per':
+            case 'eff':
+                // Use pre-calculated values from advanced stats
+                const aAdvanced = calculateAdvancedStats(a);
+                const bAdvanced = calculateAdvancedStats(b);
+                aValue = aAdvanced[sortKey];
+                bValue = bAdvanced[sortKey];
                 break;
 
             default:
-                // Fallback for name or other text fields
                 aValue = a[sortKey]?.toLowerCase() || '';
                 bValue = b[sortKey]?.toLowerCase() || '';
         }
 
-        // Handle string comparison for name/text fields
+        // Handle string comparison
         if (typeof aValue === 'string') {
             return direction === 'asc' ? 
                 aValue.localeCompare(bValue) : 
                 bValue.localeCompare(aValue);
         }
 
-        // Handle numeric comparisons
+        // Numeric comparison
         return direction === 'asc' ? aValue - bValue : bValue - aValue;
     });
 }
-
 function showGameModal(game, rating) {
     const content = `
         <div class="row">
@@ -269,11 +300,13 @@ function loadPlayerStats(season) {
         }
 
         const tbody = document.getElementById('playersTableBody');
+        const showAdvanced = document.getElementById('advancedStatsToggle').checked;
         tbody.innerHTML = '';
 
         players.forEach(player => {
             const gameRatings = (player.gameLogs || []).map(calculateGameRating);
             const avgRating = calculateAverageRating(gameRatings); // Use the updated function
+            const advancedStats = calculateAdvancedStats(player);
 
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -290,6 +323,14 @@ function loadPlayerStats(season) {
                 <td>${(player.pts / (player.gp || 1)).toFixed(1)}</td>
                 <td>${(player.reb / (player.gp || 1)).toFixed(1)}</td>
                 <td>${(player.ast / (player.gp || 1)).toFixed(1)}</td>
+                ${showAdvanced ? `
+                <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
+                <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
+                <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
+                <td class="advanced-stat">${(advancedStats.tsPct * 100).toFixed(1)}%</td>
+                <td class="advanced-stat">${advancedStats.per.toFixed(1)}</td>
+                <td class="advanced-stat">${advancedStats.eff.toFixed(1)}</td>
+                ` : ''}
                 <td>
                     <span class="rating-cell rating-${Math.floor(avgRating)}">
                         ${avgRating.toFixed(1)}
