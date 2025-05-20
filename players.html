@@ -299,26 +299,19 @@
         <section id="playerListSection">
             <div class="table-responsive">
                 <table class="table stats-table">
-                    <thead>
-                        <tr>
-                            <th>Player</th>
-                            <th>Grade</th>
-                            <th>POS</th>
-                            <th>HT</th>
-                            <th>WT</th>
-                            <!-- In players.html, modify the PPG, RPG, APG headers -->
-                            <th data-sort-key="ppg" style="cursor: pointer;">
-                            PPG<span class="sort-arrow"></span>
-                            </th>
-                            <th data-sort-key="rpg" style="cursor: pointer;">
-                            RPG<span class="sort-arrow"></span>
-                            </th>
-                            <th data-sort-key="apg" style="cursor: pointer;">
-                            APG<span class="sort-arrow"></span>
-                            </th>
-                            <th>Rating</th>
-                        </tr>
-                    </thead>
+                        <thead>
+                            <tr>
+                                <th data-sort-key="name" style="cursor: pointer;">Player<span class="sort-arrow"></span></th>
+                                <th data-sort-key="grade" style="cursor: pointer;">Grade<span class="sort-arrow"></span></th>
+                                <th data-sort-key="pos" style="cursor: pointer;">POS<span class="sort-arrow"></span></th>
+                                <th data-sort-key="ht" style="cursor: pointer;">HT<span class="sort-arrow"></span></th>
+                                <th data-sort-key="wt" style="cursor: pointer;">WT<span class="sort-arrow"></span></th>
+                                <th data-sort-key="ppg" style="cursor: pointer;">PPG<span class="sort-arrow"></span></th>
+                                <th data-sort-key="rpg" style="cursor: pointer;">RPG<span class="sort-arrow"></span></th>
+                                <th data-sort-key="apg" style="cursor: pointer;">APG<span class="sort-arrow"></span></th>
+                                <th data-sort-key="rating" style="cursor: pointer;">Rating<span class="sort-arrow"></span></th>
+                            </tr>
+                        </thead>
                     <tbody id="playersTableBody">
                         <!-- Players loaded dynamically -->
                     </tbody>
