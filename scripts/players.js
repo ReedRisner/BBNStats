@@ -20,28 +20,71 @@ async function loadPlayerData() {
 // In players.js, add this function
 function sortPlayers(players, sortKey, direction) {
     return players.slice().sort((a, b) => {
-        const aGp = a.gp || 1;
-        const bGp = b.gp || 1;
         let aValue, bValue;
 
         switch (sortKey) {
+            case 'rating':
+                const aRatings = a.gameLogs.map(calculateGameRating);
+                const bRatings = b.gameLogs.map(calculateGameRating);
+                aValue = calculateAverageRating(aRatings);
+                bValue = calculateAverageRating(bRatings);
+                break;
+
+            case 'pos':
+                // Sort order: G (1) -> F (2) -> others (3)
+                const posOrder = { 'G': 1, 'F': 2 };
+                aValue = posOrder[a.pos] || 3;
+                bValue = posOrder[b.pos] || 3;
+                break;
+
+            case 'grade':
+                // Handle grades with periods: Fr. -> So. -> Jr. -> Sr.
+                const gradeOrder = { 'Fr.': 1, 'So.': 2, 'Jr.': 3, 'Sr.': 4 };
+                aValue = gradeOrder[a.grade] || 5;
+                bValue = gradeOrder[b.grade] || 5;
+                break;
+
+            case 'ht':
+                // Convert "6'5" format to total inches
+                const parseHeight = (ht) => {
+                    const match = ht?.match(/(\d+)'(\d+)/);
+                    return match ? parseInt(match[1]) * 12 + parseInt(match[2]) : 0;
+                };
+                aValue = parseHeight(a.ht);
+                bValue = parseHeight(b.ht);
+                break;
+
+            case 'wt':
+                // Parse weight as integer
+                aValue = parseInt(a.wt) || 0;
+                bValue = parseInt(b.wt) || 0;
+                break;
+
             case 'ppg':
-                aValue = a.pts / aGp;
-                bValue = b.pts / bGp;
-                break;
             case 'rpg':
-                aValue = a.reb / aGp;
-                bValue = b.reb / bGp;
-                break;
             case 'apg':
-                aValue = a.ast / aGp;
-                bValue = b.ast / bGp;
+                // Handle per-game stats
+                const aGp = a.gp || 1;
+                const bGp = b.gp || 1;
+                const statKey = sortKey.slice(0, -1); // Remove 'g' from key
+                aValue = a[statKey] / aGp;
+                bValue = b[statKey] / bGp;
                 break;
+
             default:
-                aValue = 0;
-                bValue = 0;
+                // Fallback for name or other text fields
+                aValue = a[sortKey]?.toLowerCase() || '';
+                bValue = b[sortKey]?.toLowerCase() || '';
         }
 
+        // Handle string comparison for name/text fields
+        if (typeof aValue === 'string') {
+            return direction === 'asc' ? 
+                aValue.localeCompare(bValue) : 
+                bValue.localeCompare(aValue);
+        }
+
+        // Handle numeric comparisons
         return direction === 'asc' ? aValue - bValue : bValue - aValue;
     });
 }
