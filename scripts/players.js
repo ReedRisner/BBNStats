@@ -598,6 +598,23 @@ function showPlayerDetail(player, gameRatings = [], season) {
             document.getElementById('playerDetailSection').style.opacity = 1;
         }, 10);
 
+        const xLink = document.getElementById('x-link');
+        const instagramLink = document.getElementById('instagram-link');
+
+        if (player.x) {
+            xLink.href = `https://twitter.com/${player.x}`;
+            xLink.style.display = 'flex';
+        } else {
+            xLink.style.display = 'none';
+        }
+
+        if (player.instagram) {
+            instagramLink.href = `https://instagram.com/${player.instagram}`;
+            instagramLink.style.display = 'flex';
+        } else {
+            instagramLink.style.display = 'none';
+        }
+
     } catch (error) {
         console.error('Error showing player detail:', error);
         alert('Failed to load player profile. Check console for details.');
