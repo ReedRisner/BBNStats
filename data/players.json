@@ -335,6 +335,32 @@
               
             }
           ]
+        },
+        {
+          "number": 12,
+          "name": "Braydon Hawthorne",
+          "grade": "Fr.",
+          "pos": "F",
+          "ht": "6'8",
+          "wt": "175",
+          "gp": 0,
+          "min": 0,
+          "pts": 0,
+          "reb": 0,
+          "ast": 0,
+          "stl": 0,
+          "blk": 0,
+          "to": 0,
+          "fgm": 0,
+          "fga": 0,
+          "threeFgm": 0,
+          "threeFga": 0,
+          "ftm": 0,
+          "fta": 0,
+          "gameLogs": [
+            {}
+          ]
+                     
         }
           
         
