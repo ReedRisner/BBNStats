@@ -9,6 +9,14 @@
         "quad": 1
     },
     {
+        "date": "October 30, 2025",
+        "opponent": "vs Georgetown (EXH)",
+        "logo": "georgetown.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+    },
+    {
         "date": "November 11, 2025",
         "opponent": "at Louisville",
         "logo": "louisville.png",
@@ -29,6 +37,14 @@
         "opponent": "vs Gonzaga",
         "logo": "gonzaga.png",
         "location": "Bridgestone Arena | Nashville, TN.",
+        "result": "TBD",
+        "quad": 1
+    },
+    {
+        "date": "December 13, 2025",
+        "opponent": "vs Indiana",
+        "logo": "indiana.png",
+        "location": "Rupp Arena | Lexington, Ky.",
         "result": "TBD",
         "quad": 1
     },
