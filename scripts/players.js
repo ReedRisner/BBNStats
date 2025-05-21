@@ -418,7 +418,9 @@ function calculateAdvancedStats(player) {
 
         // Offensive/Defensive Ratings
         const ortg = (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 || 0;
-        const drtg = 95 - ((player.stl + player.blk * 1.2) / (player.gp || 1) * 4);
+        const drtg = player.gp > 0 
+            ? 100 - ((player.stl + player.blk * 1.2) / player.gp * 3) 
+            : 0;
 
         return {
             fgPct: fgPct,
