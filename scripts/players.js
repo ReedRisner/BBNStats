@@ -104,6 +104,15 @@ function sortPlayers(players, sortKey, direction) {
                 bValue = bAdvanced[sortKey];
                 break;
 
+            case 'ortg':
+            case 'drtg': {
+                const aAdvanced = calculateAdvancedStats(a);
+                const bAdvanced = calculateAdvancedStats(b);
+                aValue = aAdvanced[sortKey];
+                bValue = bAdvanced[sortKey];
+                break;
+            }
+
             default:
                 aValue = a[sortKey]?.toLowerCase() || '';
                 bValue = b[sortKey]?.toLowerCase() || '';
@@ -330,6 +339,8 @@ function loadPlayerStats(season) {
                 <td class="advanced-stat">${(advancedStats.tsPct * 100).toFixed(1)}%</td>
                 <td class="advanced-stat">${advancedStats.per.toFixed(1)}</td>
                 <td class="advanced-stat">${advancedStats.eff.toFixed(1)}</td>
+                <td class="advanced-stat">${advancedStats.ortg.toFixed(1)}</td>
+                <td class="advanced-stat">${advancedStats.drtg.toFixed(1)}</td>
                 ` : ''}
                 <td>
                     <span class="rating-cell rating-${Math.floor(avgRating)}">
