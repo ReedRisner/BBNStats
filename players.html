@@ -362,6 +362,8 @@
                                 <th data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
                                 <th data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
                                 <th data-sort-key="apg">APG<span class="sort-arrow"></span></th>
+                                <th data-sort-key="spg">SPG<span class="sort-arrow"></span></th>
+                                <th data-sort-key="bpg">BPG<span class="sort-arrow"></span></th>
                                 <!-- Advanced stats columns -->
                                 <th class="advanced-stat" data-sort-key="fgPct">FG%<span class="sort-arrow"></span></th>
                                 <th class="advanced-stat" data-sort-key="threePct">3P%<span class="sort-arrow"></span></th>
@@ -408,33 +410,45 @@
 
 
     <div class="container">
-        <!-- Main Stats Cards -->
+            <!-- Main Stats Cards -->
         <div class="row mb-4 g-3">
-            <div class="col-md-3">
+            <div class="col-6 col-sm-4 col-md-2"> <!-- Changed to col-md-2 -->
                 <div class="stat-card p-3 text-center h-100">
                     <h6>Minutes</h6>
                     <p id="statMinutes" class="fw-bold fs-4 text-uk-blue mb-0">-</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-sm-4 col-md-2"> <!-- Changed to col-md-2 -->
                 <div class="stat-card p-3 text-center h-100">
                     <h6>Points</h6>
                     <p id="statPoints" class="fw-bold fs-4 text-uk-blue mb-0">-</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-sm-4 col-md-2"> <!-- Changed to col-md-2 -->
                 <div class="stat-card p-3 text-center h-100">
                     <h6>Assists</h6>
                     <p id="statAssists" class="fw-bold fs-4 text-uk-blue mb-0">-</p>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-6 col-sm-4 col-md-2"> <!-- Changed to col-md-2 -->
                 <div class="stat-card p-3 text-center h-100">
                     <h6>Rebounds</h6>
                     <p id="statRebounds" class="fw-bold fs-4 text-uk-blue mb-0">-</p>
                 </div>
             </div>
-        </div>
+            <div class="col-6 col-sm-4 col-md-2"> <!-- Changed to col-md-2 -->
+                <div class="stat-card p-3 text-center h-100">
+                    <h6>Steals</h6>
+                    <p id="statSteals" class="fw-bold fs-4 text-uk-blue mb-0">-</p>
+                </div>
+            </div>
+            <div class="col-6 col-sm-4 col-md-2"> <!-- Changed to col-md-2 -->
+                <div class="stat-card p-3 text-center h-100">
+                    <h6>Blocks</h6>
+                    <p id="statBlocks" class="fw-bold fs-4 text-uk-blue mb-0">-</p>
+                </div>
+            </div>
+    </div>
 
 <!-- Shooting Stats -->
         <div class="card mb-4">
