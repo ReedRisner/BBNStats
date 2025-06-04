@@ -57,6 +57,15 @@ function sortPlayers(players, sortKey, direction) {
                 bValue = parseHeight(b.ht);
                 break;
 
+            case 'spg':
+            case 'bpg': {
+                const stat = sortKey === 'spg' ? 'stl' : 'blk';
+                const aGp = a.gp || 1;
+                const bGp = b.gp || 1;
+                aValue = (a[stat] || 0) / aGp;
+                bValue = (b[stat] || 0) / bGp;
+                break;
+            }
             case 'wt':
                 aValue = parseInt(a.wt) || 0;
                 bValue = parseInt(b.wt) || 0;
@@ -332,6 +341,8 @@ function loadPlayerStats(season) {
                 <td>${(player.pts / (player.gp || 1)).toFixed(1)}</td>
                 <td>${(player.reb / (player.gp || 1)).toFixed(1)}</td>
                 <td>${(player.ast / (player.gp || 1)).toFixed(1)}</td>
+                <td>${(player.stl / (player.gp || 1)).toFixed(1)}</td>
+                <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
                 ${showAdvanced ? `
                 <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
                 <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
@@ -501,6 +512,8 @@ function showPlayerDetail(player, gameRatings = [], season) {
         document.getElementById('statPoints').textContent = (player.pts / safeGP).toFixed(1);
         document.getElementById('statAssists').textContent = (player.ast / safeGP).toFixed(1);
         document.getElementById('statRebounds').textContent = (player.reb / safeGP).toFixed(1);
+        document.getElementById('statSteals').textContent = (player.stl / safeGP).toFixed(1);
+    document.getElementById('statBlocks').textContent = (player.blk / safeGP).toFixed(1);
 
         // Update shooting stats
         document.getElementById('statFgPct').textContent = 
