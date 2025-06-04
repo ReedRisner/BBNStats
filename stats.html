@@ -111,6 +111,29 @@
                 font-size: 0.9rem;
             }
         }
+
+                /* Add this to the existing styles */
+        .stat-value-container {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+        
+        .stat-ranking {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--uk-silver);
+        }
+        
+        .stat-card:hover .stat-ranking {
+            color: var(--uk-white) !important;
+        }
+        
+        @media (max-width: 768px) {
+            .stat-ranking {
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -172,7 +195,10 @@
                     <div class="stat-card">
                         <div class="glow-border"></div>
                         <h3 class="text-uk-blue mb-3">Offensive Rating</h3>
-                        <div class="stat-value">0.0</div>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
                         <div class="stat-source text-muted">Points per 100 possessions</div>
                     </div>
                 </a>
@@ -184,7 +210,10 @@
                     <div class="stat-card">
                         <div class="glow-border"></div>
                         <h3 class="text-uk-blue mb-3">Defensive Rating</h3>
-                        <div class="stat-value">0.0</div>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
                         <div class="stat-source text-muted">Points allowed per 100 poss.</div>
                     </div>
                 </a>
@@ -196,7 +225,10 @@
                     <div class="stat-card">
                         <div class="glow-border"></div>
                         <h3 class="text-uk-blue mb-3">Net Rating</h3>
-                        <div class="stat-value">0.0</div>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
                         <div class="stat-source text-muted">OffRtg - DefRtg</div>
                     </div>
                 </a>
@@ -208,7 +240,10 @@
                     <div class="stat-card">
                         <div class="glow-border"></div>
                         <h3 class="text-uk-blue mb-3">Pace</h3>
-                        <div class="stat-value">0.0</div>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
                         <div class="stat-source text-muted">Possessions per 40 min</div>
                     </div>
                 </a>
@@ -220,7 +255,10 @@
                     <div class="stat-card">
                         <div class="glow-border"></div>
                         <h3 class="text-uk-blue mb-3">Offensive TOV%</h3>
-                        <div class="stat-value percent-value">0.0</div>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
                         <div class="stat-source text-muted">Turnovers per 100 plays</div>
                     </div>
                 </a>
@@ -232,7 +270,10 @@
                     <div class="stat-card">
                         <div class="glow-border"></div>
                         <h3 class="text-uk-blue mb-3">Defensive TOV%</h3>
-                        <div class="stat-value percent-value">0.0</div>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
                         <div class="stat-source text-muted">Forced turnovers per 100 plays</div>
                     </div>
                 </a>
@@ -243,9 +284,12 @@
                 <a href="https://barttorvik.com/team.php?team=Kentucky" class="text-decoration-none" target="_blank">
                     <div class="stat-card">
                         <div class="glow-border"></div>
-                        <h3 class="text-uk-blue mb-3">3P%</h3>
-                        <div class="stat-value percent-value">0.0</div>
-                        <div class="stat-source text-muted">Three-point percentage</div>
+                        <h3 class="text-uk-blue mb-3">O3P%</h3>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
+                        <div class="stat-source text-muted">Offensive Three-point percentage</div>
                     </div>
                 </a>
             </div>
@@ -255,9 +299,12 @@
                 <a href="https://barttorvik.com/team.php?team=Kentucky" class="text-decoration-none" target="_blank">
                     <div class="stat-card">
                         <div class="glow-border"></div>
-                        <h3 class="text-uk-blue mb-3">2P%</h3>
-                        <div class="stat-value percent-value">0.0</div>
-                        <div class="stat-source text-muted">Two-point percentage</div>
+                        <h3 class="text-uk-blue mb-3">O2P%</h3>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
+                        <div class="stat-source text-muted">Offensive Two-point percentage</div>
                     </div>
                 </a>
             </div>
@@ -267,8 +314,53 @@
                 <a href="https://barttorvik.com/team.php?team=Kentucky" class="text-decoration-none" target="_blank">
                     <div class="stat-card">
                         <div class="glow-border"></div>
-                        <h3 class="text-uk-blue mb-3">FT%</h3>
-                        <div class="stat-value percent-value">0.0</div>
+                        <h3 class="text-uk-blue mb-3">OFT%</h3>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
+                        <div class="stat-source text-muted">Offensive Three-point percentage</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <a href="https://barttorvik.com/team.php?team=Kentucky" class="text-decoration-none" target="_blank">
+                    <div class="stat-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">D3P%</h3>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
+                        <div class="stat-source text-muted">Defensive Two-point percentage</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <a href="https://barttorvik.com/team.php?team=Kentucky" class="text-decoration-none" target="_blank">
+                    <div class="stat-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">D2P%</h3>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
+                        <div class="stat-source text-muted">Defensive Free throw percentage</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-4">
+                <a href="https://barttorvik.com/team.php?team=Kentucky" class="text-decoration-none" target="_blank">
+                    <div class="stat-card">
+                        <div class="glow-border"></div>
+                        <h3 class="text-uk-blue mb-3">DFT%</h3>
+                        <div class="stat-value-container">
+                            <div class="stat-value">0.0</div>
+                            <div class="stat-ranking">(#0)</div>
+                        </div>
                         <div class="stat-source text-muted">Free throw percentage</div>
                     </div>
                 </a>
