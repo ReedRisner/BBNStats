@@ -9,9 +9,9 @@
                     'Conference Record': '10-8',
                     'AP Poll': '#12',
                     'KenPom': '#16',
-                    'NET Rankings': '#3',
+                    'NET Rankings': '#14',
                     'Evan Miya': '#28',
-                    'Barttorvik': '#12',
+                    'Barttorvik': '#13',
                     'Bracketology': 'No. 3 Seed',
                     'AP Top 25 Record': '8-5'
                 },

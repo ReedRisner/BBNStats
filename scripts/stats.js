@@ -4,30 +4,35 @@ document.addEventListener('DOMContentLoaded', function() {
     // Sample data for both seasons
     const statsData = {
         '2024': {
-            'Offensive Rating': '123.7',
-            'Defensive Rating': '99.2',
-            'Net Rating': '+24.54',
-            'Pace': '73.7',
-            'Offensive TOV%': '15.0',
-            'Defensive TOV%': '14.1',
-            '3P%': '37.5',
-            '2P%': '55.6',
-            'FT%': '73.1'
+            'Offensive Rating': { value: '123.7', rank: '10' },
+            'Defensive Rating': { value: '99.2', rank: '51' },
+            'Net Rating': { value: '+24.54', rank: '16' },
+            'Pace': { value: '73.7', rank: '9' },
+            'Offensive TOV%': { value: '15.0', rank: '39' },
+            'Defensive TOV%': { value: '14.1', rank: '338' },
+            'O3P%': { value: '37.5', rank: '24' },
+            'O2P%': { value: '55.6', rank: '34' },
+            'OFT%': { value: '73.1', rank: '131' },
+            'D3P%': { value: '30.5', rank: '20' },
+            'D2P%': { value: '53.9', rank: '296' },
+            'DFT%': { value: '71.7', rank: '120' },
         },
         '2025': {
-            'Offensive Rating': '0.0',
-            'Defensive Rating': '0.0',
-            'Net Rating': '0.0',
-            'Pace': '0.0',
-            'Offensive TOV%': '0.0',
-            'Defensive TOV%': '0.0',
-            '3P%': '0.0',
-            '2P%': '0.0',
-            'FT%': '0.0'
+            'Offensive Rating': { value: '0.0', rank: '0' },
+            'Defensive Rating': { value: '0.0', rank: '0' },
+            'Net Rating': { value: '0.0', rank: '0' },
+            'Pace': { value: '0.0', rank: '0' },
+            'Offensive TOV%': { value: '0.0', rank: '0' },
+            'Defensive TOV%': { value: '0.0', rank: '0' },
+            'O3P%': { value: '0.0', rank: '0' },
+            'O2P%': { value: '0.0', rank: '0' },
+            'OFT%': { value: '0.0', rank: '0' },
+            'D3P%': { value: '0.0', rank: '0' },
+            'D2P%': { value: '0.0', rank: '0' },
+            'DFT%': { value: '0.0', rank: '0' },
         }
     };
 
-    // Initial load
     updateStats(seasonSelect.value);
 
     seasonSelect.addEventListener('change', function() {
@@ -38,18 +43,21 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.stat-card').forEach(card => {
             const title = card.querySelector('h3').textContent;
             const valueElement = card.querySelector('.stat-value');
-            const value = statsData[season][title] || '-';
+            const rankElement = card.querySelector('.stat-ranking');
+            const data = statsData[season][title] || { value: '-', rank: '-' };
             
-            // Remove % suffix if it's already there (for percentage values)
-            const displayValue = value.endsWith('%') ? value.slice(0, -1) : value;
-            valueElement.textContent = displayValue;
-            
-            // Add % suffix for percentage stats
+            // Update value
+            let displayValue = data.value;
             if (title.includes('%') || ['3P%', '2P%', 'FT%', 'Offensive TOV%', 'Defensive TOV%'].includes(title)) {
+                displayValue = displayValue.replace('%', '');
                 valueElement.classList.add('percent-value');
             } else {
                 valueElement.classList.remove('percent-value');
             }
+            valueElement.textContent = displayValue;
+            
+            // Update ranking
+            rankElement.textContent = `(#${data.rank})`;
         });
     }
 });
