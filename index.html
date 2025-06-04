@@ -90,6 +90,38 @@
             margin-bottom: 1.5rem;
         }
         .spacer { margin-left: 35px; }
+
+        .leader-card {
+            border: 2px solid var(--uk-blue);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .leader-content {
+            padding: 10px;
+        }
+
+        .leader-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 10px;
+            border: 2px solid var(--uk-blue);
+        }
+
+        .leader-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .leader-stat {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--uk-blue);
+        }
     </style>
 </head>
 <body>
@@ -180,8 +212,39 @@
         </div>
     </section>
 
+    
+
     <!-- Main Content -->
     <main class="container my-4">
+        <section class="mb-4">
+            <h3 class="mb-3">Season Leaders</h3>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="leader-card text-center p-3">
+                        <h5>Points Per Game</h5>
+                        <div id="ppgLeader" class="leader-content">
+                            <!-- Content will be loaded by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="leader-card text-center p-3">
+                        <h5>Assists Per Game</h5>
+                        <div id="apgLeader" class="leader-content">
+                            <!-- Content will be loaded by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="leader-card text-center p-3">
+                        <h5>Rebounds Per Game</h5>
+                        <div id="rpgLeader" class="leader-content">
+                            <!-- Content will be loaded by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
         <!-- Recent Games Section -->
         <section class="mb-4">
             <h3 class="mb-3">Recent Games</h3>
