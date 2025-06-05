@@ -7,6 +7,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "TBD",
         "quad": 1
+        ,"conference": false
     },
     {
         "date": "October 30, 2025",
@@ -15,6 +16,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "TBD",
         "quad": 1
+        ,"conference": false
     },
     {
         "date": "November 11, 2025",
@@ -23,6 +25,7 @@
         "location": "KFC Yum! Center | Louisville, Ky.",
         "result": "TBD",
         "quad": 1
+        ,"conference": false
     },
     {
         "date": "November 18, 2025",
@@ -31,6 +34,7 @@
         "location": "Madison Square Garden | New York, NY.",
         "result": "TBD",
         "quad": 1
+        ,"conference": false
     },
     {
         "date": "November 21, 2025",
@@ -39,6 +43,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "TBD",
         "quad": 1
+        ,"conference": false
     },
     {
         "date": "November 26, 2025",
@@ -47,6 +52,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "TBD",
         "quad": 1
+        ,"conference": false
     },
     {
         "date": "December 5, 2025",
@@ -55,6 +61,7 @@
         "location": "Bridgestone Arena | Nashville, TN.",
         "result": "TBD",
         "quad": 1
+        ,"conference": false
     },
     {
         "date": "December 9, 2025",
@@ -63,6 +70,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "TBD",
         "quad": 1
+        ,"conference": false
     },
     {
         "date": "December 13, 2025",
@@ -71,6 +79,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "TBD",
         "quad": 1
+        ,"conference": false
     },
     {
         "date": "December 20, 2025",
@@ -79,6 +88,7 @@
         "location": "State Farm Arena | Atlanta, GA.",
         "result": "TBD",
         "quad": 1
+        ,"conference": false
     },
     {
         "date": "December 23, 2025",
@@ -87,5 +97,6 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "TBD",
         "quad": 1
+        ,"conference": false
     }
 ]
