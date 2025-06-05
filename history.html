@@ -26,7 +26,7 @@
             align-items: center;
             position: relative;
         }
-
+ 
         .header-content h1 {
             flex: 1;
             text-align: center;
@@ -235,7 +235,7 @@
                     <div class="glow-border"></div>
                     <i class="fas fa-basketball-ball history-icon"></i>
                     <h3 class="text-uk-blue mb-3">Total Wins</h3>
-                    <div class="history-stat">2,424</div>
+                    <div class="history-stat" id="total-wins">2,424</div>
                     <p>Kentucky has the Most wins in College Basketball History</p>
                 </div>
             </div>
@@ -250,6 +250,41 @@
         </div>
     </footer>
 
+    <script>
+        // Function to count wins from schedule data
+        async function updateTotalWins() {
+            try {
+                // Load both schedule files
+                const [schedule2024, schedule2025] = await Promise.all([
+                    fetch('data/2025-schedule.json').then(r => r.json())
+                ]);
+
+                // Count wins in both schedules using more robust check
+                const countWins = (games) => games.filter(game => {
+                    // Check if result exists and starts with 'W' (case-insensitive)
+                    return game.result && game.result.trim().toUpperCase().startsWith('W');
+                }).length;
+                
+                const wins2024 = countWins(schedule2024);
+                const wins2025 = countWins(schedule2025);
+
+                // Calculate new total (base wins + new wins)
+                const baseWins = 2424;
+                const totalWins = baseWins + wins2024 + wins2025;
+
+                // Update DOM element
+                document.getElementById('total-wins').textContent = 
+                    totalWins.toLocaleString();
+                    
+                console.log(`Updated wins: 2024: ${wins2024}, 2025: ${wins2025}, Total: ${totalWins}`);
+            } catch (error) {
+                console.error('Error updating wins:', error);
+            }
+        }
+
+        // Initialize and update when page loads
+        document.addEventListener('DOMContentLoaded', updateTotalWins);
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
