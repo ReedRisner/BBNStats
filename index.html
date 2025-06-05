@@ -204,8 +204,8 @@
                     <div class="col-md-15 col-lg">
                         <div class="stat-card p-3 h-100">
                             <h5 class="text-muted">Next Game</h5>
-                            <div class="stat-value text-primary">vs Purdue</div>
-                            <small class="stat-label">October 24, 2025</small>
+                            <div id="nextGame" class="stat-value text-primary">-</div>
+                            <small id="nextGameDate" class="stat-label">-</small>
                         </div>
                     </div>
                 </div>
@@ -260,25 +260,7 @@
                         </tr>
                     </thead>
                     <tbody id="recent-games">
-                        <tr>
-                            <td>March 21, 2025</td>
-                            <td>vs 14 Troy</td>
-                            <td><span class="badge bg-success">W</span></td>
-                            <td>76-57</td>
-                        </tr>
-                        <tr>
-                            <td>March 23, 2025</td>
-                            <td>vs 6 Illinois</td>
-                            <td><span class="badge bg-success">W</span></td>
-                            <td>84-75</td>
-                        </tr>
-                        <tr>
-                            <td>March 28, 2025</td>
-                            <td>vs 2 Tennessee</td>
-                            <td><span class="badge bg-danger">L</span></td>
-                            <td>65-78</td>
-                        </tr>
-                        <!-- Add more games -->
+                        <!-- Will be populated by JavaScript -->
                     </tbody>
                 </table>
             </div>
