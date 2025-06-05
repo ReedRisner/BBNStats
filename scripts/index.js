@@ -16,9 +16,26 @@ async function loadTotalRecordForIndex() {
         });
 
         document.getElementById('indexTotalRecord').textContent = `${wins}-${losses}`;
+        
+        // Find next game (first TBD game)
+        const nextGame = games.find(game => 
+            game.result === 'TBD' || !game.result
+        );
+        
+        if (nextGame) {
+            // Add "vs" prefix to opponent name
+            const opponent = nextGame.opponent.replace('vs ', '').replace('at ', '');
+            document.getElementById('nextGame').textContent = `vs ${opponent}`;
+            document.getElementById('nextGameDate').textContent = 
+                nextGame.date.replace('October', 'Oct').replace('November', 'Nov');
+        }
+
     } catch (error) {
         console.error('Error loading total record:', error);
         document.getElementById('indexTotalRecord').textContent = 'N/A';
+        // Clear next game info on error
+        document.getElementById('nextGame').textContent = '';
+        document.getElementById('nextGameDate').textContent = '';
     }
 }
 
@@ -86,6 +103,7 @@ function displayLeader(elementId, player, statType) {
 document.addEventListener('DOMContentLoaded', () => {
     loadTotalRecordForIndex();
     loadSeasonLeaders();
+    loadRecentGames();
     
     // Recent games click handler
     const recentGames = document.getElementById('recent-games');
@@ -123,4 +141,66 @@ function parseGameDate(dateStr) {
         console.error('Date parsing error:', error.message, 'for date:', dateStr);
         return 'invalid-date';
     }
+}
+
+async function loadRecentGames() {
+    try {
+        const response = await fetch(`data/${CURRENT_SEASON}-schedule.json`);
+        if (!response.ok) throw new Error('Schedule not found');
+        const games = await response.json();
+        
+        // Filter completed games and sort by date (newest first)
+        const completedGames = games.filter(game => 
+            game.result && game.result !== 'TBD' && 
+            (game.result.startsWith('W') || game.result.startsWith('L'))
+        ).sort((a, b) => {
+            return new Date(parseGameDate(b.date)) - new Date(parseGameDate(a.date));
+        });
+        
+        // Take the 3 most recent games
+        const recentGames = completedGames.slice(0, 3);
+        
+        // Update the recent games table
+        updateRecentGamesTable(recentGames);
+        
+    } catch (error) {
+        console.error('Error loading recent games:', error);
+        // Show error message in table
+        document.getElementById('recent-games').innerHTML = `
+            <tr><td colspan="4" class="text-center text-danger">Error loading recent games</td></tr>
+        `;
+    }
+}
+
+// Function to update the recent games table
+function updateRecentGamesTable(games) {
+    const tbody = document.getElementById('recent-games');
+    tbody.innerHTML = '';
+    
+    games.forEach(game => {
+        const row = document.createElement('tr');
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', () => {
+            const parsedDate = parseGameDate(game.date);
+            window.location.href = `boxscore.html?season=${CURRENT_SEASON}&date=${parsedDate}`;
+        });
+        
+        // Extract result and score
+        const [result, score] = game.result.split(' ');
+        const isWin = result === 'W';
+        
+        // Add opponent rank if available
+        let opponentDisplay = game.opponent;
+        if (game.opponentRank) {
+            opponentDisplay = `vs ${game.opponentRank} ${game.opponent.replace('vs ', '').replace('at ', '')}`;
+        }
+        
+        row.innerHTML = `
+            <td>${game.date}</td>
+            <td>${opponentDisplay}</td>
+            <td><span class="badge ${isWin ? 'bg-success' : 'bg-danger'}">${result}</span></td>
+            <td>${score}</td>
+        `;
+        tbody.appendChild(row);
+    });
 }
