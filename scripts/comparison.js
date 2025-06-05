@@ -117,7 +117,7 @@ function generateStatsList(player, comparisonPlayer) {
     const statsToCompare = [
         'ppg', 'rpg', 'apg', 
         'fg%', '3p%', 'ft%', 'ts%',
-        'blk', 'stl', 'per', 'eff',
+        'bpg', 'spg', 'per', 'eff',
         'ortg', 'drtg', 'usg%', 'bpm'
     ];
     
@@ -147,8 +147,8 @@ function getStatValue(player, stat) {
         case '3p%': return player.threeFga ? `${((player.threeFgm/player.threeFga)*100).toFixed(1)}%` : '-';
         case 'ft%': return player.fta ? `${((player.ftm/player.fta)*100).toFixed(1)}%` : '-';
         case 'ts%': return adv.tsPct ? `${(adv.tsPct * 100).toFixed(1)}%` : '-';
-        case 'blk': return (player.blk/gp).toFixed(1);
-        case 'stl': return (player.stl/gp).toFixed(1);
+        case 'bpg': return (player.blk/gp).toFixed(1);
+        case 'spg': return (player.stl/gp).toFixed(1);
         case 'per': return adv.per.toFixed(1);
         case 'eff': return adv.eff.toFixed(1);
         case 'ortg': return adv.ortg.toFixed(1);
@@ -171,7 +171,7 @@ function clearComparison() {
 }
 
 function renderComparisonChart() {
-    const averagesStats = ['ppg', 'rpg', 'apg', 'blk', 'stl'];
+    const averagesStats = ['ppg', 'rpg', 'apg', 'bpg', 'spg'];
     const shootingStats = ['fg%', '3p%', 'ft%', 'ts%'];
     const advancedStats = ['per', 'eff', 'ortg', 'drtg', 'usg%', 'bpm'];
 
