@@ -1,5 +1,100 @@
 const CURRENT_SEASON = '2025'; // Define current season
 
+// ==================== Line Background System ====================
+class LinePoint {
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.reset();
+    }
+    
+    reset() {
+        this.x = Math.random() * this.canvas.width;
+        this.y = Math.random() * this.canvas.height;
+        this.speedX = (Math.random() - 0.5) * 0.8;
+        this.speedY = (Math.random() - 0.5) * 0.8;
+        this.size = Math.random() * 2 + 1;
+        this.alpha = Math.random() * 0.3 + 0.1;
+    }
+    
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        
+        // Reset points that move off screen
+        if (this.x < 0 || this.x > this.canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > this.canvas.height) this.speedY *= -1;
+    }
+    
+    draw() {
+        this.ctx.globalAlpha = this.alpha;
+        this.ctx.fillStyle = '#0033A0';
+        this.ctx.beginPath();
+        this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        this.ctx.fill();
+    }
+}
+
+function initLineBackground() {
+    const canvas = document.getElementById('line-canvas');
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const points = [];
+    const pointCount = 80;
+    
+    // Create points
+    for (let i = 0; i < pointCount; i++) {
+        points.push(new LinePoint(canvas));
+    }
+    
+    function animateLines() {
+        requestAnimationFrame(animateLines);
+        
+        // Clear with white background
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Update and draw points
+        points.forEach(point => {
+            point.update();
+            point.draw();
+        });
+        
+        // Draw connections between close points
+        ctx.strokeStyle = '#0033A0';
+        ctx.lineWidth = 0.5;
+        ctx.globalAlpha = 0.1;
+        
+        for (let i = 0; i < points.length; i++) {
+            for (let j = i; j < points.length; j++) {
+                const dx = points[i].x - points[j].x;
+                const dy = points[i].y - points[j].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 150) {
+                    ctx.beginPath();
+                    ctx.moveTo(points[i].x, points[i].y);
+                    ctx.lineTo(points[j].x, points[j].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+    
+    animateLines();
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+}
+
+// ==================== Existing Functions ====================
 async function loadTotalRecordForIndex() {
     try {
         const response = await fetch(`data/${CURRENT_SEASON}-schedule.json`);
@@ -99,50 +194,6 @@ function displayLeader(elementId, player, statType) {
     `;
 }
 
-// Combined DOMContentLoaded handler
-document.addEventListener('DOMContentLoaded', () => {
-    loadTotalRecordForIndex();
-    loadSeasonLeaders();
-    loadRecentGames();
-    
-    // Recent games click handler
-    const recentGames = document.getElementById('recent-games');
-    if (recentGames) {
-        recentGames.addEventListener('click', function(e) {
-            const row = e.target.closest('tr');
-            if (!row) return;
-            
-            const dateCell = row.cells[0];
-            const gameDate = dateCell.textContent.trim();
-            const parsedDate = parseGameDate(gameDate);
-            window.location.href = `boxscore.html?season=${CURRENT_SEASON}&date=${parsedDate}`;
-        });
-    }
-});
-
-function parseGameDate(dateStr) {
-    const months = {
-        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
-        'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
-        'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12',
-        'January': '01', 'February': '02', 'March': '03',
-        'April': '04', 'June': '06', 'July': '07', 'August': '08',
-        'September': '09', 'October': '10', 'November': '11', 'December': '12'
-    };
-
-    try {
-        const cleaned = dateStr.replace(/,/g, '').trim();
-        const parts = cleaned.split(/\s+/);
-        if (parts.length !== 3) throw new Error('Invalid date format');
-        
-        const [monthStr, day, year] = parts;
-        return `${year}-${months[monthStr]}-${day.padStart(2, '0')}`;
-    } catch (error) {
-        console.error('Date parsing error:', error.message, 'for date:', dateStr);
-        return 'invalid-date';
-    }
-}
-
 async function loadRecentGames() {
     try {
         const response = await fetch(`data/${CURRENT_SEASON}-schedule.json`);
@@ -172,7 +223,29 @@ async function loadRecentGames() {
     }
 }
 
-// Function to update the recent games table
+function parseGameDate(dateStr) {
+    const months = {
+        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+        'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+        'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12',
+        'January': '01', 'February': '02', 'March': '03',
+        'April': '04', 'June': '06', 'July': '07', 'August': '08',
+        'September': '09', 'October': '10', 'November': '11', 'December': '12'
+    };
+
+    try {
+        const cleaned = dateStr.replace(/,/g, '').trim();
+        const parts = cleaned.split(/\s+/);
+        if (parts.length !== 3) throw new Error('Invalid date format');
+        
+        const [monthStr, day, year] = parts;
+        return `${year}-${months[monthStr]}-${day.padStart(2, '0')}`;
+    } catch (error) {
+        console.error('Date parsing error:', error.message, 'for date:', dateStr);
+        return 'invalid-date';
+    }
+}
+
 function updateRecentGamesTable(games) {
     const tbody = document.getElementById('recent-games');
     tbody.innerHTML = '';
@@ -198,9 +271,31 @@ function updateRecentGamesTable(games) {
         row.innerHTML = `
             <td>${game.date}</td>
             <td>${opponentDisplay}</td>
-            <td><span class="badge ${isWin ? 'bg-success' : 'bg-danger'}">${result}</span></td>
+            <td><span class="badge ${isWin ? 'bg-success uk-badge' : 'bg-danger'}">${result}</span></td>
             <td>${score}</td>
         `;
         tbody.appendChild(row);
     });
 }
+
+// Combined DOMContentLoaded handler
+document.addEventListener('DOMContentLoaded', () => {
+    initLineBackground(); // Initialize background
+    loadTotalRecordForIndex();
+    loadSeasonLeaders();
+    loadRecentGames();
+    
+    // Recent games click handler
+    const recentGames = document.getElementById('recent-games');
+    if (recentGames) {
+        recentGames.addEventListener('click', function(e) {
+            const row = e.target.closest('tr');
+            if (!row) return;
+            
+            const dateCell = row.cells[0];
+            const gameDate = dateCell.textContent.trim();
+            const parsedDate = parseGameDate(gameDate);
+            window.location.href = `boxscore.html?season=${CURRENT_SEASON}&date=${parsedDate}`;
+        });
+    }
+});
