@@ -55,6 +55,15 @@
         ,"conference": false
     },
     {
+        "date": "December 2, 2025",
+        "opponent": "vs North Carolina",
+        "logo": "unc.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": false
+    },
+    {
         "date": "December 5, 2025",
         "opponent": "vs Gonzaga",
         "logo": "gonzaga.png",
@@ -98,5 +107,168 @@
         "result": "TBD",
         "quad": 1
         ,"conference": false
+    },
+    {
+        "date": "January 3, 2025",
+        "opponent": "vs Alabama",
+        "logo": "alabama.png",
+        "location": "Coleman Coliseum | Tuscaloosa, Al.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "January 6, 2025",
+        "opponent": "vs Mizzou",
+        "logo": "missouri.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "January 10, 2025",
+        "opponent": "vs Mississippi State",
+        "logo": "mississippi-state.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "January 13, 2025",
+        "opponent": "vs LSU",
+        "logo": "lsu.png",
+        "location": "Pete Maravich Assembly Center | Baton Rouge, La.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "January 17, 2025",
+        "opponent": "vs Tennessee",
+        "logo": "tennessee.png",
+        "location": "Thompson-Boling Arena at Food City Center | Knoxville, Tn.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "January 20, 2025",
+        "opponent": "vs Texas",
+        "logo": "texas.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "January 24, 2025",
+        "opponent": "vs Ole Miss",
+        "logo": "ole-miss.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "January 27, 2025",
+        "opponent": "vs Vanderbilt",
+        "logo": "vanderbilt.png",
+        "location": "Memorial Gymnasium | Nashville, Tn.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "January 31, 2025",
+        "opponent": "vs Arkansas",
+        "logo": "arkansas.png",
+        "location": "Bud Walton Arena | Fayetteville, Ar.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "February 3, 2025",
+        "opponent": "vs Oklahoma",
+        "logo": "oklahoma.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "February 7, 2025",
+        "opponent": "vs Tennessee",
+        "logo": "tennessee.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "February 14, 2025",
+        "opponent": "vs Florida",
+        "logo": "florida.png",
+        "location": "Exactech Arena at Stephen C. O'Connell Center | Gainesville, Fl.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "February 17, 2025",
+        "opponent": "vs Georgia",
+        "logo": "georgia.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "February 21, 2025",
+        "opponent": "vs Auburn",
+        "logo": "auburn.png",
+        "location": "Neville Arena | Auburn, Al.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "February 24, 2025",
+        "opponent": "vs South Carolina",
+        "logo": "south-carolina.png",
+        "location": "Colonial Life Arena | Columbia, S.C.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "February 28, 2025",
+        "opponent": "vs Vanderbilt",
+        "logo": "vanderbilt.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "March 3, 2025",
+        "opponent": "vs Texas A&M",
+        "logo": "texas-am.png",
+        "location": "Reed Arena | Bryan-College Station, Tx.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
+    },
+    {
+        "date": "March 7, 2025",
+        "opponent": "vs Florida",
+        "logo": "florida.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": true
     }
+    
 ]
