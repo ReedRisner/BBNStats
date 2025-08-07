@@ -51,39 +51,46 @@ function initLineBackground() {
     const isMobile = window.innerWidth <= 768;
 
     if (isMobile) {
-        // Mobile - swirling single particles
-        const swirlParticles = Array.from({ length: 20 }, (_, i) => ({
+        // Mobile swirling lines
+        const swirlLines = Array.from({ length: 20 }, () => ({
             angle: Math.random() * Math.PI * 2,
-            radius: 50 + Math.random() * 100,
+            radius: 50 + Math.random() * 150,
             speed: 0.01 + Math.random() * 0.015,
-            size: 2 + Math.random() * 2,
+            length: 30 + Math.random() * 40,
+            thickness: 1 + Math.random() * 1.5,
             centerX: canvas.width / 2,
-            centerY: canvas.height / 2 + i * 5
+            centerY: canvas.height / 2 + (Math.random() - 0.5) * 200,
+            hueOffset: Math.random() * 60
         }));
 
-        function animateSwirls() {
+        function animateSwirlLines() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            swirlParticles.forEach(p => {
-                p.angle += p.speed;
-                const x = p.centerX + Math.cos(p.angle) * p.radius;
-                const y = p.centerY + Math.sin(p.angle) * p.radius;
+            swirlLines.forEach(line => {
+                line.angle += line.speed;
+
+                const x1 = line.centerX + Math.cos(line.angle) * line.radius;
+                const y1 = line.centerY + Math.sin(line.angle) * line.radius;
+                const x2 = line.centerX + Math.cos(line.angle + 0.3) * (line.radius + line.length);
+                const y2 = line.centerY + Math.sin(line.angle + 0.3) * (line.radius + line.length);
 
                 ctx.beginPath();
-                ctx.fillStyle = '#0033A0';
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.lineWidth = line.thickness;
+                ctx.strokeStyle = '#0033A0';
                 ctx.globalAlpha = 0.6;
-                ctx.arc(x, y, p.size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.stroke();
             });
 
-            requestAnimationFrame(animateSwirls);
+            requestAnimationFrame(animateSwirlLines);
         }
 
-        animateSwirls();
+        animateSwirlLines();
     } else {
-        // Desktop - keep original connect-the-dots style
+        // Desktop - connect-the-dots design
         const points = [];
         const pointCount = 80;
 
@@ -124,6 +131,7 @@ function initLineBackground() {
         animateLines();
     }
 }
+
 
 
 
