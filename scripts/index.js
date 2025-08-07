@@ -38,61 +38,95 @@ class LinePoint {
 function initLineBackground() {
     const canvas = document.getElementById('line-canvas');
     if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    const points = [];
-    const pointCount = 80;
-    
-    // Create points
-    for (let i = 0; i < pointCount; i++) {
-        points.push(new LinePoint(canvas));
+
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
     }
-    
-    function animateLines() {
-        requestAnimationFrame(animateLines);
-        
-        // Clear with white background
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // Update and draw points
-        points.forEach(point => {
-            point.update();
-            point.draw();
-        });
-        
-        // Draw connections between close points
-        ctx.strokeStyle = '#0033A0';
-        ctx.lineWidth = 0.5;
-        ctx.globalAlpha = 0.1;
-        
-        for (let i = 0; i < points.length; i++) {
-            for (let j = i; j < points.length; j++) {
-                const dx = points[i].x - points[j].x;
-                const dy = points[i].y - points[j].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                if (distance < 150) {
-                    ctx.beginPath();
-                    ctx.moveTo(points[i].x, points[i].y);
-                    ctx.lineTo(points[j].x, points[j].y);
-                    ctx.stroke();
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const isMobile = window.innerWidth <= 768;
+
+    if (isMobile) {
+        // Mobile - swirling single particles
+        const swirlParticles = Array.from({ length: 20 }, (_, i) => ({
+            angle: Math.random() * Math.PI * 2,
+            radius: 50 + Math.random() * 100,
+            speed: 0.01 + Math.random() * 0.015,
+            size: 2 + Math.random() * 2,
+            centerX: canvas.width / 2,
+            centerY: canvas.height / 2 + i * 5
+        }));
+
+        function animateSwirls() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            swirlParticles.forEach(p => {
+                p.angle += p.speed;
+                const x = p.centerX + Math.cos(p.angle) * p.radius;
+                const y = p.centerY + Math.sin(p.angle) * p.radius;
+
+                ctx.beginPath();
+                ctx.fillStyle = '#0033A0';
+                ctx.globalAlpha = 0.6;
+                ctx.arc(x, y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            requestAnimationFrame(animateSwirls);
+        }
+
+        animateSwirls();
+    } else {
+        // Desktop - keep original connect-the-dots style
+        const points = [];
+        const pointCount = 80;
+
+        for (let i = 0; i < pointCount; i++) {
+            points.push(new LinePoint(canvas));
+        }
+
+        function animateLines() {
+            requestAnimationFrame(animateLines);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            points.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            ctx.strokeStyle = '#0033A0';
+            ctx.lineWidth = 0.5;
+            ctx.globalAlpha = 0.1;
+
+            for (let i = 0; i < points.length; i++) {
+                for (let j = i; j < points.length; j++) {
+                    const dx = points[i].x - points[j].x;
+                    const dy = points[i].y - points[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(points[i].x, points[i].y);
+                        ctx.lineTo(points[j].x, points[j].y);
+                        ctx.stroke();
+                    }
                 }
             }
         }
+
+        animateLines();
     }
-    
-    animateLines();
-    
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
 }
+
+
+
 
 // ==================== Existing Functions ====================
 async function loadTotalRecordForIndex() {
