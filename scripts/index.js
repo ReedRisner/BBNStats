@@ -51,44 +51,119 @@ function initLineBackground() {
     const isMobile = window.innerWidth <= 768;
 
     if (isMobile) {
-        // Mobile swirling lines
-        const swirlLines = Array.from({ length: 20 }, () => ({
-            angle: Math.random() * Math.PI * 2,
-            radius: 50 + Math.random() * 150,
-            speed: 0.01 + Math.random() * 0.015,
-            length: 30 + Math.random() * 40,
-            thickness: 1 + Math.random() * 1.5,
-            centerX: canvas.width / 2,
-            centerY: canvas.height / 2 + (Math.random() - 0.5) * 200,
-            hueOffset: Math.random() * 60
-        }));
+        // Fireworks effect for mobile
+        const fireworks = [];
+        const particles = [];
+        const UK_BLUE = '#0033A0';
 
-        function animateSwirlLines() {
+        class Particle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 5;
+                this.vy = (Math.random() - 0.5) * 5;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.03 + 0.015;
+                this.size = Math.random() * 2 + 1;
+                this.color = UK_BLUE;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.05; // gravity
+                this.vx *= 0.99; // friction
+                this.vy *= 0.99;
+                this.alpha -= this.decay;
+            }
+
+            draw() {
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            isAlive() {
+                return this.alpha > 0;
+            }
+        }
+
+        class Firework {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height;
+                this.targetY = Math.random() * canvas.height * 0.6;
+                this.speed = 2 + Math.random() * 2;
+                this.particles = [];
+                this.exploded = false;
+            }
+
+            update() {
+                if (!this.exploded) {
+                    this.y -= this.speed;
+                    if (this.y <= this.targetY) {
+                        this.explode();
+                    }
+                } else {
+                    this.particles.forEach((particle, index) => {
+                        particle.update();
+                        if (!particle.isAlive()) {
+                            this.particles.splice(index, 1);
+                        }
+                    });
+                }
+            }
+
+            explode() {
+                this.exploded = true;
+                const particleCount = Math.floor(Math.random() * 50) + 50;
+                for (let i = 0; i < particleCount; i++) {
+                    this.particles.push(new Particle(this.x, this.y));
+                }
+            }
+
+            draw() {
+                if (!this.exploded) {
+                    ctx.globalAlpha = 0.8;
+                    ctx.fillStyle = UK_BLUE;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    this.particles.forEach(particle => particle.draw());
+                }
+            }
+
+            isAlive() {
+                return !this.exploded || this.particles.length > 0;
+            }
+        }
+
+        function animateFireworks() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            swirlLines.forEach(line => {
-                line.angle += line.speed;
+            // Launch new fireworks occasionally
+            if (Math.random() < 0.02) {
+                fireworks.push(new Firework());
+            }
 
-                const x1 = line.centerX + Math.cos(line.angle) * line.radius;
-                const y1 = line.centerY + Math.sin(line.angle) * line.radius;
-                const x2 = line.centerX + Math.cos(line.angle + 0.3) * (line.radius + line.length);
-                const y2 = line.centerY + Math.sin(line.angle + 0.3) * (line.radius + line.length);
-
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.lineWidth = line.thickness;
-                ctx.strokeStyle = '#0033A0';
-                ctx.globalAlpha = 0.6;
-                ctx.stroke();
+            // Update and draw fireworks
+            fireworks.forEach((firework, index) => {
+                firework.update();
+                firework.draw();
+                if (!firework.isAlive()) {
+                    fireworks.splice(index, 1);
+                }
             });
 
-            requestAnimationFrame(animateSwirlLines);
+            requestAnimationFrame(animateFireworks);
         }
 
-        animateSwirlLines();
+        animateFireworks();
     } else {
         // Desktop - connect-the-dots design
         const points = [];
