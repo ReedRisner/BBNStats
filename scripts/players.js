@@ -1,6 +1,5 @@
 // Initialize data and load default season
 let allPlayersData = null;
-// In players.js, add at the top
 let currentSortKey = null;
 let currentSortDirection = 'desc'; // Default to descending
 
@@ -23,7 +22,76 @@ document.getElementById('advancedStatsToggle').addEventListener('change', functi
     loadPlayerStats(document.getElementById('seasonSelect').value);
 });
 
-// In players.js, add this function
+// Update grid view loading function
+function loadPlayerGrid(players, season) {
+  const gridContainer = document.getElementById('playersGridView');
+  gridContainer.innerHTML = '';
+  
+  players.forEach(player => {
+    const gameRatings = (player.gameLogs || []).map(calculateGameRating);
+    const avgRating = calculateAverageRating(gameRatings);
+    
+    const card = document.createElement('div');
+    card.className = 'player-card';
+    
+    card.innerHTML = `
+      <div class="player-card-header">
+        <div class="player-card-backdrop"></div>
+        <img src="images/${season}/players/${player.number}.jpg" 
+             class="player-card-img" alt="${player.name}"
+             onerror="this.src='images/players/default.jpg'">
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">#${player.number} ${player.name}</h5>
+        <div class="card-text">
+          <div>${player.grade || ''} • ${player.pos}</div>
+          <div>${player.ht} • ${player.wt}</div>
+          <div class="mt-2">
+            <span class="rating-cell rating-${Math.floor(avgRating)}">
+              ${avgRating.toFixed(1)}
+            </span>
+          </div>
+        </div>
+        <div class="player-stats mt-3">
+          <div class="player-stat">
+            <span class="stat-value">${(player.pts / (player.gp || 1)).toFixed(1)}</span>
+            <span class="stat-label">PPG</span>
+          </div>
+          <div class="player-stat">
+            <span class="stat-value">${(player.reb / (player.gp || 1)).toFixed(1)}</span>
+            <span class="stat-label">RPG</span>
+          </div>
+          <div class="player-stat">
+            <span class="stat-value">${(player.ast / (player.gp || 1)).toFixed(1)}</span>
+            <span class="stat-label">APG</span>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    card.addEventListener('click', () => {
+      showPlayerDetail(player, gameRatings, season);
+    });
+    
+    gridContainer.appendChild(card);
+  });
+}
+
+// Update grid toggle functionality
+document.getElementById('gridViewToggle').addEventListener('change', function() {
+  const playerListSection = document.getElementById('playerListSection');
+  const playersGridView = document.getElementById('playersGridView');
+  
+  if (this.checked) {
+    playerListSection.style.display = 'none';
+    playersGridView.style.display = 'grid'; // Changed to 'grid'
+    loadPlayerStats(document.getElementById('seasonSelect').value);
+  } else {
+    playerListSection.style.display = 'block';
+    playersGridView.style.display = 'none';
+  }
+});
+
 function sortPlayers(players, sortKey, direction) {
     return players.slice().sort((a, b) => {
         let aValue, bValue;
@@ -138,6 +206,7 @@ function sortPlayers(players, sortKey, direction) {
         return direction === 'asc' ? aValue - bValue : bValue - aValue;
     });
 }
+
 function showGameModal(game, rating) {
     const content = `
         <div class="row">
@@ -177,49 +246,6 @@ function showGameModal(game, rating) {
     modal.show();
 }
 
-/* This is old calcuate rating system
-function calculateGameRating(game) {
-    try {
-        // Slightly reduced weights from previous version
-        let score = (game.pts * 0.65) + (game.reb * 1.0) + (game.ast * 1.0) +
-                   (game.stl * 1.8) + (game.blk * 1.8) - (game.to * 0.7);
-
-        // Tightened shooting efficiency requirements
-        const fgPct = game.fga > 0 ? game.fgm / game.fga : 0;
-        if (game.fga > 4) {
-            if (fgPct > 0.60) score += 3;
-            else if (fgPct > 0.55) score += 2;
-            else if (fgPct > 0.50) score += 1;
-            else if (fgPct < 0.35) score -= 1;
-        }
-
-        const threePct = game.threeFga > 0 ? game.threeFgm / game.threeFga : 0;
-        if (game.threeFga > 3) {
-            if (threePct > 0.45) score += 2.5;
-            else if (threePct > 0.40) score += 1.5;
-            else if (threePct > 0.35) score += 0.5;
-            else if (threePct < 0.25) score -= 0.5;
-        }
-
-        const ftPct = game.fta > 0 ? game.ftm / game.fta : 0;
-        if (game.fta > 3) {
-            if (ftPct > 0.90) score += 1.5;
-            else if (ftPct > 0.80) score += 1;
-            else if (ftPct < 0.65) score -= 0.5;
-        }
-
-        // Adjusted scaling and clamping
-        let rating = score / 3.0;  // Increased divisor from 2.8
-        rating = Math.min(9.9, Math.max(0, Math.round(rating * 10) / 10)); // Hard cap at 9.9
-        
-        return rating;
-    } catch (e) {
-        console.error('Error calculating game rating:', e);
-        return 0;
-    }
-}
-*/
-
 function calculateGameRating(game) {
     try {
         const {
@@ -227,82 +253,72 @@ function calculateGameRating(game) {
             fgm, fga, threeFgm, threeFga, ftm, fta
         } = game;
 
-        // === Adjusted Weights ===
-        const weight = {
-            pts: 0.75,     // Slight increase from 0.65
-            reb: 0.95,     // Increased from 0.85
-            ast: 1.25,     // Increased from 1.1
-            stl: 2.2,      // Increased from 2.0
-            blk: 2.0,      // Increased from 1.8
-            to: -1.2,      // Slightly less punitive
-            fgEff: 1.2,    // Increased from 1.0
-            ftEff: 0.7,     // Increased from 0.6
-            threeEff: 1.0    // Increased from 0.8
-        };
+        // Start at 5.0 as the base rating
+        let rating = 5.0;
 
-        // === Efficiency Thresholds ===
-        const fgEff = fga >= 2 ? (fgm / fga) : 0;  // Lower threshold to 2 attempts
-        const ftEff = fta >= 1 ? (ftm / fta) : 0;   // Lower threshold to 1 attempt
-        const threeEff = threeFga >= 1 ? (threeFgm / threeFga) : 0;
+        // Positive contributions (moderate impact)
+        rating += pts * 0.12;          // Points add 0.12 each
+        rating += reb * 0.15;           // Rebounds add 0.15 each
+        rating += ast * 0.18;           // Assists add 0.18 each
+        rating += stl * 0.4;            // Steals add 0.4 each
+        rating += blk * 0.4;            // Blocks add 0.4 each
 
-        // === Soft Caps with Gradual Diminishing Returns ===
-        let rawScore = 
-            pts * weight.pts * Math.min(1, 50/(pts + 25)) + // Softer diminishing returns
-            reb * weight.reb * Math.min(1, 20/(reb + 12)) +
-            ast * weight.ast * Math.min(1, 15/(ast + 10)) +
-            stl * weight.stl +
-            blk * weight.blk +
-            to * weight.to;
-
-        // === Enhanced Efficiency Bonuses ===
-        rawScore += Math.min(fgEff * weight.fgEff, 2.5);  // Increased cap
-        rawScore += Math.min(ftEff * weight.ftEff, 1.5);
-        rawScore += Math.min(threeEff * weight.threeEff, 2.0);
-
-        // === Minute Adjustment ===
-        const minuteFactor = Math.cbrt(min + 4) + 1.5;  // Reduced minute impact
-        const scaled = (rawScore / minuteFactor) * 2.8;  // Increased from 2.5
-
-        // === Balanced Final Curve ===
-        const curvedScore = 10 * (scaled / (scaled + 3.2));  // Adjusted S-curve
+        // Negative contributions
+        rating -= to * 0.35;             // Turnovers subtract 0.35 each
         
-        // === Final Clamping ===
-        return Math.max(0.0, Math.min(10.0, parseFloat(curvedScore.toFixed(2))));
+        // Missed shots penalty
+        const fgMiss = (fga || 0) - (fgm || 0);
+        rating -= fgMiss * 0.12;         // Missed FG subtract 0.12 each
+        
+        const threeMiss = (threeFga || 0) - (threeFgm || 0);
+        rating -= threeMiss * 0.18;       // Missed 3PT subtract 0.18 each
+        
+        const ftMiss = (fta || 0) - (ftm || 0);
+        rating -= ftMiss * 0.08;          // Missed FT subtract 0.08 each
+
+        // Efficiency bonuses (difficult to achieve)
+        if (fga > 4) {
+            const fgPct = fgm / fga;
+            if (fgPct > 0.65) rating += 1.2;
+            else if (fgPct > 0.55) rating += 0.6;
+            else if (fgPct < 0.35) rating -= 0.6;
+        }
+
+        if (threeFga > 2) {
+            const threePct = threeFgm / threeFga;
+            if (threePct > 0.50) rating += 1.2;
+            else if (threePct > 0.42) rating += 0.6;
+            else if (threePct < 0.25) rating -= 0.4;
+        }
+
+        if (fta > 2) {
+            const ftPct = ftm / fta;
+            if (ftPct > 0.90) rating += 0.6;
+            else if (ftPct < 0.60) rating -= 0.4;
+        }
+
+        // Minute adjustment - reward players who contribute in more minutes
+        if (min > 0) {
+            rating += (min / 40) * 0.8; // Max +0.8 for 40 minutes
+        }
+
+        // Cap the rating between 0 and 10
+        rating = Math.max(0, Math.min(10, parseFloat(rating.toFixed(1))));
+
+        return rating;
     } catch (e) {
         console.error('Error calculating game rating:', e);
-        return 0;
+        return 5.0; // Return base rating on error
     }
 }
-
-
 
 function calculateAverageRating(gameRatings) {
-    if (!gameRatings.length) return 0;
+    if (!gameRatings.length) return 5.0; // Default to 5.0
     
-    // Weighted average approach - low scores still count but have reduced impact
-    const weightedRatings = gameRatings.map(rating => {
-        if (rating < 2.0) {
-            // For ratings below 2.0, apply a diminishing weight
-            // The lower the rating, the less it affects the average
-            return rating * (0.3 + (rating / 2.0 * 0.7)); // Scales from 30% to 100% weight
-        }
-        return rating; // Full weight for ratings 2.0 and above
-    });
-
-    // Apply trimmed mean for 5+ games
-    if (gameRatings.length < 5) {
-        return weightedRatings.reduce((a, b) => a + b, 0) / weightedRatings.length;
-    }
-    
-    const sorted = [...weightedRatings].sort((a, b) => a - b);
-    const trimCount = Math.floor(sorted.length * 0.15);
-    const trimmed = sorted.slice(trimCount);
-    
-    return trimmed.reduce((a, b) => a + b, 0) / trimmed.length;
+    // Use standard average
+    const sum = gameRatings.reduce((a, b) => a + b, 0);
+    return sum / gameRatings.length;
 }
-
-
-
 
 function loadPlayerStats(season) {
     try {
@@ -317,65 +333,75 @@ function loadPlayerStats(season) {
             players = sortPlayers(players, currentSortKey, currentSortDirection);
         }
 
-        const tbody = document.getElementById('playersTableBody');
-        const showAdvanced = document.getElementById('advancedStatsToggle').checked;
-        tbody.innerHTML = '';
-
-        players.forEach(player => {
-            const gameRatings = (player.gameLogs || []).map(calculateGameRating);
-            const avgRating = calculateAverageRating(gameRatings); // Use the updated function
-            const advancedStats = calculateAdvancedStats(player);
-
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>
-                    <img src="images/${season}/players/${player.number}.jpg" 
-                        class="player-photo" alt="${player.name}"
-                        onerror="this.src='images/players/default.jpg'">
-                    <strong>#${player.number} ${player.name}</strong>
-                </td>
-                <td>${player.grade || ''}</td>
-                <td>${player.pos}</td>
-                <td>${player.ht}</td>
-                <td>${player.wt}</td>
-                <td>${(player.pts / (player.gp || 1)).toFixed(1)}</td>
-                <td>${(player.reb / (player.gp || 1)).toFixed(1)}</td>
-                <td>${(player.ast / (player.gp || 1)).toFixed(1)}</td>
-                <td>${(player.stl / (player.gp || 1)).toFixed(1)}</td>
-                <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
-                ${showAdvanced ? `
-                <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
-                <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
-                <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
-                <td class="advanced-stat">${(advancedStats.tsPct * 100).toFixed(1)}%</td>
-                <td class="advanced-stat">${advancedStats.per.toFixed(1)}</td>
-                <td class="advanced-stat">${advancedStats.eff.toFixed(1)}</td>
-                <td class="advanced-stat">${advancedStats.ortg.toFixed(1)}</td>
-                <td class="advanced-stat">${advancedStats.drtg.toFixed(1)}</td>
-                ` : ''}
-                <td>
-                    <span class="rating-cell rating-${Math.floor(avgRating)}">
-                        ${avgRating.toFixed(1)}
-                    </span>
-                </td>
-            `;
-
-            row.addEventListener('click', () => {
-                try {
-                    showPlayerDetail(player, gameRatings, season);
-                } catch (e) {
-                    console.error('Error showing player detail:', e);
-                    alert('Error showing player details. Check console.');
-                }
-            });
-            
-            tbody.appendChild(row);
-        });
+        // Always load table view
+        loadPlayerList(players, season);
+        
+        // If grid view is active, load grid as well
+        if (document.getElementById('gridViewToggle').checked) {
+            loadPlayerGrid(players, season);
+        }
     } catch (e) {
         console.error('Error loading player stats:', e);
     }
 }
 
+// Load players in list view (table)
+function loadPlayerList(players, season) {
+    const tbody = document.getElementById('playersTableBody');
+    const showAdvanced = document.getElementById('advancedStatsToggle').checked;
+    tbody.innerHTML = '';
+
+    players.forEach(player => {
+        const gameRatings = (player.gameLogs || []).map(calculateGameRating);
+        const avgRating = calculateAverageRating(gameRatings);
+        const advancedStats = calculateAdvancedStats(player);
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <img src="images/${season}/players/${player.number}.jpg" 
+                    class="player-photo" alt="${player.name}"
+                    onerror="this.src='images/players/default.jpg'">
+                <strong>#${player.number} ${player.name}</strong>
+            </td>
+            <td>${player.grade || ''}</td>
+            <td>${player.pos}</td>
+            <td>${player.ht}</td>
+            <td>${player.wt}</td>
+            <td>${(player.pts / (player.gp || 1)).toFixed(1)}</td>
+            <td>${(player.reb / (player.gp || 1)).toFixed(1)}</td>
+            <td>${(player.ast / (player.gp || 1)).toFixed(1)}</td>
+            <td>${(player.stl / (player.gp || 1)).toFixed(1)}</td>
+            <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
+            ${showAdvanced ? `
+            <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
+            <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
+            <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
+            <td class="advanced-stat">${(advancedStats.tsPct * 100).toFixed(1)}%</td>
+            <td class="advanced-stat">${advancedStats.per.toFixed(1)}</td>
+            <td class="advanced-stat">${advancedStats.eff.toFixed(1)}</td>
+            <td class="advanced-stat">${advancedStats.ortg.toFixed(1)}</td>
+            <td class="advanced-stat">${advancedStats.drtg.toFixed(1)}</td>
+            ` : ''}
+            <td>
+                <span class="rating-cell rating-${Math.floor(avgRating)}">
+                    ${avgRating.toFixed(1)}
+                </span>
+            </td>
+        `;
+
+        row.addEventListener('click', () => {
+            try {
+                showPlayerDetail(player, gameRatings, season);
+            } catch (e) {
+                console.error('Error showing player detail:', e);
+                alert('Error showing player details. Check console.');
+            }
+        });
+        
+        tbody.appendChild(row);
+    });
+}
 
 function calculateAdvancedStats(player) {
     try {
@@ -513,7 +539,7 @@ function showPlayerDetail(player, gameRatings = [], season) {
         document.getElementById('statAssists').textContent = (player.ast / safeGP).toFixed(1);
         document.getElementById('statRebounds').textContent = (player.reb / safeGP).toFixed(1);
         document.getElementById('statSteals').textContent = (player.stl / safeGP).toFixed(1);
-    document.getElementById('statBlocks').textContent = (player.blk / safeGP).toFixed(1);
+        document.getElementById('statBlocks').textContent = (player.blk / safeGP).toFixed(1);
 
         // Update shooting stats
         document.getElementById('statFgPct').textContent = 
@@ -540,7 +566,6 @@ function showPlayerDetail(player, gameRatings = [], season) {
             advancedStats.bpm.toFixed(1);
         
             
-
         // Initialize tooltips
         document.querySelectorAll('[title]').forEach(el => {
             new bootstrap.Tooltip(el);
@@ -606,6 +631,7 @@ function showPlayerDetail(player, gameRatings = [], season) {
 
         // Show detail section
         document.getElementById('playerListSection').style.display = 'none';
+        document.getElementById('playersGridView').style.display = 'none';
         document.getElementById('playerDetailSection').style.display = 'block';
         setTimeout(() => {
             document.getElementById('playerDetailSection').style.opacity = 1;
@@ -669,7 +695,11 @@ document.getElementById('seasonSelect').addEventListener('change', function() {
 document.getElementById('backButton').addEventListener('click', () => {
     try {
         document.getElementById('playerDetailSection').style.display = 'none';
-        document.getElementById('playerListSection').style.display = 'block';
+        if (document.getElementById('gridViewToggle').checked) {
+            document.getElementById('playersGridView').style.display = 'grid';
+        } else {
+            document.getElementById('playerListSection').style.display = 'block';
+        }
     } catch (e) {
         console.error('Back button error:', e);
     }
