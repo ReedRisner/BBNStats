@@ -40,6 +40,12 @@ function initLineBackground() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
+    // Set canvas styles for background visibility
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.zIndex = '-1'; // Ensure canvas is behind content
+
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -51,6 +57,9 @@ function initLineBackground() {
     const isMobile = window.innerWidth <= 768;
 
     if (isMobile) {
+        // Make background transparent for mobile
+        canvas.style.backgroundColor = 'transparent';
+
         // Fireworks effect for mobile
         const fireworks = [];
         const particles = [];
@@ -142,9 +151,8 @@ function initLineBackground() {
         }
 
         function animateFireworks() {
+            // REMOVED: White background fill
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Launch new fireworks occasionally
             if (Math.random() < 0.02) {
@@ -165,6 +173,9 @@ function initLineBackground() {
 
         animateFireworks();
     } else {
+        // Desktop - keep white background
+        canvas.style.backgroundColor = 'white';
+        
         // Desktop - connect-the-dots design
         const points = [];
         const pointCount = 80;
@@ -206,7 +217,6 @@ function initLineBackground() {
         animateLines();
     }
 }
-
 
 
 
