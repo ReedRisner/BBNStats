@@ -266,53 +266,53 @@ function calculateGameRating(game) {
         // Return NaN if player didn't play
         if (min <= 0) return NaN;
         
-        // Start at 5.0 as the base rating
-        let rating = 5.0;
+        // Lower base rating to make perfect scores harder
+        let rating = 6.25;
 
-        // Positive contributions (moderate impact)
-        rating += pts * 0.12;          // Points add 0.12 each
-        rating += reb * 0.15;           // Rebounds add 0.15 each
-        rating += ast * 0.18;           // Assists add 0.18 each
-        rating += stl * 0.4;            // Steals add 0.4 each
-        rating += blk * 0.4;            // Blocks add 0.4 each
+        // Reduced impact for positive stats
+        rating += pts * 0.10;          // Reduced from 0.12
+        rating += reb * 0.12;           // Reduced from 0.15
+        rating += ast * 0.15;           // Reduced from 0.18
+        rating += stl * 0.35;           // Reduced from 0.4
+        rating += blk * 0.35;           // Reduced from 0.4
 
-        // Negative contributions
-        rating -= to * 0.35;            // Turnovers subtract 0.35 each
+        // Increased penalties for negative stats
+        rating -= to * 0.40;            // Increased from 0.35
         
         // Missed shots penalty
         const fgMiss = (fga || 0) - (fgm || 0);
-        rating -= fgMiss * 0.12;        // Missed FG subtract 0.12 each
+        rating -= fgMiss * 0.15;        // Increased from 0.12
         
         const threeMiss = (threeFga || 0) - (threeFgm || 0);
-        rating -= threeMiss * 0.18;      // Missed 3PT subtract 0.18 each
+        rating -= threeMiss * 0.22;      // Increased from 0.18
         
         const ftMiss = (fta || 0) - (ftm || 0);
-        rating -= ftMiss * 0.08;         // Missed FT subtract 0.08 each
+        rating -= ftMiss * 0.10;         // Increased from 0.08
 
-        // Efficiency bonuses (difficult to achieve)
+        // Harder efficiency bonuses with higher thresholds
         if (fga > 4) {
             const fgPct = fgm / fga;
-            if (fgPct > 0.65) rating += 1.2;
-            else if (fgPct > 0.55) rating += 0.6;
-            else if (fgPct < 0.35) rating -= 0.6;
+            if (fgPct > 0.70) rating += 1.0;    // Higher threshold, lower bonus
+            else if (fgPct > 0.58) rating += 0.5; // Higher threshold, lower bonus
+            else if (fgPct < 0.35) rating -= 0.7; // Increased penalty
         }
 
         if (threeFga > 2) {
             const threePct = threeFgm / threeFga;
-            if (threePct > 0.50) rating += 1.2;
-            else if (threePct > 0.42) rating += 0.6;
-            else if (threePct < 0.25) rating -= 0.4;
+            if (threePct > 0.55) rating += 1.0;   // Higher threshold, lower bonus
+            else if (threePct > 0.45) rating += 0.5; // Higher threshold, lower bonus
+            else if (threePct < 0.25) rating -= 0.5; // Increased penalty
         }
 
         if (fta > 2) {
             const ftPct = ftm / fta;
-            if (ftPct > 0.90) rating += 0.6;
-            else if (ftPct < 0.60) rating -= 0.4;
+            if (ftPct > 0.95) rating += 0.5;      // Higher threshold, lower bonus
+            else if (ftPct < 0.65) rating -= 0.5; // Increased penalty
         }
 
-        // Minute adjustment - reward players who contribute in more minutes
+        // Reduced minute bonus
         if (min > 0) {
-            rating += (min / 40) * 0.8; // Max +0.8 for 40 minutes
+            rating += Math.min(min * 0.012, 0.4); // Reduced factor and max bonus
         }
 
         // Cap the rating between 0 and 10
