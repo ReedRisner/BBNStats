@@ -8,7 +8,8 @@
         "result": "TBD",
         "quad": 1
         ,"conference": false
-        , "exh": true
+        , "exh": true,
+        "day": "Tuesday"
     },
     {
         "date": "October 30, 2025",
@@ -19,6 +20,8 @@
         "quad": 1
         ,"conference": false
         , "exh": true
+        ,"day": "Thursday"
+
     },
     {
         "date": "November 11, 2025",
@@ -29,6 +32,8 @@
         "quad": 1
         ,"conference": false
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Tuesday"
     },
     {
         "date": "November 18, 2025",
@@ -39,6 +44,8 @@
         "quad": 1
         ,"conference": false
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Tuesday"
     },
     {
         "date": "November 21, 2025",
@@ -49,6 +56,7 @@
         "quad": 1
         ,"conference": false
         , "exh": false
+        ,"day": "Friday"
     },
     {
         "date": "November 26, 2025",
@@ -59,6 +67,7 @@
         "quad": 1
         ,"conference": false
         , "exh": false
+        ,"day": "Wednesday"
     },
     {
         "date": "December 2, 2025",
@@ -69,6 +78,8 @@
         "quad": 1
         ,"conference": false
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Tuesday"
     },
     {
         "date": "December 5, 2025",
@@ -79,6 +90,8 @@
         "quad": 1
         ,"conference": false
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Friday"
     },
     {
         "date": "December 9, 2025",
@@ -89,6 +102,7 @@
         "quad": 1
         ,"conference": false
         , "exh": false
+        ,"day": "Tuesday"
     },
     {
         "date": "December 13, 2025",
@@ -99,6 +113,8 @@
         "quad": 1
         ,"conference": false
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Saturday"
     },
     {
         "date": "December 20, 2025",
@@ -109,6 +125,8 @@
         "quad": 1
         ,"conference": false
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Saturday"
     },
     {
         "date": "December 23, 2025",
@@ -119,6 +137,7 @@
         "quad": 1
         ,"conference": false
         , "exh": false
+        ,"day": "Tuesday"
     },
     {
         "date": "January 3, 2025",
@@ -129,6 +148,8 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Saturday"
     },
     {
         "date": "January 6, 2025",
@@ -139,6 +160,8 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Tuesday"
     },
     {
         "date": "January 10, 2025",
@@ -149,6 +172,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"day": "Saturday"
     },
     {
         "date": "January 13, 2025",
@@ -159,6 +183,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"day": "Tuesday"
     },
     {
         "date": "January 17, 2025",
@@ -169,6 +194,8 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Saturday"
     },
     {
         "date": "January 20, 2025",
@@ -179,6 +206,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"day": "Tuesday"
     },
     {
         "date": "January 24, 2025",
@@ -189,6 +217,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"day": "Saturday"
     },
     {
         "date": "January 27, 2025",
@@ -199,6 +228,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"day": "Tuesday"
     },
     {
         "date": "January 31, 2025",
@@ -209,6 +239,8 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Saturday"
     },
     {
         "date": "February 3, 2025",
@@ -219,6 +251,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"day": "Tuesday"
     },
     {
         "date": "February 7, 2025",
@@ -229,6 +262,8 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Saturday"
     },
     {
         "date": "February 14, 2025",
@@ -239,6 +274,8 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Saturday"
     },
     {
         "date": "February 17, 2025",
@@ -249,6 +286,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"day": "Tuesday"
     },
     {
         "date": "February 21, 2025",
@@ -259,6 +297,9 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Saturday"
+
     },
     {
         "date": "February 24, 2025",
@@ -269,6 +310,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"day": "Tuesday"
     },
     {
         "date": "February 28, 2025",
@@ -279,6 +321,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"day": "Saturday"
     },
     {
         "date": "March 3, 2025",
@@ -289,6 +332,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"day": "Tuesday"
     },
     {
         "date": "March 7, 2025",
@@ -299,6 +343,8 @@
         "quad": 1
         ,"conference": true
         , "exh": false
+        ,"opponentRank": 25
+        ,"day": "Saturday"
     }
     
 ]
