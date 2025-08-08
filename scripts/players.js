@@ -266,53 +266,53 @@ function calculateGameRating(game) {
         // Return NaN if player didn't play
         if (min <= 0) return NaN;
         
-        // Lower base rating to make perfect scores harder
-        let rating = 6.25;
+        // Slightly increased base rating
+        let rating = 6.0;  // Increased from 4.0
 
-        // Reduced impact for positive stats
-        rating += pts * 0.10;          // Reduced from 0.12
-        rating += reb * 0.12;           // Reduced from 0.15
-        rating += ast * 0.15;           // Reduced from 0.18
-        rating += stl * 0.35;           // Reduced from 0.4
-        rating += blk * 0.35;           // Reduced from 0.4
+        // Slightly increased positive stat impacts
+        rating += pts * 0.105;          // Slightly increased
+        rating += reb * 0.125;           // Slightly increased
+        rating += ast * 0.155;           // Slightly increased
+        rating += stl * 0.355;           // Slightly increased
+        rating += blk * 0.355;           // Slightly increased
 
-        // Increased penalties for negative stats
-        rating -= to * 0.40;            // Increased from 0.35
+        // Slightly reduced penalties
+        rating -= to * 0.38;            // Reduced from 0.40
         
-        // Missed shots penalty
+        // Missed shots penalty slightly reduced
         const fgMiss = (fga || 0) - (fgm || 0);
-        rating -= fgMiss * 0.15;        // Increased from 0.12
+        rating -= fgMiss * 0.145;        // Reduced from 0.15
         
         const threeMiss = (threeFga || 0) - (threeFgm || 0);
-        rating -= threeMiss * 0.22;      // Increased from 0.18
+        rating -= threeMiss * 0.21;      // Reduced from 0.22
         
         const ftMiss = (fta || 0) - (ftm || 0);
-        rating -= ftMiss * 0.10;         // Increased from 0.08
+        rating -= ftMiss * 0.095;         // Reduced from 0.10
 
-        // Harder efficiency bonuses with higher thresholds
+        // Slightly easier efficiency bonuses
         if (fga > 4) {
             const fgPct = fgm / fga;
-            if (fgPct > 0.70) rating += 1.0;    // Higher threshold, lower bonus
-            else if (fgPct > 0.58) rating += 0.5; // Higher threshold, lower bonus
-            else if (fgPct < 0.35) rating -= 0.7; // Increased penalty
+            if (fgPct > 0.68) rating += 1.05;    // Slightly increased bonus
+            else if (fgPct > 0.56) rating += 0.52; // Slightly increased bonus
+            else if (fgPct < 0.36) rating -= 0.65; // Reduced penalty
         }
 
         if (threeFga > 2) {
             const threePct = threeFgm / threeFga;
-            if (threePct > 0.55) rating += 1.0;   // Higher threshold, lower bonus
-            else if (threePct > 0.45) rating += 0.5; // Higher threshold, lower bonus
-            else if (threePct < 0.25) rating -= 0.5; // Increased penalty
+            if (threePct > 0.54) rating += 1.05;   // Slightly increased bonus
+            else if (threePct > 0.44) rating += 0.52; // Slightly increased bonus
+            else if (threePct < 0.26) rating -= 0.45; // Reduced penalty
         }
 
         if (fta > 2) {
             const ftPct = ftm / fta;
-            if (ftPct > 0.95) rating += 0.5;      // Higher threshold, lower bonus
-            else if (ftPct < 0.65) rating -= 0.5; // Increased penalty
+            if (ftPct > 0.94) rating += 0.52;      // Slightly increased bonus
+            else if (ftPct < 0.66) rating -= 0.45; // Reduced penalty
         }
 
-        // Reduced minute bonus
+        // Slightly increased minute bonus
         if (min > 0) {
-            rating += Math.min(min * 0.012, 0.4); // Reduced factor and max bonus
+            rating += Math.min(min * 0.0125, 0.42); // Increased factor and max bonus
         }
 
         // Cap the rating between 0 and 10
