@@ -71,7 +71,9 @@
 
                 // Populate row
                 row.innerHTML = `
-                    <td data-label="Date" class="game-date">${game.date}</td>
+                    <td data-label="Date" class="game-date">
+                        ${game.day ? game.day + ', ' : ''}${game.date}
+                    </td>
                     <td data-label="Matchup">
                         <img src="images/opponents/${game.logo}" class="team-logo" alt="${game.opponent} Logo">
                         <strong>${game.opponent}</strong>
