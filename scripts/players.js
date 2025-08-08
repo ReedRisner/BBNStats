@@ -31,6 +31,16 @@ function loadPlayerGrid(players, season) {
     const gameRatings = (player.gameLogs || []).map(calculateGameRating);
     const avgRating = calculateAverageRating(gameRatings);
     
+    // Handle NaN rating
+    let ratingDisplay, ratingClass;
+    if (isNaN(avgRating)) {
+        ratingDisplay = 'N/A';
+        ratingClass = 'rating-na';
+    } else {
+        ratingDisplay = avgRating.toFixed(1);
+        ratingClass = `rating-${Math.floor(avgRating)}`;
+    }
+    
     const card = document.createElement('div');
     card.className = 'player-card';
     
@@ -47,8 +57,8 @@ function loadPlayerGrid(players, season) {
           <div>${player.grade || ''} • ${player.pos}</div>
           <div>${player.ht} • ${player.wt}</div>
           <div class="mt-2">
-            <span class="rating-cell rating-${Math.floor(avgRating)}">
-              ${avgRating.toFixed(1)}
+            <span class="rating-cell ${ratingClass}">
+              ${ratingDisplay}
             </span>
           </div>
         </div>
@@ -98,8 +108,8 @@ function sortPlayers(players, sortKey, direction) {
 
         switch (sortKey) {
             case 'rating':
-                const aRatings = a.gameLogs.map(calculateGameRating);
-                const bRatings = b.gameLogs.map(calculateGameRating);
+                const aRatings = (a.gameLogs || []).map(calculateGameRating);
+                const bRatings = (b.gameLogs || []).map(calculateGameRating);
                 aValue = calculateAverageRating(aRatings);
                 bValue = calculateAverageRating(bRatings);
                 break;
@@ -249,10 +259,13 @@ function showGameModal(game, rating) {
 function calculateGameRating(game) {
     try {
         const {
-            min, pts, reb, ast, stl, blk, to,
-            fgm, fga, threeFgm, threeFga, ftm, fta
+            min = 0, pts = 0, reb = 0, ast = 0, stl = 0, blk = 0, to = 0,
+            fgm = 0, fga = 0, threeFgm = 0, threeFga = 0, ftm = 0, fta = 0
         } = game;
-
+        
+        // Return NaN if player didn't play
+        if (min <= 0) return NaN;
+        
         // Start at 5.0 as the base rating
         let rating = 5.0;
 
@@ -264,17 +277,17 @@ function calculateGameRating(game) {
         rating += blk * 0.4;            // Blocks add 0.4 each
 
         // Negative contributions
-        rating -= to * 0.35;             // Turnovers subtract 0.35 each
+        rating -= to * 0.35;            // Turnovers subtract 0.35 each
         
         // Missed shots penalty
         const fgMiss = (fga || 0) - (fgm || 0);
-        rating -= fgMiss * 0.12;         // Missed FG subtract 0.12 each
+        rating -= fgMiss * 0.12;        // Missed FG subtract 0.12 each
         
         const threeMiss = (threeFga || 0) - (threeFgm || 0);
-        rating -= threeMiss * 0.18;       // Missed 3PT subtract 0.18 each
+        rating -= threeMiss * 0.18;      // Missed 3PT subtract 0.18 each
         
         const ftMiss = (fta || 0) - (ftm || 0);
-        rating -= ftMiss * 0.08;          // Missed FT subtract 0.08 each
+        rating -= ftMiss * 0.08;         // Missed FT subtract 0.08 each
 
         // Efficiency bonuses (difficult to achieve)
         if (fga > 4) {
@@ -304,28 +317,31 @@ function calculateGameRating(game) {
 
         // Cap the rating between 0 and 10
         rating = Math.max(0, Math.min(10, parseFloat(rating.toFixed(1))));
-
+        
         return rating;
     } catch (e) {
         console.error('Error calculating game rating:', e);
-        return 5.0; // Return base rating on error
+        return NaN; // Return NaN on error
     }
 }
 
 function calculateAverageRating(gameRatings) {
-    if (!gameRatings.length) return 5.0; // Default to 5.0
+    // Filter out NaN values
+    const validRatings = gameRatings.filter(r => !isNaN(r));
+    if (validRatings.length === 0) return NaN;
     
     // Use standard average
-    const sum = gameRatings.reduce((a, b) => a + b, 0);
-    return sum / gameRatings.length;
+    const sum = validRatings.reduce((a, b) => a + b, 0);
+    return parseFloat((sum / validRatings.length).toFixed(1));
 }
 
 function loadPlayerStats(season) {
     try {
-        if (!allPlayersData) {
-            console.error('Player data not loaded');
+        if (!allPlayersData || !allPlayersData.seasons?.[season]) {
+            console.error('Season data not available:', season);
             return;
         }
+        
         let players = allPlayersData.seasons[season]?.players || [];
         
         // Apply sorting if a sort key is selected
@@ -355,6 +371,16 @@ function loadPlayerList(players, season) {
         const gameRatings = (player.gameLogs || []).map(calculateGameRating);
         const avgRating = calculateAverageRating(gameRatings);
         const advancedStats = calculateAdvancedStats(player);
+        
+        // Handle NaN rating
+        let ratingDisplay, ratingClass;
+        if (isNaN(avgRating)) {
+            ratingDisplay = 'N/A';
+            ratingClass = 'rating-na';
+        } else {
+            ratingDisplay = avgRating.toFixed(1);
+            ratingClass = `rating-${Math.floor(avgRating)}`;
+        }
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -384,8 +410,8 @@ function loadPlayerList(players, season) {
             <td class="advanced-stat">${advancedStats.drtg.toFixed(1)}</td>
             ` : ''}
             <td>
-                <span class="rating-cell rating-${Math.floor(avgRating)}">
-                    ${avgRating.toFixed(1)}
+                <span class="rating-cell ${ratingClass}">
+                    ${ratingDisplay}
                 </span>
             </td>
         `;
@@ -417,7 +443,7 @@ function calculateAdvancedStats(player) {
         const teamFga = 2000; // Example team total for season
         const usgRate = 100 * ((player.fga + 0.44 * player.fta) / teamFga) || 0;
 
-        // New BPM Formula --------------------------------------------------------
+        // New BPM Formula
         const weight = {
             pts: 2.8,
             reb: 1.8,
@@ -441,7 +467,7 @@ function calculateAdvancedStats(player) {
 
         const bpm = (rawBPM / (player.gp || 1)) * 0.18;
 
-        // Add PER calculation
+        // PER calculation
         const per = (
             (player.pts * 1.2) + 
             (player.reb * 1.0) + 
@@ -465,7 +491,9 @@ function calculateAdvancedStats(player) {
         ) / (player.gp || 1);
 
         // Offensive/Defensive Ratings
-        const ortg = (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 || 0;
+        const ortg = (player.fga + 0.44 * player.fta + player.to) > 0 ?
+            (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 : 0;
+        
         const drtg = player.gp > 0 
             ? 100 - ((player.stl + player.blk * 1.2) / player.gp * 3) 
             : 0;
@@ -484,7 +512,18 @@ function calculateAdvancedStats(player) {
         };
     } catch (e) {
         console.error('Error calculating advanced stats:', e);
-        return {};
+        return {
+            fgPct: 0,
+            threePct: 0,
+            ftPct: 0,
+            tsPct: 0,
+            usgRate: 0,
+            per: 0,
+            eff: 0,
+            ortg: 0,
+            drtg: 0,
+            bpm: 0
+        };
     }
 }
 
@@ -500,40 +539,46 @@ function updateSortArrows(sortKey, direction) {
 
 function showPlayerDetail(player, gameRatings = [], season) {
     try {
-        // Calculate advanced stats first
+        // Sanitize ratings array
+        gameRatings = gameRatings.map(r => isNaN(r) ? NaN : r);
+        
+        // Calculate advanced stats
         const advancedStats = calculateAdvancedStats(player);
+        const avgRating = calculateAverageRating(gameRatings);
 
         const playerImg = document.getElementById('detailPlayerPhoto');
         playerImg.src = `images/${season}/players/${player.number}.jpg`;
         playerImg.onerror = () => playerImg.src = 'images/players/default.jpg';
         
-        // Calculate average rating using the updated function
-        const avgRating = calculateAverageRating(gameRatings);
-        
-        // Calculate rating stats (using filtered ratings)
-        const filteredRatings = gameRatings.filter(rating => rating >= 2.0);
-        const ratingsToUse = filteredRatings.length > 0 ? filteredRatings : gameRatings;
-        
+        // Calculate rating stats
+        const validRatings = gameRatings.filter(r => !isNaN(r));
         const ratingStats = {
-            bestRating: ratingsToUse.length ? Math.max(...ratingsToUse) : 0,
-            worstRating: ratingsToUse.length ? Math.min(...ratingsToUse) : 0,
-            consistency: ratingsToUse.length ? 
-                (10 - Math.sqrt(ratingsToUse
+            bestRating: validRatings.length ? Math.max(...validRatings) : NaN,
+            worstRating: validRatings.length ? Math.min(...validRatings) : NaN,
+            consistency: validRatings.length ? 
+                (10 - Math.sqrt(validRatings
                     .map(r => Math.pow(r - avgRating, 2))
-                    .reduce((a, b) => a + b, 0) / ratingsToUse.length)) : 0,
+                    .reduce((a, b) => a + b, 0) / validRatings.length)) : NaN,
             last5: gameRatings.slice(-5) // Show last 5 including any below 2.0 for transparency
         };
 
         document.getElementById('detailPlayerName').textContent = `#${player.number} ${player.name}`;
         document.getElementById('detailPlayerInfo').textContent = 
             `${player.grade || ''} | ${player.pos} | ${player.ht} | ${player.wt} `;
-        document.getElementById('detailPlayerRating').innerHTML = `
-            <span class="rating-cell rating-${Math.floor(avgRating)}">
-                ${avgRating.toFixed(1)}
-            </span>`;
+            
+        // Handle NaN rating
+        if (isNaN(avgRating)) {
+            document.getElementById('detailPlayerRating').innerHTML = `
+                <span class="rating-cell rating-na">N/A</span>`;
+        } else {
+            document.getElementById('detailPlayerRating').innerHTML = `
+                <span class="rating-cell rating-${Math.floor(avgRating)}">
+                    ${avgRating.toFixed(1)}
+                </span>`;
+        }
 
         // Update main stat cards
-        const safeGP = player.gp || 1; // Prevent division by zero
+        const safeGP = player.gp || 1;
         document.getElementById('statMinutes').textContent = (player.min / safeGP).toFixed(1);
         document.getElementById('statPoints').textContent = (player.pts / safeGP).toFixed(1);
         document.getElementById('statAssists').textContent = (player.ast / safeGP).toFixed(1);
@@ -559,37 +604,53 @@ function showPlayerDetail(player, gameRatings = [], season) {
         document.getElementById('statOrtg').textContent = 
             advancedStats.ortg.toFixed(1);
         document.getElementById('statDrtg').textContent = 
-            advancedStats.drtg.toFixed(1);
+            advancedStats.drtg === 0 ? 'N/A' : advancedStats.drtg.toFixed(1);
         document.getElementById('statUsgRate').textContent = 
             advancedStats.usgRate.toFixed(1) + "%";
         document.getElementById('statBpm').textContent = 
             advancedStats.bpm.toFixed(1);
         
-            
         // Initialize tooltips
         document.querySelectorAll('[title]').forEach(el => {
             new bootstrap.Tooltip(el);
         });
 
         // Update rating stats
-        document.getElementById('statBestRating').innerHTML = `
-            <span class="rating-cell rating-${Math.floor(ratingStats.bestRating)}">
-                ${ratingStats.bestRating.toFixed(1)}
-            </span>`;
-        document.getElementById('statWorstRating').innerHTML = `
-            <span class="rating-cell rating-${Math.floor(ratingStats.worstRating)}">
-                ${ratingStats.worstRating.toFixed(1)}
-            </span>`;
+        if (isNaN(ratingStats.bestRating)) {
+            document.getElementById('statBestRating').innerHTML = `
+                <span class="rating-cell rating-na">N/A</span>`;
+        } else {
+            document.getElementById('statBestRating').innerHTML = `
+                <span class="rating-cell rating-${Math.floor(ratingStats.bestRating)}">
+                    ${ratingStats.bestRating.toFixed(1)}
+                </span>`;
+        }
+        
+        if (isNaN(ratingStats.worstRating)) {
+            document.getElementById('statWorstRating').innerHTML = `
+                <span class="rating-cell rating-na">N/A</span>`;
+        } else {
+            document.getElementById('statWorstRating').innerHTML = `
+                <span class="rating-cell rating-${Math.floor(ratingStats.worstRating)}">
+                    ${ratingStats.worstRating.toFixed(1)}
+                </span>`;
+        }
+        
         document.getElementById('statConsistency').textContent = 
-            ratingStats.consistency.toFixed(1);
+            isNaN(ratingStats.consistency) ? 'N/A' : ratingStats.consistency.toFixed(1);
 
         // Update recent ratings
         const recentRatings = document.getElementById('recentRatings');
         recentRatings.innerHTML = '';
         ratingStats.last5.forEach(rating => {
             const ratingEl = document.createElement('div');
-            ratingEl.className = `rating-cell rating-${Math.floor(rating)}`;
-            ratingEl.textContent = rating.toFixed(1);
+            if (isNaN(rating)) {
+                ratingEl.className = 'rating-cell rating-na';
+                ratingEl.textContent = 'N/A';
+            } else {
+                ratingEl.className = `rating-cell rating-${Math.floor(rating)}`;
+                ratingEl.textContent = rating.toFixed(1);
+            }
             recentRatings.appendChild(ratingEl);
         });
 
@@ -597,18 +658,23 @@ function showPlayerDetail(player, gameRatings = [], season) {
         const gameLogsBody = document.getElementById('gameLogsBody');
         gameLogsBody.innerHTML = player.gameLogs.map((game, index) => {
             if (Object.keys(game).length === 0) return '';
+            const rating = gameRatings[index] || NaN;
+            
             return `
                 <tr class="game-log-row" 
                     data-game='${JSON.stringify(game)}'
-                    data-rating='${gameRatings[index] || 0}'>
+                    data-rating='${rating}'>
                     <td>${game.date || '-'}</td>
                     <td>${game.opponent || '-'}</td>
                     <td>${game.min ? game.min.toFixed(1) : '-'}</td>
                     <td>${game.pts || '-'}</td>
                     <td>
-                        <span class="rating-cell rating-${Math.floor(gameRatings[index] || 0)}">
-                            ${(gameRatings[index] || 0).toFixed(1)}
-                        </span>
+                        ${isNaN(rating) ? 
+                            '<span class="rating-cell rating-na">N/A</span>' : 
+                            `<span class="rating-cell rating-${Math.floor(rating)}">
+                                ${rating.toFixed(1)}
+                            </span>`
+                        }
                     </td>
                 </tr>
             `;
