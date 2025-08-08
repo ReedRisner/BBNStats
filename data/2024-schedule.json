@@ -6,6 +6,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 123-52"
         ,"conference": false
+        , "exh": true
     },
     {
         "date": "October 29, 2024",
@@ -14,6 +15,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 98-67"
         ,"conference": false
+        , "exh": true
     },
     {
         "date": "November 4, 2024",
