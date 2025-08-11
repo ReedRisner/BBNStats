@@ -24,6 +24,30 @@
 
     },
     {
+        "date": "November 4, 2025",
+        "opponent": "vs Nicholls ",
+        "logo": "nicholls.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": false
+        , "exh": false
+        ,"day": "Tuesday"
+
+    },
+    {
+        "date": "November 7, 2025",
+        "opponent": "vs Valparaiso",
+        "logo": "valparaiso.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": false
+        , "exh": false
+        ,"day": "Friday"
+
+    },
+    {
         "date": "November 11, 2025",
         "opponent": "at Louisville",
         "logo": "louisville.png",
@@ -34,6 +58,18 @@
         , "exh": false
         ,"opponentRank": 25
         ,"day": "Tuesday"
+    },
+    {
+        "date": "November 14, 2025",
+        "opponent": "vs Eastern Illinois",
+        "logo": "eastern-illinois.png",
+        "location": "Rupp Arena | Lexington, Ky.",
+        "result": "TBD",
+        "quad": 1
+        ,"conference": false
+        , "exh": false
+        ,"day": "Friday"
+
     },
     {
         "date": "November 18, 2025",
