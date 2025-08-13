@@ -41,6 +41,11 @@ function loadPlayerGrid(players, season) {
         ratingClass = `rating-${Math.floor(avgRating)}`;
     }
     
+    // Truncate bio to 100 characters for grid view
+    const bioSnippet = player.bio ? 
+        player.bio.substring(0, 100) + (player.bio.length > 100 ? '...' : '') : 
+        'No bio available';
+    
     const card = document.createElement('div');
     card.className = 'player-card';
     
@@ -60,6 +65,10 @@ function loadPlayerGrid(players, season) {
             <span class="rating-cell ${ratingClass}">
               ${ratingDisplay}
             </span>
+          </div>
+          <!-- Bio snippet -->
+          <div class="player-bio small text-muted mt-2">
+            ${bioSnippet}
           </div>
         </div>
         <div class="player-stats mt-3">
@@ -621,6 +630,9 @@ function showPlayerDetail(player, gameRatings = [], season) {
             advancedStats.usgRate.toFixed(1) + "%";
         document.getElementById('statBpm').textContent = 
             advancedStats.bpm.toFixed(1);
+        
+        // ADD FULL BIO DISPLAY
+        document.getElementById('playerBio').textContent = player.bio || 'No bio available';
         
         // Initialize tooltips
         document.querySelectorAll('[title]').forEach(el => {
