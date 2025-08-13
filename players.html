@@ -392,6 +392,25 @@
             height: 100%;
             margin-bottom: 0;
         }
+
+        /* Add to existing styles */
+        .player-bio {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        height: 60px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-pack: justify;
+        -webkit-box-orient: vertical;
+        }
+
+        @media (max-width: 768px) {
+        .player-bio {
+            height: 40px;
+            font-size: 0.8rem;
+        }
+        }
     </style>
     
 </head>
@@ -527,6 +546,16 @@
             </div>
             <div id="detailPlayerInfo" class="mb-2"></div>
             <div id="detailPlayerRating" class="fs-5 fw-bold"></div>
+
+            <!-- ADD BIO CARD HERE -->
+            <div class="card mb-4">
+                <div class="card-header bg-uk-blue text-white">
+                <h5 class="mb-0">Player Bio</h5>
+                </div>
+                <div class="card-body">
+                <p id="playerBio" class="mb-0">Loading bio...</p>
+                </div>
+            </div>
         </div>
     </div>
 
