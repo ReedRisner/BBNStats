@@ -257,72 +257,72 @@ function showGameModal(game, rating) {
 }
 
 function calculateGameRating(game) {
-    try {
-        const {
-            min = 0, pts = 0, reb = 0, ast = 0, stl = 0, blk = 0, to = 0,
-            fgm = 0, fga = 0, threeFgm = 0, threeFga = 0, ftm = 0, fta = 0
-        } = game;
-        
-        // Return NaN if player didn't play
-        if (min <= 0) return NaN;
-        
-        // Slightly increased base rating
-        let rating = 6.0;  // Increased from 4.0
-
-        // Slightly increased positive stat impacts
-        rating += pts * 0.105;          // Slightly increased
-        rating += reb * 0.125;           // Slightly increased
-        rating += ast * 0.155;           // Slightly increased
-        rating += stl * 0.355;           // Slightly increased
-        rating += blk * 0.355;           // Slightly increased
-
-        // Slightly reduced penalties
-        rating -= to * 0.38;            // Reduced from 0.40
-        
-        // Missed shots penalty slightly reduced
-        const fgMiss = (fga || 0) - (fgm || 0);
-        rating -= fgMiss * 0.145;        // Reduced from 0.15
-        
-        const threeMiss = (threeFga || 0) - (threeFgm || 0);
-        rating -= threeMiss * 0.21;      // Reduced from 0.22
-        
-        const ftMiss = (fta || 0) - (ftm || 0);
-        rating -= ftMiss * 0.095;         // Reduced from 0.10
-
-        // Slightly easier efficiency bonuses
-        if (fga > 4) {
-            const fgPct = fgm / fga;
-            if (fgPct > 0.68) rating += 1.05;    // Slightly increased bonus
-            else if (fgPct > 0.56) rating += 0.52; // Slightly increased bonus
-            else if (fgPct < 0.36) rating -= 0.65; // Reduced penalty
-        }
-
-        if (threeFga > 2) {
-            const threePct = threeFgm / threeFga;
-            if (threePct > 0.54) rating += 1.05;   // Slightly increased bonus
-            else if (threePct > 0.44) rating += 0.52; // Slightly increased bonus
-            else if (threePct < 0.26) rating -= 0.45; // Reduced penalty
-        }
-
-        if (fta > 2) {
-            const ftPct = ftm / fta;
-            if (ftPct > 0.94) rating += 0.52;      // Slightly increased bonus
-            else if (ftPct < 0.66) rating -= 0.45; // Reduced penalty
-        }
-
-        // Slightly increased minute bonus
-        if (min > 0) {
-            rating += Math.min(min * 0.0125, 0.42); // Increased factor and max bonus
-        }
-
-        // Cap the rating between 0 and 10
-        rating = Math.max(0, Math.min(10, parseFloat(rating.toFixed(1))));
-        
-        return rating;
-    } catch (e) {
-        console.error('Error calculating game rating:', e);
-        return NaN; // Return NaN on error
-    }
+    // Extract stats from game object
+    const { min, pts, reb, ast, stl, blk, to, fgm, fga, threeFgm, threeFga, ftm, fta, result } = game;
+    
+    // Handle edge cases
+    if (min <= 0) return 0.0;
+    
+    // Calculate shooting percentages (avoid division by zero)
+    const fgPct = fga > 0 ? fgm / fga : 0;
+    const threePct = threeFga > 0 ? threeFgm / threeFga : 0;
+    const ftPct = fta > 0 ? ftm / fta : 0;
+    
+    // Calculate per-minute stats (normalized to 40 minutes for comparison)
+    const perMinMultiplier = 40 / min;
+    const ptsPerGame = pts * perMinMultiplier;
+    const rebPerGame = reb * perMinMultiplier;
+    const astPerGame = ast * perMinMultiplier;
+    const stlPerGame = stl * perMinMultiplier;
+    const blkPerGame = blk * perMinMultiplier;
+    const toPerGame = to * perMinMultiplier;
+    
+    // Calculate efficiency metrics
+    const trueShootingAttempts = fga + (0.44 * fta);
+    const trueShootingPct = trueShootingAttempts > 0 ? pts / (2 * trueShootingAttempts) : 0;
+    const assistTurnoverRatio = to > 0 ? ast / to : ast > 0 ? 5 : 0; // Cap at 5 if no turnovers
+    
+    // Calculate composite rating components (balanced ratings)
+    let rating = 1.0; // Base rating of 1.0
+    
+    // Scoring efficiency (25% of rating)
+    const scoringComponent = Math.min(10, (ptsPerGame * 0.35) + (trueShootingPct * 11));
+    rating += scoringComponent * 0.25;
+    
+    // Playmaking (20% of rating)
+    const playmakingComponent = Math.min(10, (astPerGame * 1.75) + (assistTurnoverRatio * 1.35));
+    rating += playmakingComponent * 0.20;
+    
+    // Rebounding (15% of rating)
+    const reboundingComponent = Math.min(10, rebPerGame * 1.35);
+    rating += reboundingComponent * 0.15;
+    
+    // Defense (20% of rating)
+    const defenseComponent = Math.min(10, (stlPerGame * 2.25) + (blkPerGame * 2.75));
+    rating += defenseComponent * 0.20;
+    
+    // Overall efficiency (15% of rating)
+    const efficiencyComponent = Math.min(10, Math.max(1, 
+        (fgPct * 9) + 
+        (ftPct * 2.5) + 
+        (threeFgm * 0.65) - 
+        (toPerGame * 0.7)
+    ));
+    rating += efficiencyComponent * 0.15;
+    
+    // Win bonus (5% of rating)
+    const winBonus = result === 'W' ? 1.25 : 0.25;
+    rating += winBonus * 0.05;
+    
+    // Apply minutes played factor (moderate penalty for low minutes)
+    const minutesFactor = Math.min(1.0, min / 22); // Full credit at 22+ minutes
+    rating *= (0.6 + (minutesFactor * 0.4)); // Minimum 60% of rating for low minutes
+    
+    // Ensure rating stays within 0.0-10.0 range
+    rating = Math.max(0.0, Math.min(10.0, rating));
+    
+    // Round to 1 decimal place
+    return Math.round(rating * 10) / 10;
 }
 
 function calculateAverageRating(gameRatings) {
@@ -330,9 +330,21 @@ function calculateAverageRating(gameRatings) {
     const validRatings = gameRatings.filter(r => !isNaN(r));
     if (validRatings.length === 0) return NaN;
     
-    // Use standard average
-    const sum = validRatings.reduce((a, b) => a + b, 0);
-    return parseFloat((sum / validRatings.length).toFixed(1));
+    // If 3 or fewer games, use all ratings
+    if (validRatings.length <= 3) {
+        const sum = validRatings.reduce((a, b) => a + b, 0);
+        return parseFloat((sum / validRatings.length).toFixed(1));
+    }
+    
+    // Sort ratings from highest to lowest
+    const sortedRatings = [...validRatings].sort((a, b) => b - a);
+    
+    // Remove the lowest 3 ratings
+    const ratingsToAverage = sortedRatings.slice(0, -3);
+    
+    // Calculate average
+    const sum = ratingsToAverage.reduce((a, b) => a + b, 0);
+    return parseFloat((sum / ratingsToAverage.length).toFixed(1));
 }
 
 function loadPlayerStats(season) {
