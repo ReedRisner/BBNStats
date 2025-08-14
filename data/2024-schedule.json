@@ -7,6 +7,7 @@
         "result": "W 123-52"
         ,"conference": false
         , "exh": true
+        ,"venue": "home"
     },
     {
         "date": "October 29, 2024",
@@ -16,6 +17,7 @@
         "result": "W 98-67"
         ,"conference": false
         , "exh": true
+        ,"venue": "home"
     },
     {
         "date": "November 4, 2024",
@@ -24,6 +26,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 103-62"
         ,"conference": false
+        ,"venue": "home"
     },
     {
         "date": "November 9, 2024",
@@ -32,6 +35,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 100-72"
         ,"conference": false
+        ,"venue": "home"
     },
     {
         "date": "November 12, 2024",
@@ -42,6 +46,7 @@
         ,"conference": false
         ,"quad": 1
         ,"opponentRank": 6
+        ,"venue": "away"
     },
     {
         "date": "November 19, 2024",
@@ -50,6 +55,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 97-68"
         ,"conference": false
+        ,"venue": "home"
     },
     {
         "date": "November 22, 2024",
@@ -58,6 +64,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 108-59"
         ,"conference": false
+        ,"venue": "home"
     },
     {
         "date": "November 26, 2024",
@@ -66,6 +73,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 87-68"
         ,"conference": false
+        ,"venue": "home"
     },
     {
         "date": "November 29, 2024",
@@ -74,6 +82,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 105-76"
         ,"conference": false
+        ,"venue": "home"
     },
     {
         "date": "December 3, 2024",
@@ -83,6 +92,7 @@
         "result": "L 66-70"
         ,"conference": false
         ,"quad": 1
+        ,"venue": "away"
     },
     {
         "date": "December 7, 2024",
@@ -93,6 +103,7 @@
         ,"conference": false
         ,"quad": 1
         ,"opponentRank": 7
+        ,"venue": "away"
     },
     {
         "date": "December 11, 2024",
@@ -101,6 +112,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 78-67"
         ,"conference": false
+        ,"venue": "home"
     },
     {
         "date": "December 14, 2024",
@@ -110,6 +122,7 @@
         "result": "W 93-85"
         ,"conference": false
         ,"quad": 1
+        ,"venue": "home"
     },
     {
         "date": "December 21, 2024",
@@ -119,6 +132,7 @@
         "result": "L 65-85"
         ,"conference": false
         ,"quad": 1
+        ,"venue": "away"
     },
     {
         "date": "December 31, 2024",
@@ -127,6 +141,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 88-54"
         ,"conference": false
+        ,"venue": "home"
     },
     {
         "date": "January 4, 2025",
@@ -137,6 +152,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 6
+        ,"venue": "home"
     },
     {
         "date": "January 7, 2025",
@@ -146,6 +162,7 @@
         "result": "L 69-82"
         ,"conference": true
         ,"quad": 1
+        ,"venue": "away"
     },
     {
         "date": "January 11, 2025",
@@ -156,6 +173,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 14
+        ,"venue": "away"
     },
     {
         "date": "January 14, 2025",
@@ -166,6 +184,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 11
+        ,"venue": "home"
     },
     {
         "date": "January 18, 2025",
@@ -176,6 +195,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 4
+        ,"venue": "home"
     },
     {
         "date": "January 25, 2025",
@@ -185,6 +205,7 @@
         "result": "L 69-74"
         ,"conference": true
         ,"quad": 1
+        ,"venue": "away"
     },
     {
         "date": "January 28, 2025",
@@ -195,6 +216,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 8
+        ,"venue": "away"
     },
     {
         "date": "February 1, 2025",
@@ -203,6 +225,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "L 79-89"
         ,"conference": true
+        ,"venue": "home"
     },
     {
         "date": "February 4, 2025",
@@ -213,6 +236,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 25
+        ,"venue": "away"
     },
     {
         "date": "February 8, 2025",
@@ -221,6 +245,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 80-57"
         ,"conference": true
+        ,"venue": "home"
     },
     {
         "date": "February 11, 2025",
@@ -231,6 +256,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 5
+        ,"venue": "home"
     },
     {
         "date": "February 15, 2025",
@@ -240,6 +266,7 @@
         "result": "L 78-82"
         ,"conference": true
         ,"quad": 1
+        ,"venue": "away"
     },
     {
         "date": "February 19, 2025",
@@ -248,6 +275,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 82-61"
         ,"conference": true
+        ,"venue": "home"
     },
     {
         "date": "February 22, 2025",
@@ -258,6 +286,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 4
+        ,"venue": "away"
     },
     {
         "date": "February 26, 2025",
@@ -267,6 +296,7 @@
         "result": "W 83-82"
         ,"conference": true
         ,"quad": 1
+        ,"venue": "away"
     },
     {
         "date": "March 1, 2025",
@@ -277,6 +307,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 1
+        ,"venue": "home"
     },
     {
         "date": "March 4, 2025",
@@ -285,6 +316,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 95-64"
         ,"conference": true
+        ,"venue": "home"
         
     },
     {
@@ -296,6 +328,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 15
+        ,"venue": "away"
     },
     {
         "date": "March 13, 2025",
@@ -305,6 +338,7 @@
         "result": "W 85-84"
         ,"conference": false
         ,"quad": 1
+        
     },
     {
         "date": "March 14, 2025",
@@ -315,6 +349,7 @@
         ,"conference": false
         ,"quad": 1
         ,"opponentRank": 5
+        
     },
     {
         "date": "March 21, 2025",
@@ -323,6 +358,7 @@
         "location": "Fiserv Forum | Milwaukee, Wis.",
         "result": "W 76-57"
         ,"conference": false
+        
     },
     {
         "date": "March 23, 2025",
