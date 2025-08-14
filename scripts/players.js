@@ -1,7 +1,9 @@
 // Initialize data and load default season
 let allPlayersData = null;
-let currentSortKey = null;
+let currentSortKey = 'ppg'; // Default to PPG
 let currentSortDirection = 'desc'; // Default to descending
+
+
 
 async function loadPlayerData() {
     try {
@@ -267,71 +269,74 @@ function showGameModal(game, rating) {
 
 function calculateGameRating(game) {
     // Extract stats from game object
-    const { min, pts, reb, ast, stl, blk, to, fgm, fga, threeFgm, threeFga, ftm, fta, result } = game;
+    const { min, pts, reb, ast, stl, blk, to, fgm, fga, threeFgm, threeFga, ftm, fta } = game;
     
     // Handle edge cases
     if (min <= 0) return 0.0;
     
-    // Calculate shooting percentages (avoid division by zero)
+    // Calculate shooting percentages
     const fgPct = fga > 0 ? fgm / fga : 0;
     const threePct = threeFga > 0 ? threeFgm / threeFga : 0;
     const ftPct = fta > 0 ? ftm / fta : 0;
     
-    // Calculate per-minute stats (normalized to 40 minutes for comparison)
-    const perMinMultiplier = 40 / min;
-    const ptsPerGame = pts * perMinMultiplier;
-    const rebPerGame = reb * perMinMultiplier;
-    const astPerGame = ast * perMinMultiplier;
-    const stlPerGame = stl * perMinMultiplier;
-    const blkPerGame = blk * perMinMultiplier;
-    const toPerGame = to * perMinMultiplier;
+    // Normalize stats per 36 minutes (standard for comparison)
+    const pace = 36 / min;
+    const normalizedPoints = pts * pace;
+    const normalizedRebounds = reb * pace;
+    const normalizedAssists = ast * pace;
+    const normalizedSteals = stl * pace;
+    const normalizedBlocks = blk * pace;
+    const normalizedTurnovers = to * pace;
+
+    // OFFENSIVE RATING (0-5 points)
+    let offensiveRating = 0.9; // Base offensive rating boost
     
-    // Calculate efficiency metrics
-    const trueShootingAttempts = fga + (0.44 * fta);
-    const trueShootingPct = trueShootingAttempts > 0 ? pts / (2 * trueShootingAttempts) : 0;
-    const assistTurnoverRatio = to > 0 ? ast / to : ast > 0 ? 5 : 0; // Cap at 5 if no turnovers
+    // Points component (0-2.5 points) - more generous scaling
+    // Excellent: 18+ pts/36min = 2.5, Good: 12+ = 1.8, Average: 8+ = 1.2
+    const pointsScore = Math.min(2.5, normalizedPoints / 7.2);
+    offensiveRating += pointsScore;
     
-    // Calculate composite rating components (balanced ratings)
-    let rating = 1.0; // Base rating of 1.0
+    // Shooting efficiency component (0-2 points)
+    let efficiencyScore = 0.3; // Base efficiency boost
+    // Field Goal Percentage weight - more generous
+    if (fga >= 2) { // Lower threshold for meaningful attempts
+        efficiencyScore += fgPct * 1.4; // Increased multiplier
+    }
+    // Three-point shooting bonus
+    if (threeFga >= 1) { // Lower threshold
+        efficiencyScore += threePct * 0.6; // Increased bonus
+    }
+    // Free throw efficiency
+    if (fta >= 1) { // Lower threshold
+        efficiencyScore += ftPct * 0.4; // Increased bonus
+    }
+    efficiencyScore = Math.min(2.0, efficiencyScore);
+    offensiveRating += efficiencyScore;
+
+    // DEFENSIVE/HUSTLE RATING (0-3 points)
+    let defensiveRating = 0;
     
-    // Scoring efficiency (25% of rating)
-    const scoringComponent = Math.min(10, (ptsPerGame * 0.35) + (trueShootingPct * 11));
-    rating += scoringComponent * 0.25;
+    // Rebounds (0-1.5 points)
+    const reboundScore = Math.min(1.5, normalizedRebounds / 8); // 8+ reb/36min = max
+    defensiveRating += reboundScore;
     
-    // Playmaking (20% of rating)
-    const playmakingComponent = Math.min(10, (astPerGame * 1.75) + (assistTurnoverRatio * 1.35));
-    rating += playmakingComponent * 0.20;
+    // Steals and Blocks (0-1.5 points)
+    const stealBlockScore = Math.min(1.5, (normalizedSteals + normalizedBlocks) / 3); // 3+ combined = max
+    defensiveRating += stealBlockScore;
+
+    // EFFICIENCY/CARE RATING (0-2 points)
+    let efficiencyCare = 2.0; // Start at max, deduct for turnovers
     
-    // Rebounding (15% of rating)
-    const reboundingComponent = Math.min(10, rebPerGame * 1.35);
-    rating += reboundingComponent * 0.15;
+    // Turnover penalty
+    const turnoverPenalty = Math.min(2.0, normalizedTurnovers / 6); // 6+ TO/36min = -2.0
+    efficiencyCare -= turnoverPenalty;
+    efficiencyCare = Math.max(0, efficiencyCare);
+
+    // TOTAL RATING
+    let totalRating = offensiveRating + defensiveRating + efficiencyCare;
     
-    // Defense (20% of rating)
-    const defenseComponent = Math.min(10, (stlPerGame * 2.25) + (blkPerGame * 2.75));
-    rating += defenseComponent * 0.20;
-    
-    // Overall efficiency (15% of rating)
-    const efficiencyComponent = Math.min(10, Math.max(1, 
-        (fgPct * 9) + 
-        (ftPct * 2.5) + 
-        (threeFgm * 0.65) - 
-        (toPerGame * 0.7)
-    ));
-    rating += efficiencyComponent * 0.15;
-    
-    // Win bonus (5% of rating)
-    const winBonus = result === 'W' ? 1.25 : 0.25;
-    rating += winBonus * 0.05;
-    
-    // Apply minutes played factor (moderate penalty for low minutes)
-    const minutesFactor = Math.min(1.0, min / 22); // Full credit at 22+ minutes
-    rating *= (0.6 + (minutesFactor * 0.4)); // Minimum 60% of rating for low minutes
-    
-    // Ensure rating stays within 0.0-10.0 range
-    rating = Math.max(0.0, Math.min(10.0, rating));
-    
-    // Round to 1 decimal place
-    return Math.round(rating * 10) / 10;
+    // Scale to 0-10 and round to 1 decimal
+    return Math.round(Math.min(10.0, Math.max(0.0, totalRating)) * 10) / 10;
 }
 
 function calculateAverageRating(gameRatings) {
@@ -560,6 +565,9 @@ function updateSortArrows(sortKey, direction) {
 
 function showPlayerDetail(player, gameRatings = [], season) {
     try {
+        // Hide players page header
+        document.getElementById('playersPageHeader').style.display = 'none';
+        
         // Sanitize ratings array
         gameRatings = gameRatings.map(r => isNaN(r) ? NaN : r);
         
@@ -580,7 +588,7 @@ function showPlayerDetail(player, gameRatings = [], season) {
                 (10 - Math.sqrt(validRatings
                     .map(r => Math.pow(r - avgRating, 2))
                     .reduce((a, b) => a + b, 0) / validRatings.length)) : NaN,
-            last5: gameRatings.slice(-5) // Show last 5 including any below 2.0 for transparency
+            last5: gameRatings.slice(-5)
         };
 
         document.getElementById('detailPlayerName').textContent = `#${player.number} ${player.name}`;
@@ -631,7 +639,7 @@ function showPlayerDetail(player, gameRatings = [], season) {
         document.getElementById('statBpm').textContent = 
             advancedStats.bpm.toFixed(1);
         
-        // ADD FULL BIO DISPLAY
+        // Update bio display
         document.getElementById('playerBio').textContent = player.bio || 'No bio available';
         
         // Initialize tooltips
@@ -718,6 +726,45 @@ function showPlayerDetail(player, gameRatings = [], season) {
                 trigger: 'hover'
             });
         });
+        
+        // Update Past Seasons
+        const pastSeasonsBody = document.getElementById('pastSeasonsBody');
+        pastSeasonsBody.innerHTML = '';
+        
+        if (player.pastSeasons && player.pastSeasons.length > 0) {
+            player.pastSeasons.forEach(seasonData => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${seasonData.year}</td>
+                    <td>${seasonData.team}</td>
+                    <td>${seasonData.grade}</td>
+                    <td>${seasonData.gp || 0}</td>
+                    <td>${seasonData.mpg !== undefined ? seasonData.mpg.toFixed(1) : '0.0'}</td>
+                    <td>${seasonData.ppg !== undefined ? seasonData.ppg.toFixed(1) : '0.0'}</td>
+                    <td>${seasonData.rpg !== undefined ? seasonData.rpg.toFixed(1) : '0.0'}</td>
+                    <td>${seasonData.apg !== undefined ? seasonData.apg.toFixed(1) : '0.0'}</td>
+                    <td>${seasonData.bpg !== undefined ? seasonData.bpg.toFixed(1) : '0.0'}</td>
+                    <td>${seasonData.spg !== undefined ? seasonData.spg.toFixed(1) : '0.0'}</td>
+                    <td data-bs-toggle="tooltip" title="Field Goal Percentage">
+                        ${seasonData.fgPct !== undefined ? (seasonData.fgPct * 100).toFixed(1) + '%' : '0.0%'}
+                    </td>
+                    <td data-bs-toggle="tooltip" title="Three-Point Percentage">
+                        ${seasonData.threePct !== undefined ? (seasonData.threePct * 100).toFixed(1) + '%' : '0.0%'}
+                    </td>
+                    <td data-bs-toggle="tooltip" title="Free Throw Percentage">
+                        ${seasonData.ftPct !== undefined ? (seasonData.ftPct * 100).toFixed(1) + '%' : '0.0%'}
+                    </td>
+                `;
+                pastSeasonsBody.appendChild(row);
+            });
+        } else {
+            pastSeasonsBody.innerHTML = '<tr><td colspan="13" class="text-center">No past seasons data available</td></tr>';
+        }
+
+        // Initialize tooltips for percentages
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+            new bootstrap.Tooltip(el);
+        });
 
         // Show detail section
         document.getElementById('playerListSection').style.display = 'none';
@@ -751,14 +798,6 @@ function showPlayerDetail(player, gameRatings = [], season) {
 }
 
 // Initialize everything with error handling
-document.addEventListener('DOMContentLoaded', () => {
-    try {
-        loadPlayerData();
-        new bootstrap.Dropdown(document.querySelector('.dropdown-toggle'));
-    } catch (e) {
-        console.error('Initialization error:', e);
-    }
-});
 
 document.querySelectorAll('[data-sort-key]').forEach(header => {
     header.addEventListener('click', function() {
@@ -784,6 +823,8 @@ document.getElementById('seasonSelect').addEventListener('change', function() {
 
 document.getElementById('backButton').addEventListener('click', () => {
     try {
+         document.getElementById('playersPageHeader').style.display = 'block';
+        
         document.getElementById('playerDetailSection').style.display = 'none';
         if (document.getElementById('gridViewToggle').checked) {
             document.getElementById('playersGridView').style.display = 'grid';
@@ -792,5 +833,19 @@ document.getElementById('backButton').addEventListener('click', () => {
         }
     } catch (e) {
         console.error('Back button error:', e);
+    }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        loadPlayerData();
+        new bootstrap.Dropdown(document.querySelector('.dropdown-toggle'));
+        
+        // Set initial sort to PPG after data loads
+        setTimeout(() => {
+            updateSortArrows(currentSortKey, currentSortDirection);
+        }, 100);
+    } catch (e) {
+        console.error('Initialization error:', e);
     }
 });
