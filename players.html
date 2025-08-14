@@ -411,6 +411,76 @@
             font-size: 0.8rem;
         }
         }
+
+        @media (max-width: 768px) {
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .table th, .table td {
+            font-size: 0.8rem;
+            padding: 4px 6px;
+        }
+        .past-seasons-table th:nth-child(4), /* GP */
+        .past-seasons-table th:nth-child(11), /* FG% */
+        .past-seasons-table th:nth-child(12), /* 3P% */
+        .past-seasons-table th:nth-child(13) /* FT% */ {
+            display: none;
+        }
+        .past-seasons-table td:nth-child(4),
+        .past-seasons-table td:nth-child(11),
+        .past-seasons-table td:nth-child(12),
+        .past-seasons-table td:nth-child(13) {
+            display: none;
+        }
+    }
+
+    /* Add to existing styles */
+    .past-seasons-table {
+        font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+        .past-seasons-table th, 
+        .past-seasons-table td {
+            padding: 4px 6px;
+            font-size: 0.8rem;
+        }
+        /* Hide less important columns on mobile */
+        .past-seasons-table th:nth-child(4), /* GP */
+        .past-seasons-table th:nth-child(11), /* FG% */
+        .past-seasons-table th:nth-child(12), /* 3P% */
+        .past-seasons-table th:nth-child(13) /* FT% */ {
+            display: none;
+        }
+        .past-seasons-table td:nth-child(4),
+        .past-seasons-table td:nth-child(11),
+        .past-seasons-table td:nth-child(12),
+        .past-seasons-table td:nth-child(13) {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .past-seasons-table th, 
+        .past-seasons-table td {
+            padding: 4px 6px;
+            font-size: 0.8rem;
+        }
+        
+        .past-seasons-table th:nth-child(4), /* GP */
+        .past-seasons-table th:nth-child(11), /* FG% */
+        .past-seasons-table th:nth-child(12), /* 3P% */
+        .past-seasons-table th:nth-child(13) /* FT% */ {
+            display: none;
+        }
+        
+        .past-seasons-table td:nth-child(4),
+        .past-seasons-table td:nth-child(11),
+        .past-seasons-table td:nth-child(12),
+        .past-seasons-table td:nth-child(13) {
+            display: none;
+        }
+    }
     </style>
     
 </head>
@@ -461,7 +531,8 @@
         
     
         <!-- Header -->
-    <header class="players-header text-center mb-5">
+    <header class="players-header text-center mb-5" id="playersPageHeader">
+        
         <div class="container">
             <div class="d-flex justify-content-center align-items-center flex-wrap gap-3">
                 <h1 class="display-4 fw-bold mb-0">Kentucky Basketball Players</h1>
@@ -480,7 +551,9 @@
                 </div>
             </div>
             <p class="text-white-50 mt-2 mb-0">Click on any player to view detailed profile</p>
+           
         </div>
+        
     </header>
 
     <!-- Main Content -->
@@ -548,14 +621,7 @@
             <div id="detailPlayerRating" class="fs-5 fw-bold"></div>
 
             <!-- ADD BIO CARD HERE -->
-            <div class="card mb-4">
-                <div class="card-header bg-uk-blue text-white">
-                <h5 class="mb-0">Player Bio</h5>
-                </div>
-                <div class="card-body">
-                <p id="playerBio" class="mb-0">Loading bio...</p>
-                </div>
-            </div>
+           
         </div>
     </div>
 
@@ -663,6 +729,55 @@
             </div>
         </div>
 
+        <div class="row g-4 mb-4">
+    <!-- Bio Card (Left Column) -->
+    <div class="col-md-5">
+        <div class="card h-100">
+            <div class="card-header bg-uk-blue text-white">
+                <h5 class="mb-0">Player Bio</h5>
+            </div>
+            <div class="card-body">
+                <p id="playerBio" class="mb-0">Loading bio...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Past Seasons Card (Right Column) -->
+    <div class="col-md-7">
+        <div class="card h-100">
+            <div class="card-header bg-uk-blue text-white">
+                <h5 class="mb-0">Past Seasons</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 past-seasons-table">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Year</th>
+                                <th>Team</th>
+                                <th>Grade</th>
+                                <th>GP</th>
+                                <th>MPG</th>
+                                <th>PPG</th>
+                                <th>RPG</th>
+                                <th>APG</th>
+                                <th>BPG</th>
+                                <th>SPG</th>
+                                <th>FG%</th>
+                                <th>3P%</th>
+                                <th>FT%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pastSeasonsBody">
+                            <!-- Past seasons will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
         <!-- Performance Section -->
         <div class="row g-4 mb-4">
             <!-- Recent Performance -->
@@ -736,6 +851,8 @@
             </div>
         </div>
     </div>
+
+
 
     <!-- Footer -->
     <footer class="bg-dark text-white py-4">
