@@ -222,22 +222,39 @@ function initLineBackground() {
 
 
 // ==================== Existing Functions ====================
-async function loadTotalRecordForIndex() {
+async function loadStatsFromUpdateJson() {
     try {
-        const response = await fetch(`data/${CURRENT_SEASON}-schedule.json`);
-        if (!response.ok) throw new Error('Schedule not found');
-        const games = await response.json();
-
-        let wins = 0, losses = 0;
-
-        games.forEach(game => {
-            if (game.result && game.result !== 'TBD') {
-                if (game.result.startsWith('W')) wins++;
-                if (game.result.startsWith('L')) losses++;
+        const response = await fetch('update.json');
+        if (!response.ok) throw new Error('Update data not found');
+        const data = await response.json();
+        
+        const currentSeason = '2025';
+        const rankings = data[currentSeason].rankings;
+        
+        if (rankings) {
+            // Update Overall Record
+            document.getElementById('indexTotalRecord').textContent = rankings['Overall Record'];
+            
+            // Update AP Poll
+            document.getElementById('indexAPPoll').textContent = rankings['AP Poll'];
+            
+            // Update KenPom
+            document.getElementById('indexKenPom').textContent = rankings['KenPom'];
+            
+            // Update Bracketology (extract just the seed number)
+            const bracketologyText = rankings['Bracketology'];
+            const seedMatch = bracketologyText.match(/\d+/);
+            if (seedMatch) {
+                document.getElementById('indexBracketology').textContent = seedMatch[0];
+            } else {
+                document.getElementById('indexBracketology').textContent = bracketologyText;
             }
-        });
-
-        document.getElementById('indexTotalRecord').textContent = `${wins}-${losses}`;
+        }
+        
+        // Find next game from schedule
+        const scheduleResponse = await fetch(`data/${currentSeason}-schedule.json`);
+        if (!scheduleResponse.ok) throw new Error('Schedule not found');
+        const games = await scheduleResponse.json();
         
         // Find next game (first TBD game)
         const nextGame = games.find(game => 
@@ -253,13 +270,18 @@ async function loadTotalRecordForIndex() {
         }
 
     } catch (error) {
-        console.error('Error loading total record:', error);
+        console.error('Error loading data:', error);
+        // Set fallback values
         document.getElementById('indexTotalRecord').textContent = 'N/A';
+        document.getElementById('indexAPPoll').textContent = '#N/A';
+        document.getElementById('indexKenPom').textContent = '#N/A';
+        document.getElementById('indexBracketology').textContent = 'N/A';
+        
         // Clear next game info on error
         document.getElementById('nextGame').textContent = '';
         document.getElementById('nextGameDate').textContent = '';
     }
-}
+};
 
 async function loadSeasonLeaders() {
     try {
@@ -408,7 +430,7 @@ function updateRecentGamesTable(games) {
 // Combined DOMContentLoaded handler
 document.addEventListener('DOMContentLoaded', () => {
     initLineBackground(); // Initialize background
-    loadTotalRecordForIndex();
+    loadStatsFromUpdateJson(); // Load all stats from update.json and next game
     loadSeasonLeaders();
     loadRecentGames();
     
@@ -426,3 +448,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
