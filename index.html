@@ -268,6 +268,7 @@
                     <!-- Quick Stats Cards -->
                     <div class="stats-container">
                         <div class="row g-3 mb-4">
+                            <!-- Record Card -->
                             <div class="col-md-15 col-lg">
                                 <div class="stat-card p-3 h-100">
                                     <h5 class="text-muted">Record</h5>
@@ -275,24 +276,30 @@
                                     <small class="stat-label">Overall</small>
                                 </div>
                             </div>
+
+                            <!-- AP Poll Card -->
                             <div class="col-md-15 col-lg">
                                 <div class="stat-card p-3 h-100" onclick="window.open('https://apnews.com/hub/ap-top-25-college-basketball-poll', '_blank')">
                                     <h5 class="text-muted">AP Poll</h5>
-                                    <div class="stat-value">#N/A</div>
+                                    <div id="indexAPPoll" class="stat-value">#N/A</div>
                                     <small class="stat-label">Click for details</small>
                                 </div>
                             </div>
+
+                            <!-- KenPom Card -->
                             <div class="col-md-15 col-lg">
                                 <div class="stat-card p-3 h-100" onclick="window.open('https://kenpom.com', '_blank')">
                                     <h5 class="text-muted">KenPom</h5>
-                                    <div class="stat-value">#N/A</div>
+                                    <div id="indexKenPom" class="stat-value">#N/A</div>
                                     <small class="stat-label">Click for details</small>
                                 </div>
                             </div>
+
+                            <!-- Bracketology Card -->
                             <div class="col-md-15 col-lg">
                                 <div class="stat-card p-3 h-100" onclick="window.open('https://www.espn.com/espn/feature/story/_/page/bracketology/ncaa-bracketology-2026-march-madness-men-field-predictions', '_blank')">
                                     <h5 class="text-muted">Bracketology</h5>
-                                    <div class="stat-value">3</div>
+                                    <div id="indexBracketology" class="stat-value">3</div>
                                     <small class="stat-label">Projected Seed</small>
                                 </div>
                             </div>
