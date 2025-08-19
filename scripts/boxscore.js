@@ -24,57 +24,75 @@
 
         // Game rating calculation function (from players.js)
         function calculateGameRating(game) {
-            try {
-                const {
-                    min, pts, reb, ast, stl, blk, to,
-                    fgm, fga, threeFgm, threeFga, ftm, fta
-                } = game;
-
-                // Adjusted Weights
-                const weight = {
-                    pts: 0.75,
-                    reb: 0.95,
-                    ast: 1.25,
-                    stl: 2.2,
-                    blk: 2.0,
-                    to: -1.2,
-                    fgEff: 1.2,
-                    ftEff: 0.7,
-                    threeEff: 1.0
-                };
-
-                // Efficiency Thresholds
-                const fgEff = fga >= 2 ? (fgm / fga) : 0;
-                const ftEff = fta >= 1 ? (ftm / fta) : 0;
-                const threeEff = threeFga >= 1 ? (threeFgm / threeFga) : 0;
-
-                // Soft Caps with Gradual Diminishing Returns
-                let rawScore = 
-                    pts * weight.pts * Math.min(1, 50/(pts + 25)) +
-                    reb * weight.reb * Math.min(1, 20/(reb + 12)) +
-                    ast * weight.ast * Math.min(1, 15/(ast + 10)) +
-                    stl * weight.stl +
-                    blk * weight.blk +
-                    to * weight.to;
-
-                // Enhanced Efficiency Bonuses
-                rawScore += Math.min(fgEff * weight.fgEff, 2.5);
-                rawScore += Math.min(ftEff * weight.ftEff, 1.5);
-                rawScore += Math.min(threeEff * weight.threeEff, 2.0);
-
-                // Minute Adjustment
-                const minuteFactor = Math.cbrt(min + 4) + 1.5;
-                const scaled = (rawScore / minuteFactor) * 2.8;
-
-                // Balanced Final Curve
-                const curvedScore = 10 * (scaled / (scaled + 3.2));
-                
-                // Final Clamping
-                return Math.max(0.0, Math.min(10.0, parseFloat(curvedScore.toFixed(2))));
-            } catch (e) {
-                console.error('Error calculating game rating:', e);
-                return 0;
+            // Extract stats from game object
+            const { min, pts, reb, ast, stl, blk, to, fgm, fga, threeFgm, threeFga, ftm, fta } = game;
+            
+            // Handle edge cases
+            if (min <= 0) return 0.0;
+            
+            // Calculate shooting percentages
+            const fgPct = fga > 0 ? fgm / fga : 0;
+            const threePct = threeFga > 0 ? threeFgm / threeFga : 0;
+            const ftPct = fta > 0 ? ftm / fta : 0;
+            
+            // Normalize stats per 36 minutes (standard for comparison)
+            const pace = 36 / min;
+            const normalizedPoints = pts * pace;
+            const normalizedRebounds = reb * pace;
+            const normalizedAssists = ast * pace;
+            const normalizedSteals = stl * pace;
+            const normalizedBlocks = blk * pace;
+            const normalizedTurnovers = to * pace;
+        
+            // OFFENSIVE RATING (0-5 points)
+            let offensiveRating = 0.9; // Base offensive rating boost
+            
+            // Points component (0-2.5 points) - more generous scaling
+            // Excellent: 18+ pts/36min = 2.5, Good: 12+ = 1.8, Average: 8+ = 1.2
+            const pointsScore = Math.min(2.5, normalizedPoints / 7.2);
+            offensiveRating += pointsScore;
+            
+            // Shooting efficiency component (0-2 points)
+            let efficiencyScore = 0.3; // Base efficiency boost
+            // Field Goal Percentage weight - more generous
+            if (fga >= 2) { // Lower threshold for meaningful attempts
+                efficiencyScore += fgPct * 1.4; // Increased multiplier
             }
+            // Three-point shooting bonus
+            if (threeFga >= 1) { // Lower threshold
+                efficiencyScore += threePct * 0.6; // Increased bonus
+            }
+            // Free throw efficiency
+            if (fta >= 1) { // Lower threshold
+                efficiencyScore += ftPct * 0.4; // Increased bonus
+            }
+            efficiencyScore = Math.min(2.0, efficiencyScore);
+            offensiveRating += efficiencyScore;
+        
+            // DEFENSIVE/HUSTLE RATING (0-3 points)
+            let defensiveRating = 0;
+            
+            // Rebounds (0-1.5 points)
+            const reboundScore = Math.min(1.5, normalizedRebounds / 8); // 8+ reb/36min = max
+            defensiveRating += reboundScore;
+            
+            // Steals and Blocks (0-1.5 points)
+            const stealBlockScore = Math.min(1.5, (normalizedSteals + normalizedBlocks) / 3); // 3+ combined = max
+            defensiveRating += stealBlockScore;
+        
+            // EFFICIENCY/CARE RATING (0-2 points)
+            let efficiencyCare = 2.0; // Start at max, deduct for turnovers
+            
+            // Turnover penalty
+            const turnoverPenalty = Math.min(2.0, normalizedTurnovers / 6); // 6+ TO/36min = -2.0
+            efficiencyCare -= turnoverPenalty;
+            efficiencyCare = Math.max(0, efficiencyCare);
+        
+            // TOTAL RATING
+            let totalRating = offensiveRating + defensiveRating + efficiencyCare;
+            
+            // Scale to 0-10 and round to 1 decimal
+            return Math.round(Math.min(10.0, Math.max(0.0, totalRating)) * 10) / 10;
         }
 
         async function loadBoxScore() {
@@ -237,3 +255,4 @@
 
         // Start loading when page loads
         document.addEventListener('DOMContentLoaded', loadBoxScore);
+
