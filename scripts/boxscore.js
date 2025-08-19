@@ -256,3 +256,4 @@
         // Start loading when page loads
         document.addEventListener('DOMContentLoaded', loadBoxScore);
 
+
