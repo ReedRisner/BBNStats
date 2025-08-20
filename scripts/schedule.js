@@ -134,11 +134,19 @@
 
         // Initial load - default to 2025-2026 season
         document.addEventListener('DOMContentLoaded', () => {
-            loadSchedule('2025');
+            const urlParams = new URLSearchParams(window.location.search);
+            const season = urlParams.get('season') || '2025'; // Default to 2025 if no parameter
+            document.getElementById('seasonSelect').value = season;
+            loadSchedule(season);
         });
 
         // Season selector handler
         document.getElementById('seasonSelect').addEventListener('change', function() {
-            loadSchedule(this.value);
+            const season = this.value;
+            // Update URL with the selected season
+            const url = new URL(window.location);
+            url.searchParams.set('season', season);
+            window.history.replaceState({}, '', url);
+            loadSchedule(season);
         });
  

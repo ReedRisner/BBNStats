@@ -1,23 +1,93 @@
 // Initialize data and load default season
 let allPlayersData = null;
+let allGameLogsData = null;
 let currentSortKey = 'ppg'; // Default to PPG
 let currentSortDirection = 'desc'; // Default to descending
 
-
-
 async function loadPlayerData() {
     try {
-        // Corrected path for players.json
-        const response = await fetch('data/players.json');
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        // Load players data
+        const playersResponse = await fetch('data/players.json');
+        if (!playersResponse.ok) throw new Error(`HTTP error! status: ${playersResponse.status}`);
+        allPlayersData = await playersResponse.json();
         
-        allPlayersData = await response.json();
+        // Load game logs data
+        const gameLogsResponse = await fetch('data/gameLogs.json');
+        if (!gameLogsResponse.ok) throw new Error('Failed to load game logs');
+        allGameLogsData = await gameLogsResponse.json();
+        
+        // Process game logs and calculate stats
+        processGameLogs();
+        
         loadPlayerStats('2025');
     } catch (error) {
         console.error('Error loading player data:', error);
         alert('Failed to load player data. Please check console for details.');
     }
 }
+
+function processGameLogs() {
+    // Reset and calculate player stats from game logs
+    Object.keys(allPlayersData.seasons).forEach(season => {
+        const players = allPlayersData.seasons[season].players;
+        const seasonGames = allGameLogsData.seasons[season]?.games || [];
+        
+        // Initialize stats for all players
+        players.forEach(player => {
+            // Reset cumulative stats
+            player.min = 0;
+            player.pts = 0;
+            player.reb = 0;
+            player.ast = 0;
+            player.stl = 0;
+            player.blk = 0;
+            player.to = 0;
+            player.fgm = 0;
+            player.fga = 0;
+            player.threeFgm = 0;
+            player.threeFga = 0;
+            player.ftm = 0;
+            player.fta = 0;
+            player.gp = 0; // Games played
+            player.gameLogs = [];
+        });
+        
+        // Process each game
+        seasonGames.forEach(game => {
+            game.boxscore.forEach(playerStat => {
+                const player = players.find(p => p.number == playerStat.number);
+                if (player) {
+                    // Add game to player's game logs
+                    player.gameLogs.push({
+                        ...playerStat,
+                        date: game.date,
+                        opponent: game.opponent,
+                        result: game.result
+                    });
+                    
+                    // Update cumulative stats
+                    player.gp++;
+                    player.min += playerStat.min || 0;
+                    player.pts += playerStat.pts || 0;
+                    player.reb += playerStat.reb || 0;
+                    player.ast += playerStat.ast || 0;
+                    player.stl += playerStat.stl || 0;
+                    player.blk += playerStat.blk || 0;
+                    player.to += playerStat.to || 0;
+                    player.fgm += playerStat.fgm || 0;
+                    player.fga += playerStat.fga || 0;
+                    player.threeFgm += playerStat.threeFgm || 0;
+                    player.threeFga += playerStat.threeFga || 0;
+                    player.ftm += playerStat.ftm || 0;
+                    player.fta += playerStat.fta || 0;
+                }
+            });
+        });
+    });
+}
+
+// Rest of the file remains the same with minor adjustments to use calculated stats
+// ==============================================================================
 
 document.getElementById('advancedStatsToggle').addEventListener('change', function() {
     document.querySelector('.stats-table').classList.toggle('show-advanced');
@@ -202,6 +272,14 @@ function sortPlayers(players, sortKey, direction) {
                 bValue = bAdvanced[sortKey];
                 break;
 
+            case 'usgRate': {
+                const aAdvanced = calculateAdvancedStats(a);
+                const bAdvanced = calculateAdvancedStats(b);
+                aValue = aAdvanced.usgRate;
+                bValue = bAdvanced.usgRate;
+                break;
+            }
+
             case 'ortg':
             case 'drtg': {
                 const aAdvanced = calculateAdvancedStats(a);
@@ -228,43 +306,78 @@ function sortPlayers(players, sortKey, direction) {
     });
 }
 
-function showGameModal(game, rating) {
-    const content = `
-        <div class="row">
-            <div class="col-6">
-                <p class="mb-1"><strong>Date:</strong> ${game.date}</p>
-                <p class="mb-1"><strong>Opponent:</strong> ${game.opponent}</p>
-                <p class="mb-1"><strong>Result:</strong> ${game.result}</p>
-                <p class="mb-1"><strong>Rating:</strong> 
-                    <span class="rating-cell rating-${Math.floor(rating)}">
-                        ${rating.toFixed(1)}
-                    </span>
-                </p>
+async function showGameModal(game, rating) {
+    try {
+        const gameDate = new Date(game.date);
+        const season = gameDate.getFullYear();
+        const scheduleResponse = await fetch(`data/${season}-schedule.json`);
+        
+        if (!scheduleResponse.ok) {
+            throw new Error(`Failed to load schedule for ${season}`);
+        }
+        
+        const scheduleData = await scheduleResponse.json();
+        
+        // Find the matching game in the schedule
+        const scheduledGame = scheduleData.find(item => {
+            const scheduleDate = new Date(item.date);
+            return scheduleDate.toDateString() === gameDate.toDateString() && 
+                   item.opponent.includes(game.opponent);
+        });
+        
+        // Determine the result text
+       
+        
+        const content = `
+            <div class="row">
+                <div class="col-6">
+                    <p class="mb-1"><strong>Date:</strong> ${game.date}</p>
+                    <p class="mb-1"><strong>Opponent:</strong> ${game.opponent}</p>
+                    
+                    <p class="mb-1"><strong>Rating:</strong> 
+                        <span class="rating-cell rating-${Math.floor(rating)}">
+                            ${rating.toFixed(1)}
+                        </span>
+                    </p>
+                </div>
+                <div class="col-6">
+                    <p class="mb-1"><strong>Minutes:</strong> ${game.min.toFixed(1)}</p>
+                    <p class="mb-1"><strong>PTS:</strong> ${game.pts}</p>
+                    <p class="mb-1"><strong>REB:</strong> ${game.reb}</p>
+                    <p class="mb-1"><strong>AST:</strong> ${game.ast}</p>
+                </div>
             </div>
-            <div class="col-6">
-                <p class="mb-1"><strong>Minutes:</strong> ${game.min.toFixed(1)}</p>
-                <p class="mb-1"><strong>PTS:</strong> ${game.pts}</p>
-                <p class="mb-1"><strong>REB:</strong> ${game.reb}</p>
-                <p class="mb-1"><strong>AST:</strong> ${game.ast}</p>
+            <div class="row mt-2">
+                <div class="col-12">
+                    <p class="mb-1"><strong>Shooting:</strong> 
+                        ${game.fgm}/${game.fga} FG • 
+                        ${game.threeFgm}/${game.threeFga} 3PT • 
+                        ${game.ftm}/${game.fta} FT
+                    </p>
+                    <p class="mb-1"><strong>Defense:</strong> 
+                        ${game.stl} STL • ${game.blk} BLK • ${game.to} TO
+                    </p>
+                </div>
             </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col-12">
-                <p class="mb-1"><strong>Shooting:</strong> 
-                    ${game.fgm}/${game.fga} FG • 
-                    ${game.threeFgm}/${game.threeFga} 3PT • 
-                    ${game.ftm}/${game.fta} FT
-                </p>
-                <p class="mb-1"><strong>Defense:</strong> 
-                    ${game.stl} STL • ${game.blk} BLK • ${game.to} TO
-                </p>
+        `;
+        
+        document.getElementById('gameStatsContent').innerHTML = content;
+        const modal = new bootstrap.Modal('#gameStatsModal');
+        modal.show();
+    } catch (error) {
+        console.error('Error showing game modal:', error);
+        // Fallback content
+        const fallbackContent = `
+            <div class="row">
+                <div class="col-12">
+                    <p>Error loading game details. Please try again.</p>
+                </div>
             </div>
-        </div>
-    `;
-    
-    document.getElementById('gameStatsContent').innerHTML = content;
-    const modal = new bootstrap.Modal('#gameStatsModal');
-    modal.show();
+        `;
+        document.getElementById('gameStatsContent').innerHTML = fallbackContent;
+        const modal = new bootstrap.Modal('#gameStatsModal');
+        modal.show();
+    }
 }
 
 function calculateGameRating(game) {
@@ -432,6 +545,7 @@ function loadPlayerList(players, season) {
             <td class="advanced-stat">${(advancedStats.tsPct * 100).toFixed(1)}%</td>
             <td class="advanced-stat">${advancedStats.per.toFixed(1)}</td>
             <td class="advanced-stat">${advancedStats.eff.toFixed(1)}</td>
+            <td class="advanced-stat">${advancedStats.usgRate.toFixed(1)}%</td>
             <td class="advanced-stat">${advancedStats.ortg.toFixed(1)}</td>
             <td class="advanced-stat">${advancedStats.drtg.toFixed(1)}</td>
             ` : ''}
@@ -532,6 +646,7 @@ function calculateAdvancedStats(player) {
             usgRate: usgRate,
             per: per, // Added back PER
             eff: eff,
+
             ortg: ortg,
             drtg: drtg,
             bpm: bpm
@@ -546,6 +661,7 @@ function calculateAdvancedStats(player) {
             usgRate: 0,
             per: 0,
             eff: 0,
+            usgRate: 0,
             ortg: 0,
             drtg: 0,
             bpm: 0
@@ -674,32 +790,56 @@ function showPlayerDetail(player, gameRatings = [], season) {
         // Update recent ratings
         const recentRatings = document.getElementById('recentRatings');
         recentRatings.innerHTML = '';
-        ratingStats.last5.forEach(rating => {
-            const ratingEl = document.createElement('div');
-            if (isNaN(rating)) {
-                ratingEl.className = 'rating-cell rating-na';
-                ratingEl.textContent = 'N/A';
-            } else {
-                ratingEl.className = `rating-cell rating-${Math.floor(rating)}`;
-                ratingEl.textContent = rating.toFixed(1);
-            }
-            recentRatings.appendChild(ratingEl);
+
+        // Combine games with ratings and sort by date ASC
+        const combinedLast5 = player.gameLogs.map((game, i) => ({
+        rating: gameRatings[i],
+        date: new Date(game.date)
+        })).sort((a, b) => a.date - b.date) // oldest → newest
+        .slice(-5); // keep last 5
+
+        // Render in reverse (newest left → oldest right)
+        [...combinedLast5].reverse().forEach(item => {
+        const ratingEl = document.createElement('div');
+        if (isNaN(item.rating)) {
+            ratingEl.className = 'rating-cell rating-na';
+            ratingEl.textContent = 'N/A';
+        } else {
+            ratingEl.className = `rating-cell rating-${Math.floor(item.rating)}`;
+            ratingEl.textContent = item.rating.toFixed(1);
+        }
+        recentRatings.appendChild(ratingEl);
         });
 
-        // Update game logs
+
+
+        // Update game logs - SORTED BY DATE (newest first)
         const gameLogsBody = document.getElementById('gameLogsBody');
-        gameLogsBody.innerHTML = player.gameLogs.map((game, index) => {
-            if (Object.keys(game).length === 0) return '';
-            const rating = gameRatings[index] || NaN;
+        
+        // Create combined array of games and ratings
+        const combined = player.gameLogs.map((game, index) => ({
+            game,
+            rating: gameRatings[index]
+        }));
+        
+        // Sort by date (newest first)
+        combined.sort((a, b) => 
+            new Date(b.game.date) - new Date(a.game.date)
+        );
+
+        gameLogsBody.innerHTML = combined.map(item => {
+            const game = item.game;
+            const rating = item.rating;
             
+            // Handle zero values properly (show 0 instead of '-')
             return `
                 <tr class="game-log-row" 
                     data-game='${JSON.stringify(game)}'
                     data-rating='${rating}'>
                     <td>${game.date || '-'}</td>
                     <td>${game.opponent || '-'}</td>
-                    <td>${game.min ? game.min.toFixed(1) : '-'}</td>
-                    <td>${game.pts || '-'}</td>
+                    <td>${typeof game.min === 'number' ? game.min.toFixed(1) : '-'}</td>
+                    <td>${typeof game.pts === 'number' ? game.pts : '0'}</td>
                     <td>
                         ${isNaN(rating) ? 
                             '<span class="rating-cell rating-na">N/A</span>' : 
@@ -848,5 +988,4 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
         console.error('Initialization error:', e);
     }
-
 });

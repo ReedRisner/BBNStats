@@ -283,29 +283,65 @@ async function loadStatsFromUpdateJson() {
     }
 };
 
-async function loadSeasonLeaders() {
+async function loadSeasonLeaders() { 
     try {
-        // Load player data
-        const response = await fetch('data/players.json');
-        if (!response.ok) throw new Error('Player data not found');
-        const playerData = await response.json();
+        // Load player data for names
+        const playersResponse = await fetch('data/players.json');
+        if (!playersResponse.ok) throw new Error('Player data not found');
+        const playerData = await playersResponse.json();
         
-        // Get players for current season
-        const players = playerData.seasons[CURRENT_SEASON]?.players || [];
-        if (players.length === 0) {
-            throw new Error('No players found for current season');
+        // Load game logs data
+        const gameLogsResponse = await fetch('data/gameLogs.json');
+        if (!gameLogsResponse.ok) throw new Error('Game logs not found');
+        const gameLogsData = await gameLogsResponse.json();
+        
+        // Get games for current season
+        const seasonGames = gameLogsData.seasons?.[CURRENT_SEASON]?.games || [];
+        if (seasonGames.length === 0) {
+            throw new Error('No games found for current season');
         }
         
-        // Calculate per-game stats
-        const playersWithStats = players.map(player => {
-            const gp = player.gp || 1; // Avoid division by zero
+        // Aggregate player stats from game logs
+        const playerStats = {};
+        
+        seasonGames.forEach(game => {
+            game.boxscore.forEach(playerGame => {
+                const number = playerGame.number.toString();
+                
+                if (!playerStats[number]) {
+                    playerStats[number] = {
+                        pts: 0,
+                        ast: 0,
+                        reb: 0,
+                        gp: 0  // Games played
+                    };
+                }
+                
+                // Accumulate stats
+                playerStats[number].pts += playerGame.pts || 0;
+                playerStats[number].ast += playerGame.ast || 0;
+                playerStats[number].reb += playerGame.reb || 0;
+                playerStats[number].gp += 1;
+            });
+        });
+        
+        // Create player objects with calculated averages
+        const playersWithStats = Object.entries(playerStats).map(([number, stats]) => {
+            // Find player info from players.json
+            const playerInfo = findPlayerInfo(playerData, number, CURRENT_SEASON);
+            
             return {
-                ...player,
-                ppg: player.pts / gp,
-                apg: player.ast / gp,
-                rpg: player.reb / gp
+                number: number,
+                name: playerInfo?.name || `Player #${number}`,
+                ppg: stats.gp > 0 ? stats.pts / stats.gp : 0,
+                apg: stats.gp > 0 ? stats.ast / stats.gp : 0,
+                rpg: stats.gp > 0 ? stats.reb / stats.gp : 0
             };
         });
+        
+        if (playersWithStats.length === 0) {
+            throw new Error('No player stats calculated');
+        }
         
         // Find leaders
         const ppgLeader = [...playersWithStats].sort((a, b) => b.ppg - a.ppg)[0];
@@ -321,9 +357,14 @@ async function loadSeasonLeaders() {
         console.error('Error loading season leaders:', error);
         // Show placeholders
         document.querySelectorAll('.leader-content').forEach(el => {
-            el.innerHTML = '<p>Stats loading...</p>';
+            el.innerHTML = '<p>No Games Played...</p>';
         });
     }
+}
+
+function findPlayerInfo(playerData, number, season) {
+    const seasonPlayers = playerData.seasons?.[season]?.players || [];
+    return seasonPlayers.find(p => p.number.toString() === number);
 }
 
 function displayLeader(elementId, player, statType) {

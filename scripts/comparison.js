@@ -1,18 +1,88 @@
 let allPlayersData = null;
+let allGameLogsData = null;
 let player1 = null;
 let player2 = null;
 let averagesChart = null;
 let shootingChart = null;
 let advancedChart = null;
 
+
+
 async function loadPlayerData() {
     try {
-        const response = await fetch('data/players.json');
-        allPlayersData = await response.json();
+        // Load players data
+        const playersResponse = await fetch('data/players.json');
+        allPlayersData = await playersResponse.json();
+        
+        // Load game logs data
+        const gameLogsResponse = await fetch('data/gameLogs.json');
+        allGameLogsData = await gameLogsResponse.json();
+        
+        // Process and attach game logs
+        processGameLogs();
+        
         setupPlayerSelects();
     } catch (error) {
         console.error('Error loading player data:', error);
     }
+}
+
+function processGameLogs() {
+    Object.keys(allPlayersData.seasons).forEach(season => {
+        const players = allPlayersData.seasons[season].players;
+        const seasonGames = allGameLogsData.seasons[season]?.games || [];
+        
+        players.forEach(player => {
+            // Initialize cumulative stats
+            player.gp = 0; // Games played
+            player.min = 0;
+            player.pts = 0;
+            player.reb = 0;
+            player.ast = 0;
+            player.stl = 0;
+            player.blk = 0;
+            player.to = 0;
+            player.fgm = 0;
+            player.fga = 0;
+            player.threeFgm = 0;
+            player.threeFga = 0;
+            player.ftm = 0;
+            player.fta = 0;
+            player.gameLogs = [];
+        });
+        
+        // Process each game
+        seasonGames.forEach(game => {
+            game.boxscore.forEach(playerStat => {
+                const player = players.find(p => p.number == playerStat.number);
+                if (player) {
+                    // Add game to player's game logs
+                    player.gameLogs.push({
+                        ...playerStat,
+                        date: game.date,
+                        opponent: game.opponent,
+                        result: game.result
+                    });
+                    
+                    // Update cumulative stats
+                    player.gp++;
+                    player.min += playerStat.min || 0;
+                    player.pts += playerStat.pts || 0;
+                    player.reb += playerStat.reb || 0;
+                    player.ast += playerStat.ast || 0;
+                    player.stl += playerStat.stl || 0;
+                    player.blk += playerStat.blk || 0;
+                    player.to += playerStat.to || 0;
+                    player.fgm += playerStat.fgm || 0;
+                    player.fga += playerStat.fga || 0;
+                    player.threeFgm += playerStat.threeFgm || 0;
+                    player.threeFga += playerStat.threeFga || 0;
+                    player.ftm += playerStat.ftm || 0;
+                    player.fta += playerStat.fta || 0;
+                }
+            });
+        });
+    });
 }
 
 function setupPlayerSelects() {
@@ -121,10 +191,18 @@ function generateStatsList(player, comparisonPlayer) {
         'ortg', 'drtg', 'usg%', 'bpm'
     ];
     
+    // Calculate advanced stats once per player
+    const advancedStats = calculateAdvancedStats(player);
+    
     return statsToCompare.map(stat => {
-        const value = getStatValue(player, stat);
-        const comparisonValue = comparisonPlayer ? getStatValue(comparisonPlayer, stat) : null;
-        const isHigher = comparisonPlayer && (parseFloat(value) > parseFloat(comparisonValue));
+        const value = getStatValue(player, advancedStats, stat);
+        const comparisonValue = comparisonPlayer ? 
+            getStatValue(comparisonPlayer, calculateAdvancedStats(comparisonPlayer), stat) : null;
+        
+        // Handle percentage values for comparison
+        const cleanValue = value.replace('%', '');
+        const cleanComparisonValue = comparisonValue ? comparisonValue.replace('%', '') : null;
+        const isHigher = comparisonPlayer && (parseFloat(cleanValue) > parseFloat(cleanComparisonValue));
 
         return `
             <div class="stat-row">
@@ -135,26 +213,29 @@ function generateStatsList(player, comparisonPlayer) {
     }).join('');
 }
 
-function getStatValue(player, stat) {
-    const gp = player.gp || 1;
-    const adv = calculateAdvancedStats(player);
+function getStatValue(player, advancedStats, stat) {
+    const gp = player.gp || 1;  // Ensure at least 1 game to prevent division by zero
     
     switch(stat.toLowerCase()) {
-        case 'ppg': return (player.pts/gp).toFixed(1);
-        case 'rpg': return (player.reb/gp).toFixed(1);
-        case 'apg': return (player.ast/gp).toFixed(1);
-        case 'fg%': return player.fga ? `${((player.fgm/player.fga)*100).toFixed(1)}%` : '-';
-        case '3p%': return player.threeFga ? `${((player.threeFgm/player.threeFga)*100).toFixed(1)}%` : '-';
-        case 'ft%': return player.fta ? `${((player.ftm/player.fta)*100).toFixed(1)}%` : '-';
-        case 'ts%': return adv.tsPct ? `${(adv.tsPct * 100).toFixed(1)}%` : '-';
-        case 'bpg': return (player.blk/gp).toFixed(1);
-        case 'spg': return (player.stl/gp).toFixed(1);
-        case 'per': return adv.per.toFixed(1);
-        case 'eff': return adv.eff.toFixed(1);
-        case 'ortg': return adv.ortg.toFixed(1);
-        case 'drtg': return adv.drtg.toFixed(1);
-        case 'usg%': return adv.usgRate.toFixed(1) + '%';
-        case 'bpm': return adv.bpm.toFixed(1);
+        case 'ppg': return (player.pts / gp).toFixed(1);
+        case 'rpg': return (player.reb / gp).toFixed(1);
+        case 'apg': return (player.ast / gp).toFixed(1);
+        case 'fg%': 
+            return player.fga > 0 ? ((player.fgm / player.fga) * 100).toFixed(1) + '%' : '-';
+        case '3p%': 
+            return player.threeFga > 0 ? ((player.threeFgm / player.threeFga) * 100).toFixed(1) + '%' : '-';
+        case 'ft%': 
+            return player.fta > 0 ? ((player.ftm / player.fta) * 100).toFixed(1) + '%' : '-';
+        case 'ts%': 
+            return advancedStats.tsPct ? (advancedStats.tsPct * 100).toFixed(1) + '%' : '-';
+        case 'bpg': return (player.blk / gp).toFixed(1);
+        case 'spg': return (player.stl / gp).toFixed(1);
+        case 'per': return advancedStats.per ? advancedStats.per.toFixed(1) : '-';
+        case 'eff': return advancedStats.eff ? advancedStats.eff.toFixed(1) : '-';
+        case 'ortg': return advancedStats.ortg ? advancedStats.ortg.toFixed(1) : '-';
+        case 'drtg': return advancedStats.drtg ? advancedStats.drtg.toFixed(1) : '-';
+        case 'usg%': return advancedStats.usgRate ? advancedStats.usgRate.toFixed(1) + '%' : '-';
+        case 'bpm': return advancedStats.bpm ? advancedStats.bpm.toFixed(1) : '-';
         default: return '-';
     }
 }
@@ -180,6 +261,10 @@ function renderComparisonChart() {
         if (chart) chart.destroy();
     });
 
+    // Calculate advanced stats once per player
+    const player1Advanced = calculateAdvancedStats(player1);
+    const player2Advanced = calculateAdvancedStats(player2);
+    
     // Create averages chart
     averagesChart = new Chart(
         document.getElementById('averagesChart').getContext('2d'),
@@ -200,19 +285,23 @@ function renderComparisonChart() {
 }
 
 function getChartConfig(stats, title, yMax) {
+    // Calculate advanced stats once per player
+    const player1Advanced = calculateAdvancedStats(player1);
+    const player2Advanced = calculateAdvancedStats(player2);
+    
     return {
         type: 'bar',
         data: {
             labels: stats.map(stat => stat.toUpperCase()),
             datasets: [{
                 label: player1.name,
-                data: stats.map(stat => parseFloat(getStatValue(player1, stat))) || 0,
+                data: stats.map(stat => parseFloat(getStatValue(player1, player1Advanced, stat))) || 0,
                 backgroundColor: 'rgba(0, 51, 160, 0.7)',
                 borderColor: 'rgba(0, 51, 160, 1)',
                 borderWidth: 2
             }, {
                 label: player2.name,
-                data: stats.map(stat => parseFloat(getStatValue(player2, stat))) || 0,
+                data: stats.map(stat => parseFloat(getStatValue(player2, player2Advanced, stat))) || 0,
                 backgroundColor: 'rgba(128, 128, 128, 0.7)',
                 borderColor: 'rgba(128, 128, 128, 1)',
                 borderWidth: 2
@@ -257,59 +346,138 @@ function getChartConfig(stats, title, yMax) {
 document.addEventListener('DOMContentLoaded', loadPlayerData);
 
 function calculateGameRating(game) {
-    try {
-        const { pts, reb, ast, stl, blk, to, fgm, fga, threeFgm, threeFga, ftm, fta } = game;
-        const weight = { 
-            pts: 0.75, 
-            reb: 0.95, 
-            ast: 1.25, 
-            stl: 2.2, 
-            blk: 2.0, 
-            to: -1.2 
-        };
-        
-        let rawScore = pts * weight.pts +
-                      reb * weight.reb +
-                      ast * weight.ast +
-                      stl * weight.stl +
-                      blk * weight.blk +
-                      to * weight.to;
+    // Extract stats from game object
+    const { min, pts, reb, ast, stl, blk, to, fgm, fga, threeFgm, threeFga, ftm, fta } = game;
+    
+    // Handle edge cases
+    if (min <= 0) return 0.0;
+    
+    // Calculate shooting percentages
+    const fgPct = fga > 0 ? fgm / fga : 0;
+    const threePct = threeFga > 0 ? threeFgm / threeFga : 0;
+    const ftPct = fta > 0 ? ftm / fta : 0;
+    
+    // Normalize stats per 36 minutes (standard for comparison)
+    const pace = 36 / min;
+    const normalizedPoints = pts * pace;
+    const normalizedRebounds = reb * pace;
+    const normalizedAssists = ast * pace;
+    const normalizedSteals = stl * pace;
+    const normalizedBlocks = blk * pace;
+    const normalizedTurnovers = to * pace;
 
-        const fgEff = fga >= 2 ? (fgm / fga) : 0;
-        const ftEff = fta >= 1 ? (ftm / fta) : 0;
-        const threeEff = threeFga >= 1 ? (threeFgm / threeFga) : 0;
-
-        rawScore += Math.min(fgEff * 1.2, 2.5);
-        rawScore += Math.min(ftEff * 0.7, 1.5);
-        rawScore += Math.min(threeEff * 1.0, 2.0);
-
-        const minuteFactor = Math.cbrt(game.min + 4) + 1.5;
-        const scaled = (rawScore / minuteFactor) * 2.8;
-        const curvedScore = 10 * (scaled / (scaled + 3.2));
-        
-        return Math.max(0.0, Math.min(10.0, parseFloat(curvedScore.toFixed(2))));
-    } catch (e) {
-        console.error('Error calculating game rating:', e);
-        return 0;
+    // OFFENSIVE RATING (0-5 points)
+    let offensiveRating = 0.9; // Base offensive rating boost
+    
+    // Points component (0-2.5 points) - more generous scaling
+    // Excellent: 18+ pts/36min = 2.5, Good: 12+ = 1.8, Average: 8+ = 1.2
+    const pointsScore = Math.min(2.5, normalizedPoints / 7.2);
+    offensiveRating += pointsScore;
+    
+    // Shooting efficiency component (0-2 points)
+    let efficiencyScore = 0.3; // Base efficiency boost
+    // Field Goal Percentage weight - more generous
+    if (fga >= 2) { // Lower threshold for meaningful attempts
+        efficiencyScore += fgPct * 1.4; // Increased multiplier
     }
+    // Three-point shooting bonus
+    if (threeFga >= 1) { // Lower threshold
+        efficiencyScore += threePct * 0.6; // Increased bonus
+    }
+    // Free throw efficiency
+    if (fta >= 1) { // Lower threshold
+        efficiencyScore += ftPct * 0.4; // Increased bonus
+    }
+    efficiencyScore = Math.min(2.0, efficiencyScore);
+    offensiveRating += efficiencyScore;
+
+    // DEFENSIVE/HUSTLE RATING (0-3 points)
+    let defensiveRating = 0;
+    
+    // Rebounds (0-1.5 points)
+    const reboundScore = Math.min(1.5, normalizedRebounds / 8); // 8+ reb/36min = max
+    defensiveRating += reboundScore;
+    
+    // Steals and Blocks (0-1.5 points)
+    const stealBlockScore = Math.min(1.5, (normalizedSteals + normalizedBlocks) / 3); // 3+ combined = max
+    defensiveRating += stealBlockScore;
+
+    // EFFICIENCY/CARE RATING (0-2 points)
+    let efficiencyCare = 2.0; // Start at max, deduct for turnovers
+    
+    // Turnover penalty
+    const turnoverPenalty = Math.min(2.0, normalizedTurnovers / 6); // 6+ TO/36min = -2.0
+    efficiencyCare -= turnoverPenalty;
+    efficiencyCare = Math.max(0, efficiencyCare);
+
+    // TOTAL RATING
+    let totalRating = offensiveRating + defensiveRating + efficiencyCare;
+    
+    // Scale to 0-10 and round to 1 decimal
+    return Math.round(Math.min(10.0, Math.max(0.0, totalRating)) * 10) / 10;
 }
 
 function calculateAverageRating(gameRatings) {
-    if (!gameRatings.length) return 0;
-    return gameRatings.reduce((a, b) => a + b, 0) / gameRatings.length;
+    // Filter out NaN values
+    const validRatings = gameRatings.filter(r => !isNaN(r));
+    if (validRatings.length === 0) return NaN;
+    
+    // If 3 or fewer games, use all ratings
+    if (validRatings.length <= 3) {
+        const sum = validRatings.reduce((a, b) => a + b, 0);
+        return parseFloat((sum / validRatings.length).toFixed(1));
+    }
+    
+    // Sort ratings from highest to lowest
+    const sortedRatings = [...validRatings].sort((a, b) => b - a);
+    
+    // Remove the lowest 3 ratings
+    const ratingsToAverage = sortedRatings.slice(0, -3);
+    
+    // Calculate average
+    const sum = ratingsToAverage.reduce((a, b) => a + b, 0);
+    return parseFloat((sum / ratingsToAverage.length).toFixed(1));
 }
 
 function calculateAdvancedStats(player) {
     try {
-        const gp = player.gp || 1;
-        
         // Basic percentages
         const fgPct = player.fga > 0 ? player.fgm / player.fga : 0;
         const threePct = player.threeFga > 0 ? player.threeFgm / player.threeFga : 0;
         const ftPct = player.fta > 0 ? player.ftm / player.fta : 0;
-        const tsPct = player.pts / (2 * (player.fga + 0.44 * player.fta)) || 0;
-
+        
         // Advanced metrics
+        const tsPct = player.pts / (2 * (player.fga + 0.44 * player.fta)) || 0;
+        
+        // Usage rate (simplified team context)
+        const teamFga = 2000; // Example team total for season
+        const usgRate = 100 * ((player.fga + 0.44 * player.fta) / teamFga) || 0;
+
+        // New BPM Formula
+        const weight = {
+            pts: 2.8,
+            reb: 1.8,
+            ast: 3.2,
+            stl: 6.0,
+            blk: 5.5,
+            to: -3.5,
+            fgMiss: -1.8,
+            ftMiss: -1.2
+        };
+
+        const rawBPM = 
+            (player.pts * weight.pts) +
+            (player.reb * weight.reb) +
+            (player.ast * weight.ast) +
+            (player.stl * weight.stl) +
+            (player.blk * weight.blk) +
+            (player.to * weight.to) +
+            ((player.fga - player.fgm) * weight.fgMiss) +
+            ((player.fta - player.ftm) * weight.ftMiss);
+
+        const bpm = (rawBPM / (player.gp || 1)) * 0.18;
+
+        // PER calculation
         const per = (
             (player.pts * 1.2) + 
             (player.reb * 1.0) + 
@@ -319,8 +487,9 @@ function calculateAdvancedStats(player) {
             (player.to * 2.0) - 
             ((player.fga - player.fgm) * 0.5) - 
             ((player.fta - player.ftm) * 0.5)
-        ) / gp;
+        ) / (player.gp || 1);
 
+        // Efficiency Rating (EFF)
         const eff = (
             player.pts + 
             (player.reb * 1.2) + 
@@ -329,34 +498,41 @@ function calculateAdvancedStats(player) {
             (player.blk * 3) - 
             (player.to * 2) - 
             ((player.fga - player.fgm) * 0.7)
-        ) / gp;
+        ) / (player.gp || 1);
 
-        const ortg = (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 || 0;
-        const drtg = 95 - ((player.stl + player.blk * 1.2) / gp * 4);
-        const usgRate = 100 * ((player.fga + 0.44 * player.fta) / 2000) || 0;
-
-        const bpm = (
-            (player.pts * 2.8) +
-            (player.reb * 1.8) +
-            (player.ast * 3.2) +
-            (player.stl * 6.0) +
-            (player.blk * 5.5) +
-            (player.to * -3.5) +
-            ((player.fga - player.fgm) * -1.8) +
-            ((player.fta - player.ftm) * -1.2)
-        ) / gp * 0.18;
+        // Offensive/Defensive Ratings
+        const ortg = (player.fga + 0.44 * player.fta + player.to) > 0 ?
+            (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 : 0;
+        
+        const drtg = player.gp > 0 
+            ? 100 - ((player.stl + player.blk * 1.2) / player.gp * 3) 
+            : 0;
 
         return {
+            fgPct: fgPct,
+            threePct: threePct,
+            ftPct: ftPct,
             tsPct: tsPct,
+            usgRate: usgRate,
             per: per,
             eff: eff,
             ortg: ortg,
             drtg: drtg,
-            usgRate: usgRate,
             bpm: bpm
         };
     } catch (e) {
         console.error('Error calculating advanced stats:', e);
-        return {};
+        return {
+            fgPct: 0,
+            threePct: 0,
+            ftPct: 0,
+            tsPct: 0,
+            usgRate: 0,
+            per: 0,
+            eff: 0,
+            ortg: 0,
+            drtg: 0,
+            bpm: 0
+        };
     }
 }
