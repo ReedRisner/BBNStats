@@ -1,7 +1,7 @@
 // Initialize data and load default season
 let allPlayersData = null;
 let allGameLogsData = null;
-let currentSortKey = 'ppg'; // Default to PPG
+let currentSortKey = 'rating'; // Default to rating
 let currentSortDirection = 'desc'; // Default to descending
 
 async function loadPlayerData() {
