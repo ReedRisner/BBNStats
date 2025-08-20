@@ -59,6 +59,22 @@
             font-weight: bold;
             position: sticky;
             top: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .boxscore-table th:hover {
+            background: #00267a;
+        }
+        
+        .boxscore-table th.sort-asc::after {
+            content: " ▲";
+            font-size: 0.8em;
+        }
+        
+        .boxscore-table th.sort-desc::after {
+            content: " ▼";
+            font-size: 0.8em;
         }
         
         .boxscore-table td {
@@ -139,8 +155,8 @@
         .rating-6 { background-color: #ffc107; }
         .rating-7 { background-color: #28a745; }
         .rating-8 { background-color: #28a745; }
-        .rating-9 { background-color: #007bff; }
-        .rating-10 { background-color: #007bff; }
+        .rating-9 { background-color: #5cd809; }
+        .rating-10 { background-color: #65fd00; }
 
         @media (max-width: 768px) {
             .boxscore-table {
@@ -198,18 +214,18 @@
                     <table class="boxscore-table">
                         <thead>
                             <tr>
-                                <th>Player</th>
-                                <th>MIN</th>
-                                <th>PTS</th>
-                                <th>REB</th>
-                                <th>AST</th>
-                                <th>STL</th>
-                                <th>BLK</th>
-                                <th>TO</th>
-                                <th>FG</th>
-                                <th>3PT</th>
-                                <th>FT</th>
-                                <th>Rating</th>
+                                <th data-sort="player">Player</th>
+                                <th data-sort="min">MIN</th>
+                                <th data-sort="pts">PTS</th>
+                                <th data-sort="reb">REB</th>
+                                <th data-sort="ast">AST</th>
+                                <th data-sort="stl">STL</th>
+                                <th data-sort="blk">BLK</th>
+                                <th data-sort="to">TO</th>
+                                <th data-sort="fg">FG</th>
+                                <th data-sort="threept">3PT</th>
+                                <th data-sort="ft">FT</th>
+                                <th data-sort="rating">Rating</th>
                             </tr>
                         </thead>
                         <tbody id="player-stats">
