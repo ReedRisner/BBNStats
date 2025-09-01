@@ -15,6 +15,7 @@ const loading = document.getElementById('loading');
 const boxscoreContent = document.getElementById('boxscore-content');
 const errorMessage = document.getElementById('error-message');
 const playerStats = document.getElementById('player-stats');
+const videoButton = document.getElementById('video-button');
 
 // Game info elements
 const opponentName = document.getElementById('opponent-name');
@@ -133,6 +134,14 @@ async function loadBoxScore() {
         const seasonGameLogs = gameLogsData.seasons[season]?.games || [];
         const gameLog = seasonGameLogs.find(g => parseGameDate(g.date) === date);
         if (!gameLog) throw new Error('Game log not found');
+        
+        // Check for video and show button if available
+        if (gameLog.video) {
+            videoButton.href = gameLog.video;
+            videoButton.style.display = 'block';
+        } else {
+            videoButton.style.display = 'none';
+        }
         
         // Load players data for names
         const playersResponse = await fetch('data/players.json');
