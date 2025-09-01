@@ -12,6 +12,7 @@
         {
           "opponent": "Kentucky Wesleyan",
           "date": "2024-10-23",
+          "video": "https://www.youtube.com/watch?v=8eoTjbILR-E",
           "boxscore": [
             {
               "number": 10,
@@ -194,6 +195,7 @@
         {
           "opponent": "Minnesota St.",
           "date": "2024-10-29",
+          "video": "https://www.youtube.com/watch?v=sYo47Kn_jSc",
           "boxscore": [
             {
               "number": 7,
@@ -392,6 +394,7 @@
         {
           "opponent": "Wright St.",
           "date": "2024-11-04",
+          "video": "https://www.youtube.com/watch?v=FYeRdpaKd5M&pp=0gcJCbIJAYcqIYzv",
           "boxscore": [
             {
               "number": 7,
@@ -590,6 +593,7 @@
         {
           "opponent": "Bucknell",
           "date": "2024-11-09",
+          "video": "https://www.youtube.com/watch?v=NZdQTipJLso",
           "boxscore": [
             {
               "number": 7,
@@ -788,6 +792,7 @@
         {
           "opponent": "Duke",
           "date": "2024-11-12",
+          "video": "https://www.youtube.com/watch?v=DyCzVrpRvnk",
           "boxscore": [
   {
     "number": 7,
@@ -954,6 +959,7 @@
         {
           "opponent": "Florida",
           "date": "2025-01-04",
+          "video": "https://www.youtube.com/watch?v=8Z6jYeKv58o",
           "boxscore": [
             {
               "number": 7,
@@ -1104,6 +1110,7 @@
         {
           "opponent": "Lipscomb",
           "date": "2024-11-19",
+          "video": "https://www.youtube.com/watch?v=Al39tUCEioY&pp=0gcJCbIJAYcqIYzv",
           "boxscore": [
   {
     "number": 7,
@@ -1302,6 +1309,7 @@
         {
           "opponent": "Georgia",
           "date": "2025-01-07",
+          "video": "https://www.youtube.com/watch?v=BwEzCtey_kI&pp=ygUda2VudHVjeSB2cyBnZW9yZ2lhIGJhc2tldGJhbGw%3D",
           "boxscore": [
   {
     "number": 7,
@@ -1468,6 +1476,7 @@
         {
           "opponent": "Mississippi St.",
           "date": "2025-01-11",
+          "video": "https://www.youtube.com/watch?v=Kg1s0OolDxY",
           "boxscore": [
   {
     "number": 7,
@@ -1618,6 +1627,7 @@
         {
           "opponent": "Jackson St.",
           "date": "2024-11-22",
+          "video": "https://www.youtube.com/watch?v=LkWY05NhqvA",
           "boxscore": [
   {
     "number": 7,
@@ -1816,6 +1826,7 @@
         {
           "opponent": "Western Ky.",
           "date": "2024-11-26",
+          "video": "https://www.youtube.com/watch?v=xvj1QvT3R2M",
           "boxscore": [
   {
     "number": 7,
@@ -1982,6 +1993,7 @@
         {
           "opponent": "Texas A&M",
           "date": "2025-01-14",
+          "video": "https://www.youtube.com/watch?v=ClFE0h51X2Q",
           "boxscore": [
   {
     "number": 7,
@@ -2132,6 +2144,7 @@
         {
           "opponent": "Alabama",
           "date": "2025-01-18",
+          "video": "https://www.youtube.com/watch?v=0Jwg1v46WbE&pp=ygUda2VudHVjeSB2cyBhbGFiYW1hIGJhc2tldGJhbGw%3D",
           "boxscore": [
   {
     "number": 7,
@@ -2282,6 +2295,7 @@
         {
           "opponent": "Georgia St.",
           "date": "2024-11-29",
+          "video": "https://www.youtube.com/watch?v=ehgMt72jTRY",
           "boxscore": [
   {
     "number": 7,
@@ -2432,6 +2446,7 @@
         {
           "opponent": "Clemson",
           "date": "2024-12-03",
+          "video": "https://www.youtube.com/watch?v=2G5jjiYbMTU&pp=ygUda2VudHVjeSB2cyBjbGVtc29pbmJhc2tldGJhbGw%3D",
           "boxscore": [
             {
               "number": 7,
@@ -2582,6 +2597,7 @@
         {
           "opponent": "Vanderbilt",
           "date": "2025-01-25",
+          "video": "https://www.youtube.com/watch?v=XSYQZWXdN98&pp=ygUha2VudHVjeSB2cyB2YW5kZXJiaWx0ICBiYXNrZXRiYWxs",
           "boxscore": [
   {
     "number": 15,
@@ -2748,6 +2764,7 @@
         {
           "opponent": "Tennessee",
           "date": "2025-01-28",
+          "video": "https://www.youtube.com/watch?v=gkb-OR0kMAc",
           "boxscore": [
   {
     "number": 15,
@@ -2914,6 +2931,7 @@
         {
           "opponent": "Gonzaga",
           "date": "2024-12-07",
+          "video": "https://www.youtube.com/watch?v=ywiwD03gF_o",
           "boxscore": [
             {
               "number": 7,
@@ -3080,6 +3098,7 @@
         {
           "opponent": "Arkansas",
           "date": "2025-02-01",
+          "video": "https://www.youtube.com/watch?v=Yu_-XuvesYA&pp=ygUea2VudHVjeSB2cyBhcmthbnNhcyBiYXNrZXRiYWxs",
           "boxscore": [
   {
     "number": 15,
@@ -3230,6 +3249,7 @@
         {
           "opponent": "Colgate",
           "date": "2024-12-11",
+          "video": "https://www.youtube.com/watch?v=b_G9W95RzaY",
           "boxscore": [
             {
               "number": 7,
@@ -3396,6 +3416,7 @@
         {
           "opponent": "Ole Miss",
           "date": "2025-02-04",
+          "video": "https://www.youtube.com/watch?v=vwAoyED9fmE&pp=ygUea2VudHVjeSB2cyBvbGUgbWlzcyBiYXNrZXRiYWxs",
           "boxscore": [
   {
     "number": 15,
@@ -3562,6 +3583,7 @@
         {
           "opponent": "Louisville",
           "date": "2024-12-14",
+          "video": "https://www.youtube.com/watch?v=gqNFI4vzlSQ",
           "boxscore": [
             {
               "number": 7,
@@ -3712,6 +3734,7 @@
         {
           "opponent": "South Carolina",
           "date": "2025-02-08",
+          "video": "https://www.youtube.com/watch?v=Z1wdhcxV5yI",
           "boxscore": [
   {
     "number": 15,
@@ -3894,6 +3917,7 @@
         {
           "opponent": "Tennessee",
           "date": "2025-02-11",
+          "video": "https://www.youtube.com/watch?v=o4_fAGir-a8",
           "boxscore": [
   {
     "number": 15,
@@ -4060,6 +4084,7 @@
         {
           "opponent": "Texas",
           "date": "2025-02-15",
+          "video": "https://www.youtube.com/watch?v=A16Oulplbxg&pp=ygUba2VudHVjeSB2cyB0ZXhhcyBiYXNrZXRiYWxs",
           "boxscore": [
   {
     "number": 15,
@@ -4210,6 +4235,7 @@
         {
           "opponent": "Vanderbilt",
           "date": "2025-02-19",
+          "video": "https://www.youtube.com/watch?v=NyWs9-tS7sg",
           "boxscore": [
   {
     "number": 7,
@@ -4360,6 +4386,7 @@
         {
           "opponent": "Alabama",
           "date": "2025-02-22",
+          "video": "https://www.youtube.com/watch?v=pem5N6yWQEc&pp=ygUda2VudHVjeSB2cyBhbGFiYW1hIGJhc2tldGJhbGw%3D",
           "boxscore": [
   {
     "number": 7,
@@ -4510,6 +4537,7 @@
         {
           "opponent": "Ohio St.",
           "date": "2024-12-21",
+          "video": "https://www.youtube.com/watch?v=wuBs_zxpsZ0&pp=ygUfa2VudHVjeSB2cyBvaGlvIHNhdGUgYmFza2V0YmFsbA%3D%3D",
           "boxscore": [
             {
               "number": 7,
@@ -4676,6 +4704,7 @@
         {
           "opponent": "Brown",
           "date": "2024-12-31",
+          "video": "https://www.youtube.com/watch?v=JEBL0OzyfnU&pp=0gcJCbIJAYcqIYzv",
           "boxscore": [
   {
     "number": 7,
@@ -4874,6 +4903,7 @@
         {
   "opponent": "Oklahoma",
   "date": "2025-02-26",
+  "video": "https://www.youtube.com/watch?v=tou08aOETSw",
   "boxscore": [
     {
       "number": 7,
@@ -5056,6 +5086,7 @@
         {
   "opponent": "Missouri",
   "date": "2025-03-08",
+  "video": "https://www.youtube.com/watch?v=zHmydxcXPjg",
   "boxscore": [
     {
       "number": 7,
@@ -5222,6 +5253,7 @@
         {
   "opponent": "LSU",
   "date": "2025-03-04",
+  "video": "https://www.youtube.com/watch?v=EMloB1KIFMw",
   "boxscore": [
     {
       "number": 7,
@@ -5388,6 +5420,7 @@
         {
   "opponent": "Auburn",
   "date": "2025-03-01",
+  "video": "https://www.youtube.com/watch?v=eQLvlhQqCQI&pp=ygUca2VudHVjeSB2cyBhdWJ1cm4gYmFza2V0YmFsbA%3D%3D",
   "boxscore": [
     {
       "number": 7,
@@ -5554,6 +5587,7 @@
         {
   "opponent": "Oklahoma",
   "date": "2025-03-13",
+  "video": "https://www.youtube.com/watch?v=dCw4hvk5NcY",
   "boxscore": [
     {
       "number": 7,
@@ -5720,6 +5754,7 @@
         {
           "opponent": "Alabama",
           "date": "2025-03-14",
+          "video": "https://www.youtube.com/watch?v=wqgCaO87rGY&pp=ygUda2VudHVjeSB2cyBhbGFiYW1hIGJhc2tldGJhbGw%3D",
           "boxscore": [
             {
               "number": 7,
@@ -5870,6 +5905,7 @@
         {
           "opponent": "Illinois",
           "date": "2025-03-23",
+          "video": "https://www.youtube.com/watch?v=4Z787Cyz7O4&pp=ygUfa2VudHVja3kgdnMgaWxsaW5vaXMgYmFza2V0YmFsbA%3D%3D",
           "boxscore": [
             {
               "number": 7,
@@ -6020,6 +6056,7 @@
         {
           "opponent": "Troy",
           "date": "2025-03-21",
+          "video": "https://www.youtube.com/watch?v=hf-zrJ-5qN8&pp=ygUaa2VudHVjeSB2cyB0cm95IGJhc2tldGJhbGw%3D",
           "boxscore": [
             {
               "number": 7,
@@ -6234,6 +6271,7 @@
         {
           "opponent": "Tennessee",
           "date": "2025-03-28",
+          "video": "https://www.youtube.com/watch?v=nVtgxOcCBT8&pp=ygUta2VudHVja3kgdnMgdGVubmVzZWUgbWFyY2ggbWFkbmVzcyBiYXNrZXRiYWxs",
           "boxscore": [
             {
               "number": 7,
