@@ -26,6 +26,8 @@ async function loadPlayerData() {
     }
 }
 
+// ... existing code ...
+
 async function processGameLogs() {
     // Reset and calculate player stats from game logs
     for (const season of Object.keys(allPlayersData.seasons)) {
@@ -47,15 +49,24 @@ async function processGameLogs() {
         const exhibitionGames = {};
         scheduleData.forEach(game => {
             if (game.exh) {
-                // Normalize date format for comparison (handle different date formats)
-                const gameDate = new Date(game.date);
-                const normalizedDate = gameDate.toISOString().split('T')[0];
-                
-                // Use both opponent and date as key to avoid conflicts
-                const key = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
-                exhibitionGames[key] = true;
-                
-                console.log(`Exhibition game: ${key}`);
+                try {
+                    // Validate date format before processing
+                    if (!game.date || isNaN(new Date(game.date).getTime())) {
+                        console.warn(`Invalid date in schedule: ${game.date}`);
+                        return;
+                    }
+                    
+                    const gameDate = new Date(game.date);
+                    const normalizedDate = gameDate.toISOString().split('T')[0];
+                    
+                    // Use both opponent and date as key to avoid conflicts
+                    const key = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
+                    exhibitionGames[key] = true;
+                    
+                    console.log(`Exhibition game: ${key}`);
+                } catch (error) {
+                    console.error(`Error processing schedule game date: ${game.date}`, error);
+                }
             }
         });
         
@@ -82,58 +93,67 @@ async function processGameLogs() {
         
         // Process each game
         seasonGames.forEach(game => {
-            // Normalize date format for comparison (handle different date formats)
-            const gameDate = new Date(game.date);
-            const normalizedDate = gameDate.toISOString().split('T')[0];
-            
-            // Create key for comparison (remove "vs " and "(EXH)" from opponent name)
-            const opponentKey = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
-            
-            // Check if this is an exhibition game
-            const isExhibition = exhibitionGames[opponentKey] || false;
-            
-            console.log(`Game: ${opponentKey}, isExhibition: ${isExhibition}`);
-            
-            game.boxscore.forEach(playerStat => {
-                const player = players.find(p => p.number == playerStat.number);
-                if (player) {
-                    // Add game to player's game logs (all games)
-                    player.gameLogs.push({
-                        ...playerStat,
-                        date: game.date,
-                        opponent: game.opponent,
-                        result: game.result,
-                        exh: isExhibition
-                    });
-                    
-                    // Only update cumulative stats for non-exhibition games
-                    if (!isExhibition) {
-                        player.nonExhGameLogs.push({
+            try {
+                // Validate date format before processing
+                if (!game.date || isNaN(new Date(game.date).getTime())) {
+                    console.warn(`Invalid date in game log: ${game.date}`);
+                    return;
+                }
+                
+                const gameDate = new Date(game.date);
+                const normalizedDate = gameDate.toISOString().split('T')[0];
+                
+                // Create key for comparison (remove "vs " and "(EXH)" from opponent name)
+                const opponentKey = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
+                
+                // Check if this is an exhibition game
+                const isExhibition = exhibitionGames[opponentKey] || false;
+                
+                console.log(`Game: ${opponentKey}, isExhibition: ${isExhibition}`);
+                
+                game.boxscore.forEach(playerStat => {
+                    const player = players.find(p => p.number == playerStat.number);
+                    if (player) {
+                        // Add game to player's game logs (all games)
+                        player.gameLogs.push({
                             ...playerStat,
                             date: game.date,
                             opponent: game.opponent,
                             result: game.result,
-                            exh: false
+                            exh: isExhibition
                         });
                         
-                        // Update cumulative stats
-                        player.gp++;
-                        player.min += playerStat.min || 0;
-                        player.pts += playerStat.pts || 0;
-                        player.reb += playerStat.reb || 0;
-                        player.ast += playerStat.ast || 0;
-                        player.stl += playerStat.stl || 0;
-                        player.blk += playerStat.blk || 0;
-                        player.to += playerStat.to || 0;
-                        player.fgm += playerStat.fgm || 0;
-                        player.fga += playerStat.fga || 0;
-                        player.threeFgm += playerStat.threeFgm || 0;
-                        player.threeFga += playerStat.threeFga || 0;
-                        player.ftm += playerStat.ftm || 0;
-                        player.fta += playerStat.fta || 0;
+                        // Only update cumulative stats for non-exhibition games
+                        if (!isExhibition) {
+                            player.nonExhGameLogs.push({
+                                ...playerStat,
+                                date: game.date,
+                                opponent: game.opponent,
+                                result: game.result,
+                                exh: false
+                            });
+                            
+                            // Update cumulative stats
+                            player.gp++;
+                            player.min += playerStat.min || 0;
+                            player.pts += playerStat.pts || 0;
+                            player.reb += playerStat.reb || 0;
+                            player.ast += playerStat.ast || 0;
+                            player.stl += playerStat.stl || 0;
+                            player.blk += playerStat.blk || 0;
+                            player.to += playerStat.to || 0;
+                            player.fgm += playerStat.fgm || 0;
+                            player.fga += playerStat.fga || 0;
+                            player.threeFgm += playerStat.threeFgm || 0;
+                            player.threeFga += playerStat.threeFga || 0;
+                            player.ftm += playerStat.ftm || 0;
+                            player.fta += playerStat.fta || 0;
+                        }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error(`Error processing game: ${game.opponent} on ${game.date}`, error);
+            }
         });
     }
 }

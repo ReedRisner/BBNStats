@@ -283,7 +283,7 @@ async function loadStatsFromUpdateJson() {
     }
 };
 
-async function loadSeasonLeaders() { 
+async function loadSeasonLeaders() {
     try {
         // Load player data for names
         const playersResponse = await fetch('data/players.json');
@@ -295,34 +295,87 @@ async function loadSeasonLeaders() {
         if (!gameLogsResponse.ok) throw new Error('Game logs not found');
         const gameLogsData = await gameLogsResponse.json();
         
+        // Load schedule data for current season to identify exhibition games
+        let scheduleData = [];
+        try {
+            const scheduleResponse = await fetch(`data/${CURRENT_SEASON}-schedule.json`);
+            if (scheduleResponse.ok) {
+                scheduleData = await scheduleResponse.json();
+            }
+        } catch (error) {
+            console.error(`Error loading schedule for ${CURRENT_SEASON}:`, error);
+        }
+        
+        // Create a map of exhibition games by opponent and date
+        const exhibitionGames = {};
+        scheduleData.forEach(game => {
+            if (game.exh) {
+                try {
+                    if (!game.date || isNaN(new Date(game.date).getTime())) {
+                        console.warn(`Invalid date in schedule: ${game.date}`);
+                        return;
+                    }
+                    
+                    const gameDate = new Date(game.date);
+                    const normalizedDate = gameDate.toISOString().split('T')[0];
+                    
+                    const key = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
+                    exhibitionGames[key] = true;
+                } catch (error) {
+                    console.error(`Error processing schedule game date: ${game.date}`, error);
+                }
+            }
+        });
+        
         // Get games for current season
         const seasonGames = gameLogsData.seasons?.[CURRENT_SEASON]?.games || [];
         if (seasonGames.length === 0) {
             throw new Error('No games found for current season');
         }
         
-        // Aggregate player stats from game logs
+        // Aggregate player stats from game logs, skipping exhibition games
         const playerStats = {};
         
         seasonGames.forEach(game => {
-            game.boxscore.forEach(playerGame => {
-                const number = playerGame.number.toString();
-                
-                if (!playerStats[number]) {
-                    playerStats[number] = {
-                        pts: 0,
-                        ast: 0,
-                        reb: 0,
-                        gp: 0  // Games played
-                    };
+            try {
+                // Check if this is an exhibition game
+                if (!game.date || isNaN(new Date(game.date).getTime())) {
+                    console.warn(`Invalid date in game log: ${game.date}`);
+                    return;
                 }
                 
-                // Accumulate stats
-                playerStats[number].pts += playerGame.pts || 0;
-                playerStats[number].ast += playerGame.ast || 0;
-                playerStats[number].reb += playerGame.reb || 0;
-                playerStats[number].gp += 1;
-            });
+                const gameDate = new Date(game.date);
+                const normalizedDate = gameDate.toISOString().split('T')[0];
+                
+                const opponentKey = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
+                const isExhibition = exhibitionGames[opponentKey] || false;
+                
+                // Skip exhibition games
+                if (isExhibition) {
+                    return;
+                }
+                
+                game.boxscore.forEach(playerGame => {
+                    const number = playerGame.number.toString();
+                    
+                    if (!playerStats[number]) {
+                        playerStats[number] = {
+                            pts: 0,
+                            ast: 0,
+                            reb: 0,
+                            gp: 0  // Games played
+                        };
+                    }
+                    
+                    // Accumulate stats
+                    playerStats[number].pts += playerGame.pts || 0;
+                    playerStats[number].ast += playerGame.ast || 0;
+                    playerStats[number].reb += playerGame.reb || 0;
+                    playerStats[number].gp += 1;
+                });
+            } catch (error) {
+                console.error(`Error processing game: ${game.opponent} on ${game.date}`, error);
+            }
         });
         
         // Create player objects with calculated averages
@@ -353,8 +406,12 @@ async function loadSeasonLeaders() {
         displayLeader('apgLeader', apgLeader, 'apg');
         displayLeader('rpgLeader', rpgLeader, 'rpg');
         
-    } catch (error) {
-        console.error('Error loading season leaders:', error);
+     } catch (error) {
+        if (error.message === 'No games found for current season') {
+            console.error('No Games Played Yet This Season');
+        } else {
+            console.error('Error loading season leaders:', error);
+        }
         // Show placeholders
         document.querySelectorAll('.leader-content').forEach(el => {
             el.innerHTML = '<p>No Games Played...</p>';

@@ -12,29 +12,69 @@ async function loadPlayerData() {
     try {
         // Load players data
         const playersResponse = await fetch('data/players.json');
+        if (!playersResponse.ok) throw new Error(`HTTP error! status: ${playersResponse.status}`);
         allPlayersData = await playersResponse.json();
         
         // Load game logs data
         const gameLogsResponse = await fetch('data/gameLogs.json');
+        if (!gameLogsResponse.ok) throw new Error('Failed to load game logs');
         allGameLogsData = await gameLogsResponse.json();
         
-        // Process and attach game logs
-        processGameLogs();
+        // Process game logs and calculate stats
+        await processGameLogs();
         
         setupPlayerSelects();
     } catch (error) {
         console.error('Error loading player data:', error);
+        alert('Failed to load player data. Please check console for details.');
     }
 }
 
-function processGameLogs() {
-    Object.keys(allPlayersData.seasons).forEach(season => {
+async function processGameLogs() {
+    // Reset and calculate player stats from game logs
+    for (const season of Object.keys(allPlayersData.seasons)) {
         const players = allPlayersData.seasons[season].players;
         const seasonGames = allGameLogsData.seasons[season]?.games || [];
         
+        // Load schedule data for this season to identify exhibition games
+        let scheduleData = [];
+        try {
+            const scheduleResponse = await fetch(`data/${season}-schedule.json`);
+            if (scheduleResponse.ok) {
+                scheduleData = await scheduleResponse.json();
+            }
+        } catch (error) {
+            console.error(`Error loading schedule for ${season}:`, error);
+        }
+        
+        // Create a map of exhibition games by opponent and date
+        const exhibitionGames = {};
+        scheduleData.forEach(game => {
+            if (game.exh) {
+                try {
+                    // Validate date format before processing
+                    if (!game.date || isNaN(new Date(game.date).getTime())) {
+                        console.warn(`Invalid date in schedule: ${game.date}`);
+                        return;
+                    }
+                    
+                    const gameDate = new Date(game.date);
+                    const normalizedDate = gameDate.toISOString().split('T')[0];
+                    
+                    // Use both opponent and date as key to avoid conflicts
+                    const key = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
+                    exhibitionGames[key] = true;
+                    
+                    console.log(`Exhibition game: ${key}`);
+                } catch (error) {
+                    console.error(`Error processing schedule game date: ${game.date}`, error);
+                }
+            }
+        });
+        
+        // Initialize stats for all players
         players.forEach(player => {
-            // Initialize cumulative stats
-            player.gp = 0; // Games played
+            // Reset cumulative stats
             player.min = 0;
             player.pts = 0;
             player.reb = 0;
@@ -48,41 +88,76 @@ function processGameLogs() {
             player.threeFga = 0;
             player.ftm = 0;
             player.fta = 0;
+            player.gp = 0; // Games played
             player.gameLogs = [];
+            player.nonExhGameLogs = []; // Separate array for non-exhibition games
         });
         
         // Process each game
         seasonGames.forEach(game => {
-            game.boxscore.forEach(playerStat => {
-                const player = players.find(p => p.number == playerStat.number);
-                if (player) {
-                    // Add game to player's game logs
-                    player.gameLogs.push({
-                        ...playerStat,
-                        date: game.date,
-                        opponent: game.opponent,
-                        result: game.result
-                    });
-                    
-                    // Update cumulative stats
-                    player.gp++;
-                    player.min += playerStat.min || 0;
-                    player.pts += playerStat.pts || 0;
-                    player.reb += playerStat.reb || 0;
-                    player.ast += playerStat.ast || 0;
-                    player.stl += playerStat.stl || 0;
-                    player.blk += playerStat.blk || 0;
-                    player.to += playerStat.to || 0;
-                    player.fgm += playerStat.fgm || 0;
-                    player.fga += playerStat.fga || 0;
-                    player.threeFgm += playerStat.threeFgm || 0;
-                    player.threeFga += playerStat.threeFga || 0;
-                    player.ftm += playerStat.ftm || 0;
-                    player.fta += playerStat.fta || 0;
+            try {
+                // Validate date format before processing
+                if (!game.date || isNaN(new Date(game.date).getTime())) {
+                    console.warn(`Invalid date in game log: ${game.date}`);
+                    return;
                 }
-            });
+                
+                const gameDate = new Date(game.date);
+                const normalizedDate = gameDate.toISOString().split('T')[0];
+                
+                // Create key for comparison (remove "vs " and "(EXH)" from opponent name)
+                const opponentKey = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
+                
+                // Check if this is an exhibition game
+                const isExhibition = exhibitionGames[opponentKey] || false;
+                
+                console.log(`Game: ${opponentKey}, isExhibition: ${isExhibition}`);
+                
+                game.boxscore.forEach(playerStat => {
+                    const player = players.find(p => p.number == playerStat.number);
+                    if (player) {
+                        // Add game to player's game logs (all games)
+                        player.gameLogs.push({
+                            ...playerStat,
+                            date: game.date,
+                            opponent: game.opponent,
+                            result: game.result,
+                            exh: isExhibition
+                        });
+                        
+                        // Only update cumulative stats for non-exhibition games
+                        if (!isExhibition) {
+                            player.nonExhGameLogs.push({
+                                ...playerStat,
+                                date: game.date,
+                                opponent: game.opponent,
+                                result: game.result,
+                                exh: false
+                            });
+                            
+                            // Update cumulative stats
+                            player.gp++;
+                            player.min += playerStat.min || 0;
+                            player.pts += playerStat.pts || 0;
+                            player.reb += playerStat.reb || 0;
+                            player.ast += playerStat.ast || 0;
+                            player.stl += playerStat.stl || 0;
+                            player.blk += playerStat.blk || 0;
+                            player.to += playerStat.to || 0;
+                            player.fgm += playerStat.fgm || 0;
+                            player.fga += playerStat.fga || 0;
+                            player.threeFgm += playerStat.threeFgm || 0;
+                            player.threeFga += playerStat.threeFga || 0;
+                            player.ftm += playerStat.ftm || 0;
+                            player.fta += playerStat.fta || 0;
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error(`Error processing game: ${game.opponent} on ${game.date}`, error);
+            }
         });
-    });
+    }
 }
 
 function setupPlayerSelects() {
