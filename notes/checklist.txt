@@ -1,0 +1,7 @@
+Checklist after everygame:
+
+update.json (Stats and Rankings)
+schedule-2025.json (Game Result)
+gameLogs.json (Upload Box Score)
+
+
