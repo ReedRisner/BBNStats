@@ -17,7 +17,7 @@ async function loadPlayerData() {
         allGameLogsData = await gameLogsResponse.json();
         
         // Process game logs and calculate stats
-        processGameLogs();
+        await processGameLogs();
         
         loadPlayerStats('2025');
     } catch (error) {
@@ -26,11 +26,38 @@ async function loadPlayerData() {
     }
 }
 
-function processGameLogs() {
+async function processGameLogs() {
     // Reset and calculate player stats from game logs
-    Object.keys(allPlayersData.seasons).forEach(season => {
+    for (const season of Object.keys(allPlayersData.seasons)) {
         const players = allPlayersData.seasons[season].players;
         const seasonGames = allGameLogsData.seasons[season]?.games || [];
+        
+        // Load schedule data for this season to identify exhibition games
+        let scheduleData = [];
+        try {
+            const scheduleResponse = await fetch(`data/${season}-schedule.json`);
+            if (scheduleResponse.ok) {
+                scheduleData = await scheduleResponse.json();
+            }
+        } catch (error) {
+            console.error(`Error loading schedule for ${season}:`, error);
+        }
+        
+        // Create a map of exhibition games by opponent and date
+        const exhibitionGames = {};
+        scheduleData.forEach(game => {
+            if (game.exh) {
+                // Normalize date format for comparison (handle different date formats)
+                const gameDate = new Date(game.date);
+                const normalizedDate = gameDate.toISOString().split('T')[0];
+                
+                // Use both opponent and date as key to avoid conflicts
+                const key = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
+                exhibitionGames[key] = true;
+                
+                console.log(`Exhibition game: ${key}`);
+            }
+        });
         
         // Initialize stats for all players
         players.forEach(player => {
@@ -50,43 +77,68 @@ function processGameLogs() {
             player.fta = 0;
             player.gp = 0; // Games played
             player.gameLogs = [];
+            player.nonExhGameLogs = []; // Separate array for non-exhibition games
         });
         
         // Process each game
         seasonGames.forEach(game => {
+            // Normalize date format for comparison (handle different date formats)
+            const gameDate = new Date(game.date);
+            const normalizedDate = gameDate.toISOString().split('T')[0];
+            
+            // Create key for comparison (remove "vs " and "(EXH)" from opponent name)
+            const opponentKey = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
+            
+            // Check if this is an exhibition game
+            const isExhibition = exhibitionGames[opponentKey] || false;
+            
+            console.log(`Game: ${opponentKey}, isExhibition: ${isExhibition}`);
+            
             game.boxscore.forEach(playerStat => {
                 const player = players.find(p => p.number == playerStat.number);
                 if (player) {
-                    // Add game to player's game logs
+                    // Add game to player's game logs (all games)
                     player.gameLogs.push({
                         ...playerStat,
                         date: game.date,
                         opponent: game.opponent,
-                        result: game.result
+                        result: game.result,
+                        exh: isExhibition
                     });
                     
-                    // Update cumulative stats
-                    player.gp++;
-                    player.min += playerStat.min || 0;
-                    player.pts += playerStat.pts || 0;
-                    player.reb += playerStat.reb || 0;
-                    player.ast += playerStat.ast || 0;
-                    player.stl += playerStat.stl || 0;
-                    player.blk += playerStat.blk || 0;
-                    player.to += playerStat.to || 0;
-                    player.fgm += playerStat.fgm || 0;
-                    player.fga += playerStat.fga || 0;
-                    player.threeFgm += playerStat.threeFgm || 0;
-                    player.threeFga += playerStat.threeFga || 0;
-                    player.ftm += playerStat.ftm || 0;
-                    player.fta += playerStat.fta || 0;
+                    // Only update cumulative stats for non-exhibition games
+                    if (!isExhibition) {
+                        player.nonExhGameLogs.push({
+                            ...playerStat,
+                            date: game.date,
+                            opponent: game.opponent,
+                            result: game.result,
+                            exh: false
+                        });
+                        
+                        // Update cumulative stats
+                        player.gp++;
+                        player.min += playerStat.min || 0;
+                        player.pts += playerStat.pts || 0;
+                        player.reb += playerStat.reb || 0;
+                        player.ast += playerStat.ast || 0;
+                        player.stl += playerStat.stl || 0;
+                        player.blk += playerStat.blk || 0;
+                        player.to += playerStat.to || 0;
+                        player.fgm += playerStat.fgm || 0;
+                        player.fga += playerStat.fga || 0;
+                        player.threeFgm += playerStat.threeFgm || 0;
+                        player.threeFga += playerStat.threeFga || 0;
+                        player.ftm += playerStat.ftm || 0;
+                        player.fta += playerStat.fta || 0;
+                    }
                 }
             });
         });
-    });
+    }
 }
 
-// Rest of the file remains the same with minor adjustments to use calculated stats
+// Rest of the file remains the same with adjustments to use non-exhibition games
 // ==============================================================================
 
 document.getElementById('advancedStatsToggle').addEventListener('change', function() {
@@ -100,7 +152,8 @@ function loadPlayerGrid(players, season) {
   gridContainer.innerHTML = '';
   
   players.forEach(player => {
-    const gameRatings = (player.gameLogs || []).map(calculateGameRating);
+    // Use non-exhibition games for ratings
+    const gameRatings = (player.nonExhGameLogs || []).map(calculateGameRating);
     const avgRating = calculateAverageRating(gameRatings);
     
     // Handle NaN rating
@@ -175,7 +228,7 @@ document.getElementById('gridViewToggle').addEventListener('change', function() 
   
   if (this.checked) {
     playerListSection.style.display = 'none';
-    playersGridView.style.display = 'grid'; // Changed to 'grid'
+    playersGridView.style.display = 'grid';
     loadPlayerStats(document.getElementById('seasonSelect').value);
   } else {
     playerListSection.style.display = 'block';
@@ -189,8 +242,8 @@ function sortPlayers(players, sortKey, direction) {
 
         switch (sortKey) {
             case 'rating':
-                const aRatings = (a.gameLogs || []).map(calculateGameRating);
-                const bRatings = (b.gameLogs || []).map(calculateGameRating);
+                const aRatings = (a.nonExhGameLogs || []).map(calculateGameRating);
+                const bRatings = (b.nonExhGameLogs || []).map(calculateGameRating);
                 aValue = calculateAverageRating(aRatings);
                 bValue = calculateAverageRating(bRatings);
                 break;
@@ -233,7 +286,6 @@ function sortPlayers(players, sortKey, direction) {
             case 'ppg':
             case 'rpg':
             case 'apg':
-                // Fixed per-game stats calculation
                 const statMap = {
                     ppg: 'pts',
                     rpg: 'reb',
@@ -265,7 +317,6 @@ function sortPlayers(players, sortKey, direction) {
                 break;
             case 'per':
             case 'eff':
-                // Use pre-calculated values from advanced stats
                 const aAdvanced = calculateAdvancedStats(a);
                 const bAdvanced = calculateAdvancedStats(b);
                 aValue = aAdvanced[sortKey];
@@ -325,15 +376,12 @@ async function showGameModal(game, rating) {
                    item.opponent.includes(game.opponent);
         });
         
-        // Determine the result text
-       
-        
         const content = `
             <div class="row">
                 <div class="col-6">
                     <p class="mb-1"><strong>Date:</strong> ${game.date}</p>
                     <p class="mb-1"><strong>Opponent:</strong> ${game.opponent}</p>
-                    
+                    ${game.exh ? '<p class="mb-1 text-warning"><strong>Exhibition Game</strong></p>' : ''}
                     <p class="mb-1"><strong>Rating:</strong> 
                         <span class="rating-cell rating-${Math.floor(rating)}">
                             ${rating.toFixed(1)}
@@ -366,7 +414,6 @@ async function showGameModal(game, rating) {
         modal.show();
     } catch (error) {
         console.error('Error showing game modal:', error);
-        // Fallback content
         const fallbackContent = `
             <div class="row">
                 <div class="col-12">
@@ -381,18 +428,14 @@ async function showGameModal(game, rating) {
 }
 
 function calculateGameRating(game) {
-    // Extract stats from game object
     const { min, pts, reb, ast, stl, blk, to, fgm, fga, threeFgm, threeFga, ftm, fta } = game;
     
-    // Handle edge cases
     if (min <= 0) return 0.0;
     
-    // Calculate shooting percentages
     const fgPct = fga > 0 ? fgm / fga : 0;
     const threePct = threeFga > 0 ? threeFgm / threeFga : 0;
     const ftPct = fta > 0 ? ftm / fta : 0;
     
-    // Normalize stats per 36 minutes (standard for comparison)
     const pace = 36 / min;
     const normalizedPoints = pts * pace;
     const normalizedRebounds = reb * pace;
@@ -401,75 +444,52 @@ function calculateGameRating(game) {
     const normalizedBlocks = blk * pace;
     const normalizedTurnovers = to * pace;
 
-    // OFFENSIVE RATING (0-5 points)
-    let offensiveRating = 0.9; // Base offensive rating boost
-    
-    // Points component (0-2.5 points) - more generous scaling
-    // Excellent: 18+ pts/36min = 2.5, Good: 12+ = 1.8, Average: 8+ = 1.2
+    let offensiveRating = 0.9;
     const pointsScore = Math.min(2.5, normalizedPoints / 7.2);
     offensiveRating += pointsScore;
     
-    // Shooting efficiency component (0-2 points)
-    let efficiencyScore = 0.3; // Base efficiency boost
-    // Field Goal Percentage weight - more generous
-    if (fga >= 2) { // Lower threshold for meaningful attempts
-        efficiencyScore += fgPct * 1.4; // Increased multiplier
+    let efficiencyScore = 0.3;
+    if (fga >= 2) {
+        efficiencyScore += fgPct * 1.4;
     }
-    // Three-point shooting bonus
-    if (threeFga >= 1) { // Lower threshold
-        efficiencyScore += threePct * 0.6; // Increased bonus
+    if (threeFga >= 1) {
+        efficiencyScore += threePct * 0.6;
     }
-    // Free throw efficiency
-    if (fta >= 1) { // Lower threshold
-        efficiencyScore += ftPct * 0.4; // Increased bonus
+    if (fta >= 1) {
+        efficiencyScore += ftPct * 0.4;
     }
     efficiencyScore = Math.min(2.0, efficiencyScore);
     offensiveRating += efficiencyScore;
 
-    // DEFENSIVE/HUSTLE RATING (0-3 points)
     let defensiveRating = 0;
-    
-    // Rebounds (0-1.5 points)
-    const reboundScore = Math.min(1.5, normalizedRebounds / 8); // 8+ reb/36min = max
+    const reboundScore = Math.min(1.5, normalizedRebounds / 8);
     defensiveRating += reboundScore;
     
-    // Steals and Blocks (0-1.5 points)
-    const stealBlockScore = Math.min(1.5, (normalizedSteals + normalizedBlocks) / 3); // 3+ combined = max
+    const stealBlockScore = Math.min(1.5, (normalizedSteals + normalizedBlocks) / 3);
     defensiveRating += stealBlockScore;
 
-    // EFFICIENCY/CARE RATING (0-2 points)
-    let efficiencyCare = 2.0; // Start at max, deduct for turnovers
-    
-    // Turnover penalty
-    const turnoverPenalty = Math.min(2.0, normalizedTurnovers / 6); // 6+ TO/36min = -2.0
+    let efficiencyCare = 2.0;
+    const turnoverPenalty = Math.min(2.0, normalizedTurnovers / 6);
     efficiencyCare -= turnoverPenalty;
     efficiencyCare = Math.max(0, efficiencyCare);
 
-    // TOTAL RATING
     let totalRating = offensiveRating + defensiveRating + efficiencyCare;
     
-    // Scale to 0-10 and round to 1 decimal
     return Math.round(Math.min(10.0, Math.max(0.0, totalRating)) * 10) / 10;
 }
 
 function calculateAverageRating(gameRatings) {
-    // Filter out NaN values
     const validRatings = gameRatings.filter(r => !isNaN(r));
     if (validRatings.length === 0) return NaN;
     
-    // If 3 or fewer games, use all ratings
     if (validRatings.length <= 3) {
         const sum = validRatings.reduce((a, b) => a + b, 0);
         return parseFloat((sum / validRatings.length).toFixed(1));
     }
     
-    // Sort ratings from highest to lowest
     const sortedRatings = [...validRatings].sort((a, b) => b - a);
-    
-    // Remove the lowest 3 ratings
     const ratingsToAverage = sortedRatings.slice(0, -3);
     
-    // Calculate average
     const sum = ratingsToAverage.reduce((a, b) => a + b, 0);
     return parseFloat((sum / ratingsToAverage.length).toFixed(1));
 }
@@ -483,15 +503,12 @@ function loadPlayerStats(season) {
         
         let players = allPlayersData.seasons[season]?.players || [];
         
-        // Apply sorting if a sort key is selected
         if (currentSortKey) {
             players = sortPlayers(players, currentSortKey, currentSortDirection);
         }
 
-        // Always load table view
         loadPlayerList(players, season);
         
-        // If grid view is active, load grid as well
         if (document.getElementById('gridViewToggle').checked) {
             loadPlayerGrid(players, season);
         }
@@ -500,18 +517,16 @@ function loadPlayerStats(season) {
     }
 }
 
-// Load players in list view (table)
 function loadPlayerList(players, season) {
     const tbody = document.getElementById('playersTableBody');
     const showAdvanced = document.getElementById('advancedStatsToggle').checked;
     tbody.innerHTML = '';
 
     players.forEach(player => {
-        const gameRatings = (player.gameLogs || []).map(calculateGameRating);
+        const gameRatings = (player.nonExhGameLogs || []).map(calculateGameRating);
         const avgRating = calculateAverageRating(gameRatings);
         const advancedStats = calculateAdvancedStats(player);
         
-        // Handle NaN rating
         let ratingDisplay, ratingClass;
         if (isNaN(avgRating)) {
             ratingDisplay = 'N/A';
@@ -571,19 +586,15 @@ function loadPlayerList(players, season) {
 
 function calculateAdvancedStats(player) {
     try {
-        // Basic percentages
         const fgPct = player.fga > 0 ? player.fgm / player.fga : 0;
         const threePct = player.threeFga > 0 ? player.threeFgm / player.threeFga : 0;
         const ftPct = player.fta > 0 ? player.ftm / player.fta : 0;
         
-        // Advanced metrics
         const tsPct = player.pts / (2 * (player.fga + 0.44 * player.fta)) || 0;
         
-        // Usage rate (simplified team context)
-        const teamFga = 2000; // Example team total for season
+        const teamFga = 2000;
         const usgRate = 100 * ((player.fga + 0.44 * player.fta) / teamFga) || 0;
 
-        // New BPM Formula
         const weight = {
             pts: 2.8,
             reb: 1.8,
@@ -607,7 +618,6 @@ function calculateAdvancedStats(player) {
 
         const bpm = (rawBPM / (player.gp || 1)) * 0.18;
 
-        // PER calculation
         const per = (
             (player.pts * 1.2) + 
             (player.reb * 1.0) + 
@@ -619,7 +629,6 @@ function calculateAdvancedStats(player) {
             ((player.fta - player.ftm) * 0.5)
         ) / (player.gp || 1);
 
-        // Efficiency Rating (EFF)
         const eff = (
             player.pts + 
             (player.reb * 1.2) + 
@@ -630,7 +639,6 @@ function calculateAdvancedStats(player) {
             ((player.fga - player.fgm) * 0.7)
         ) / (player.gp || 1);
 
-        // Offensive/Defensive Ratings
         const ortg = (player.fga + 0.44 * player.fta + player.to) > 0 ?
             (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 : 0;
         
@@ -644,9 +652,8 @@ function calculateAdvancedStats(player) {
             ftPct: ftPct,
             tsPct: tsPct,
             usgRate: usgRate,
-            per: per, // Added back PER
+            per: per,
             eff: eff,
-
             ortg: ortg,
             drtg: drtg,
             bpm: bpm
@@ -661,7 +668,6 @@ function calculateAdvancedStats(player) {
             usgRate: 0,
             per: 0,
             eff: 0,
-            usgRate: 0,
             ortg: 0,
             drtg: 0,
             bpm: 0
@@ -678,16 +684,12 @@ function updateSortArrows(sortKey, direction) {
     });
 }
 
-
 function showPlayerDetail(player, gameRatings = [], season) {
     try {
-        // Hide players page header
         document.getElementById('playersPageHeader').style.display = 'none';
         
-        // Sanitize ratings array
         gameRatings = gameRatings.map(r => isNaN(r) ? NaN : r);
         
-        // Calculate advanced stats
         const advancedStats = calculateAdvancedStats(player);
         const avgRating = calculateAverageRating(gameRatings);
 
@@ -695,7 +697,6 @@ function showPlayerDetail(player, gameRatings = [], season) {
         playerImg.src = `images/${season}/players/${player.number}.jpg`;
         playerImg.onerror = () => playerImg.src = 'images/players/default.jpg';
         
-        // Calculate rating stats
         const validRatings = gameRatings.filter(r => !isNaN(r));
         const ratingStats = {
             bestRating: validRatings.length ? Math.max(...validRatings) : NaN,
@@ -711,7 +712,6 @@ function showPlayerDetail(player, gameRatings = [], season) {
         document.getElementById('detailPlayerInfo').textContent = 
             `${player.grade || ''} | ${player.pos} | ${player.ht} | ${player.wt} `;
             
-        // Handle NaN rating
         if (isNaN(avgRating)) {
             document.getElementById('detailPlayerRating').innerHTML = `
                 <span class="rating-cell rating-na">N/A</span>`;
@@ -722,7 +722,6 @@ function showPlayerDetail(player, gameRatings = [], season) {
                 </span>`;
         }
 
-        // Update main stat cards
         const safeGP = player.gp || 1;
         document.getElementById('statMinutes').textContent = (player.min / safeGP).toFixed(1);
         document.getElementById('statPoints').textContent = (player.pts / safeGP).toFixed(1);
@@ -731,7 +730,6 @@ function showPlayerDetail(player, gameRatings = [], season) {
         document.getElementById('statSteals').textContent = (player.stl / safeGP).toFixed(1);
         document.getElementById('statBlocks').textContent = (player.blk / safeGP).toFixed(1);
 
-        // Update shooting stats
         document.getElementById('statFgPct').textContent = 
             (advancedStats.fgPct * 100).toFixed(1) + "%";
         document.getElementById('statThreePct').textContent = 
@@ -741,7 +739,6 @@ function showPlayerDetail(player, gameRatings = [], season) {
         document.getElementById('statTsPct').textContent = 
             (advancedStats.tsPct * 100).toFixed(1) + "%";
 
-        // Update advanced metrics
         document.getElementById('statPer').textContent = 
             advancedStats.per.toFixed(1);
         document.getElementById('statEff').textContent = 
@@ -755,15 +752,12 @@ function showPlayerDetail(player, gameRatings = [], season) {
         document.getElementById('statBpm').textContent = 
             advancedStats.bpm.toFixed(1);
         
-        // Update bio display
         document.getElementById('playerBio').textContent = player.bio || 'No bio available';
         
-        // Initialize tooltips
         document.querySelectorAll('[title]').forEach(el => {
             new bootstrap.Tooltip(el);
         });
 
-        // Update rating stats
         if (isNaN(ratingStats.bestRating)) {
             document.getElementById('statBestRating').innerHTML = `
                 <span class="rating-cell rating-na">N/A</span>`;
@@ -787,18 +781,15 @@ function showPlayerDetail(player, gameRatings = [], season) {
         document.getElementById('statConsistency').textContent = 
             isNaN(ratingStats.consistency) ? 'N/A' : ratingStats.consistency.toFixed(1);
 
-        // Update recent ratings
         const recentRatings = document.getElementById('recentRatings');
         recentRatings.innerHTML = '';
 
-        // Combine games with ratings and sort by date ASC
-        const combinedLast5 = player.gameLogs.map((game, i) => ({
+        const combinedLast5 = player.nonExhGameLogs.map((game, i) => ({
         rating: gameRatings[i],
         date: new Date(game.date)
-        })).sort((a, b) => a.date - b.date) // oldest → newest
-        .slice(-5); // keep last 5
+        })).sort((a, b) => a.date - b.date)
+        .slice(-5);
 
-        // Render in reverse (newest left → oldest right)
         [...combinedLast5].reverse().forEach(item => {
         const ratingEl = document.createElement('div');
         if (isNaN(item.rating)) {
@@ -811,18 +802,13 @@ function showPlayerDetail(player, gameRatings = [], season) {
         recentRatings.appendChild(ratingEl);
         });
 
-
-
-        // Update game logs - SORTED BY DATE (newest first)
         const gameLogsBody = document.getElementById('gameLogsBody');
         
-        // Create combined array of games and ratings
-        const combined = player.gameLogs.map((game, index) => ({
+        const combined = player.nonExhGameLogs.map((game, index) => ({
             game,
             rating: gameRatings[index]
         }));
         
-        // Sort by date (newest first)
         combined.sort((a, b) => 
             new Date(b.game.date) - new Date(a.game.date)
         );
@@ -831,7 +817,6 @@ function showPlayerDetail(player, gameRatings = [], season) {
             const game = item.game;
             const rating = item.rating;
             
-            // Handle zero values properly (show 0 instead of '-')
             return `
                 <tr class="game-log-row" 
                     data-game='${JSON.stringify(game)}'
@@ -857,17 +842,14 @@ function showPlayerDetail(player, gameRatings = [], season) {
             const game = JSON.parse(row.dataset.game);
             const rating = parseFloat(row.dataset.rating);
             
-            // Click handler
             row.addEventListener('click', () => showGameModal(game, rating));
             
-            // Hover tooltip
             row.setAttribute('title', `Click to view ${game.opponent} details`);
             new bootstrap.Tooltip(row, {
                 trigger: 'hover'
             });
         });
         
-        // Update Past Seasons
         const pastSeasonsBody = document.getElementById('pastSeasonsBody');
         pastSeasonsBody.innerHTML = '';
         
@@ -901,12 +883,10 @@ function showPlayerDetail(player, gameRatings = [], season) {
             pastSeasonsBody.innerHTML = '<tr><td colspan="13" class="text-center">No past seasons data available</td></tr>';
         }
 
-        // Initialize tooltips for percentages
         document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
             new bootstrap.Tooltip(el);
         });
 
-        // Show detail section
         document.getElementById('playerListSection').style.display = 'none';
         document.getElementById('playersGridView').style.display = 'none';
         document.getElementById('playerDetailSection').style.display = 'block';
@@ -936,8 +916,6 @@ function showPlayerDetail(player, gameRatings = [], season) {
         alert('Failed to load player profile. Check console for details.');
     }
 }
-
-// Initialize everything with error handling
 
 document.querySelectorAll('[data-sort-key]').forEach(header => {
     header.addEventListener('click', function() {
@@ -981,11 +959,10 @@ document.addEventListener('DOMContentLoaded', () => {
         loadPlayerData();
         new bootstrap.Dropdown(document.querySelector('.dropdown-toggle'));
         
-        // Set initial sort to PPG after data loads
         setTimeout(() => {
             updateSortArrows(currentSortKey, currentSortDirection);
         }, 100);
     } catch (e) {
         console.error('Initialization error:', e);
     }
-});
+})
