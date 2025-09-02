@@ -87,8 +87,8 @@ async function processGameLogs() {
             player.ftm = 0;
             player.fta = 0;
             player.gp = 0; // Games played
-            player.gameLogs = [];
-            player.nonExhGameLogs = []; // Separate array for non-exhibition games
+            player.gameLogs = []; // All games including exhibition
+            player.nonExhGameLogs = []; // Only non-exhibition games for stats
         });
         
         // Process each game
@@ -115,23 +115,19 @@ async function processGameLogs() {
                     const player = players.find(p => p.number == playerStat.number);
                     if (player) {
                         // Add game to player's game logs (all games)
-                        player.gameLogs.push({
+                        const gameLogEntry = {
                             ...playerStat,
                             date: game.date,
                             opponent: game.opponent,
                             result: game.result,
                             exh: isExhibition
-                        });
+                        };
+                        
+                        player.gameLogs.push(gameLogEntry);
                         
                         // Only update cumulative stats for non-exhibition games
                         if (!isExhibition) {
-                            player.nonExhGameLogs.push({
-                                ...playerStat,
-                                date: game.date,
-                                opponent: game.opponent,
-                                result: game.result,
-                                exh: false
-                            });
+                            player.nonExhGameLogs.push(gameLogEntry);
                             
                             // Update cumulative stats
                             player.gp++;
@@ -708,25 +704,29 @@ function showPlayerDetail(player, gameRatings = [], season) {
     try {
         document.getElementById('playersPageHeader').style.display = 'none';
         
-        gameRatings = gameRatings.map(r => isNaN(r) ? NaN : r);
+        // Calculate ratings for all games (including exhibition) for display
+        const allGameRatings = player.gameLogs.map(game => calculateGameRating(game));
         
-        const advancedStats = calculateAdvancedStats(player);
-        const avgRating = calculateAverageRating(gameRatings);
+        // Calculate average rating only from non-exhibition games for stats
+        const nonExhRatings = (player.nonExhGameLogs || []).map(calculateGameRating);
+        const avgRating = calculateAverageRating(nonExhRatings);
 
         const playerImg = document.getElementById('detailPlayerPhoto');
         playerImg.src = `images/${season}/players/${player.number}.jpg`;
         playerImg.onerror = () => playerImg.src = 'images/players/default.jpg';
         
-        const validRatings = gameRatings.filter(r => !isNaN(r));
+        const validNonExhRatings = nonExhRatings.filter(r => !isNaN(r));
         const ratingStats = {
-            bestRating: validRatings.length ? Math.max(...validRatings) : NaN,
-            worstRating: validRatings.length ? Math.min(...validRatings) : NaN,
-            consistency: validRatings.length ? 
-                (10 - Math.sqrt(validRatings
+            bestRating: validNonExhRatings.length ? Math.max(...validNonExhRatings) : NaN,
+            worstRating: validNonExhRatings.length ? Math.min(...validNonExhRatings) : NaN,
+            consistency: validNonExhRatings.length ? 
+                (10 - Math.sqrt(validNonExhRatings
                     .map(r => Math.pow(r - avgRating, 2))
-                    .reduce((a, b) => a + b, 0) / validRatings.length)) : NaN,
-            last5: gameRatings.slice(-5)
+                    .reduce((a, b) => a + b, 0) / validNonExhRatings.length)) : NaN,
+            last5: allGameRatings.slice(-5) // Show last 5 including exhibition
         };
+
+        const advancedStats = calculateAdvancedStats(player);
 
         document.getElementById('detailPlayerName').textContent = `#${player.number} ${player.name}`;
         document.getElementById('detailPlayerInfo').textContent = 
@@ -804,45 +804,56 @@ function showPlayerDetail(player, gameRatings = [], season) {
         const recentRatings = document.getElementById('recentRatings');
         recentRatings.innerHTML = '';
 
-        const combinedLast5 = player.nonExhGameLogs.map((game, i) => ({
-        rating: gameRatings[i],
-        date: new Date(game.date)
-        })).sort((a, b) => a.date - b.date)
-        .slice(-5);
+        // Combine all game logs with their ratings (including exhibition)
+        const combinedAll = player.gameLogs.map((game, index) => ({
+            game,
+            rating: allGameRatings[index],
+            date: new Date(game.date)
+        })).sort((a, b) => a.date - b.date) // Sort by date
+        .slice(-5); // Get last 5
 
-        [...combinedLast5].reverse().forEach(item => {
-        const ratingEl = document.createElement('div');
-        if (isNaN(item.rating)) {
-            ratingEl.className = 'rating-cell rating-na';
-            ratingEl.textContent = 'N/A';
-        } else {
-            ratingEl.className = `rating-cell rating-${Math.floor(item.rating)}`;
-            ratingEl.textContent = item.rating.toFixed(1);
-        }
-        recentRatings.appendChild(ratingEl);
+        // Display them in reverse order (most recent first)
+        [...combinedAll].reverse().forEach(item => {
+            const ratingEl = document.createElement('div');
+            if (isNaN(item.rating)) {
+                ratingEl.className = 'rating-cell rating-na';
+                ratingEl.textContent = 'N/A';
+            } else {
+                ratingEl.className = `rating-cell rating-${Math.floor(item.rating)}`;
+                if (item.game.exh) {
+                    ratingEl.classList.add('exhibition-rating');
+                    ratingEl.setAttribute('data-bs-toggle', 'tooltip');
+                    ratingEl.setAttribute('title', 'Exhibition Game');
+                }
+                ratingEl.textContent = item.rating.toFixed(1);
+            }
+            recentRatings.appendChild(ratingEl);
         });
 
+        // Game logs table (show all games, including exhibition)
         const gameLogsBody = document.getElementById('gameLogsBody');
         
-        const combined = player.nonExhGameLogs.map((game, index) => ({
+        // Combine all game logs with ratings (including exhibition)
+        const allGamesCombined = player.gameLogs.map((game, index) => ({
             game,
-            rating: gameRatings[index]
+            rating: allGameRatings[index]
         }));
         
-        combined.sort((a, b) => 
+        // Sort by date (most recent first)
+        allGamesCombined.sort((a, b) => 
             new Date(b.game.date) - new Date(a.game.date)
         );
 
-        gameLogsBody.innerHTML = combined.map(item => {
+        gameLogsBody.innerHTML = allGamesCombined.map(item => {
             const game = item.game;
             const rating = item.rating;
             
             return `
-                <tr class="game-log-row" 
+                <tr class="game-log-row ${game.exh ? 'exhibition-game' : ''}" 
                     data-game='${JSON.stringify(game)}'
                     data-rating='${rating}'>
                     <td>${game.date || '-'}</td>
-                    <td>${game.opponent || '-'}</td>
+                    <td>${game.opponent || '-'} ${game.exh ? ' (Exh)' : ''}</td>
                     <td>${typeof game.min === 'number' ? game.min.toFixed(1) : '-'}</td>
                     <td>${typeof game.pts === 'number' ? game.pts : '0'}</td>
                     <td>
