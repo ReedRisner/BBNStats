@@ -129,6 +129,9 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        
+
+        
     </style>
 </head>
 <!-- Google tag (gtag.js) -->
@@ -191,9 +194,19 @@
                         <option value="2024">2024-2025 Season</option>
                     </select>
                 </div>
-                <select class="form-select bg-white text-uk-blue" id="player1Select">
+                <select class="form-select bg-white text-uk-blue mb-3" id="player1Select">
                     <option value="">Select First Player</option>
                 </select>
+                <div class="mb-3">
+                    <select class="form-select bg-white text-uk-blue" id="player1Filter">
+                        <option value="whole">Whole Season</option>
+                        <option value="last5">Past 5 Games</option>
+                        <option value="home">Home Games</option>
+                        <option value="away">Away Games</option>
+                        <option value="conference">Conference Games</option>
+                        <option value="nonconference">Non-Conference Games</option>
+                    </select>
+                </div>
                 <div id="player1Card" class="player-card"></div>
             </div>
             <div>
@@ -203,9 +216,19 @@
                         <option value="2024">2024-2025 Season</option>
                     </select>
                 </div>
-                <select class="form-select bg-white text-uk-blue" id="player2Select">
+                <select class="form-select bg-white text-uk-blue mb-3" id="player2Select">
                     <option value="">Select Second Player</option>
                 </select>
+                <div class="mb-3">
+                    <select class="form-select bg-white text-uk-blue" id="player2Filter">
+                        <option value="whole">Whole Season</option>
+                        <option value="last5">Past 5 Games</option>
+                        <option value="home">Home Games</option>
+                        <option value="away">Away Games</option>
+                        <option value="conference">Conference Games</option>
+                        <option value="nonconference">Non-Conference Games</option>
+                    </select>
+                </div>
                 <div id="player2Card" class="player-card"></div>
             </div>
         </div>
