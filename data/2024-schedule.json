@@ -5,9 +5,9 @@
         "logo": "kentucky-wesleyan.png",
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 123-52"
-        ,"conference": false
-        , "exh": true
-        ,"venue": "home"
+        ,"conference": false,
+        "exh": true,
+        "venue": "home"
     },
     {
         "date": "October 29, 2024",
@@ -15,8 +15,8 @@
         "logo": "minnesota-state.png",
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 98-67"
-        ,"conference": false
-        , "exh": true
+        ,"conference": false,
+        "exh": true
         ,"venue": "home"
     },
     {
@@ -25,6 +25,7 @@
         "logo": "wright-state.png",
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 103-62"
+        ,"exh": false
         ,"conference": false
         ,"venue": "home"
     },
@@ -33,9 +34,10 @@
         "opponent": "vs Bucknell",
         "logo": "bucknell.png",
         "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 100-72"
-        ,"conference": false
-        ,"venue": "home"
+        "result": "W 100-72",
+        "exh": false,
+        "conference": false,
+        "venue": "home"
     },
     {
         "date": "November 12, 2024",
@@ -44,6 +46,7 @@
         "location": "State Farm Arena | Atlanta, Ga.",
         "result": "W 77-72"
         ,"conference": false
+        ,"exh": false
         ,"quad": 1
         ,"opponentRank": 6
         ,"venue": "away"
@@ -54,6 +57,7 @@
         "logo": "lipscomb.png",
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 97-68"
+        ,"exh": false
         ,"conference": false
         ,"venue": "home"
     },
@@ -63,6 +67,7 @@
         "logo": "jackson-state.png",
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 108-59"
+        ,"exh": false
         ,"conference": false
         ,"venue": "home"
     },
@@ -72,6 +77,7 @@
         "logo": "western-kentucky.png",
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 87-68"
+        ,"exh": false
         ,"conference": false
         ,"venue": "home"
     },
@@ -81,6 +87,7 @@
         "logo": "georgia-state.png",
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 105-76"
+        ,"exh": false
         ,"conference": false
         ,"venue": "home"
     },
@@ -90,6 +97,7 @@
         "logo": "clemson.png",
         "location": "Littlejohn Coliseum | Clemson, S.C.",
         "result": "L 66-70"
+        ,"exh": false
         ,"conference": false
         ,"quad": 1
         ,"venue": "away"
@@ -101,6 +109,7 @@
         "location": "Climate Pledge Arena | Seattle, Wash.",
         "result": "W 90-89"
         ,"conference": false
+        ,"exh": false
         ,"quad": 1
         ,"opponentRank": 7
         ,"venue": "away"
@@ -112,6 +121,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 78-67"
         ,"conference": false
+        ,"exh": false
         ,"venue": "home"
     },
     {
@@ -121,6 +131,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 93-85"
         ,"conference": false
+        ,"exh": false
         ,"quad": 1
         ,"venue": "home"
     },
@@ -132,6 +143,7 @@
         "result": "L 65-85"
         ,"conference": false
         ,"quad": 1
+        ,"exh": false
         ,"venue": "away"
     },
     {
@@ -141,6 +153,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 88-54"
         ,"conference": false
+        ,"exh": false
         ,"venue": "home"
     },
     {
@@ -151,6 +164,7 @@
         "result": "W 106-100"
         ,"conference": true
         ,"quad": 1
+        ,"exh": false
         ,"opponentRank": 6
         ,"venue": "home"
     },
@@ -162,6 +176,7 @@
         "result": "L 69-82"
         ,"conference": true
         ,"quad": 1
+        ,"exh": false
         ,"venue": "away"
     },
     {
@@ -173,6 +188,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 14
+        ,"exh": false
         ,"venue": "away"
     },
     {
@@ -183,6 +199,7 @@
         "result": "W 81-69"
         ,"conference": true
         ,"quad": 1
+        ,"exh": false
         ,"opponentRank": 11
         ,"venue": "home"
     },
@@ -193,6 +210,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "L 97-102"
         ,"conference": true
+        ,"exh": false
         ,"quad": 1
         ,"opponentRank": 4
         ,"venue": "home"
@@ -204,6 +222,7 @@
         "location": "Memorial Gymnasium | Nashville, Tenn.",
         "result": "L 69-74"
         ,"conference": true
+        ,"exh": false
         ,"quad": 1
         ,"venue": "away"
     },
@@ -215,6 +234,7 @@
         "result": "W 78-73"
         ,"conference": true
         ,"quad": 1
+        ,"exh": false
         ,"opponentRank": 8
         ,"venue": "away"
     },
@@ -225,6 +245,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "L 79-89"
         ,"conference": true
+        ,"exh": false
         ,"venue": "home"
     },
     {
@@ -235,6 +256,7 @@
         "result": "L 84-98"
         ,"conference": true
         ,"quad": 1
+        ,"exh": false
         ,"opponentRank": 25
         ,"venue": "away"
     },
@@ -245,6 +267,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 80-57"
         ,"conference": true
+        ,"exh": false
         ,"venue": "home"
     },
     {
@@ -256,6 +279,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 5
+        ,"exh": false
         ,"venue": "home"
     },
     {
@@ -266,6 +290,7 @@
         "result": "L 78-82"
         ,"conference": true
         ,"quad": 1
+        ,"exh": false
         ,"venue": "away"
     },
     {
@@ -275,6 +300,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 82-61"
         ,"conference": true
+        ,"exh": false
         ,"venue": "home"
     },
     {
@@ -286,6 +312,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 4
+        ,"exh": false
         ,"venue": "away"
     },
     {
@@ -297,6 +324,7 @@
         ,"conference": true
         ,"quad": 1
         ,"venue": "away"
+        ,"exh": false
     },
     {
         "date": "March 1, 2025",
@@ -308,6 +336,7 @@
         ,"quad": 1
         ,"opponentRank": 1
         ,"venue": "home"
+        ,"exh": false
     },
     {
         "date": "March 4, 2025",
@@ -316,6 +345,7 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "W 95-64"
         ,"conference": true
+        ,"exh": false
         ,"venue": "home"
         
     },
@@ -328,6 +358,7 @@
         ,"conference": true
         ,"quad": 1
         ,"opponentRank": 15
+        ,"exh": false
         ,"venue": "away"
     },
     {
@@ -337,7 +368,9 @@
         "location": "Bridgestone Arena | Nashville, Tenn.",
         "result": "W 85-84"
         ,"conference": false
+        ,"exh": false
         ,"quad": 1
+        ,"venue": "away"
         
     },
     {
@@ -347,8 +380,10 @@
         "location": "Bridgestone Arena | Nashville, Tenn.",
         "result": "L 70-99"
         ,"conference": false
+        ,"exh": false
         ,"quad": 1
         ,"opponentRank": 5
+        ,"venue": "away"
         
     },
     {
@@ -358,6 +393,8 @@
         "location": "Fiserv Forum | Milwaukee, Wis.",
         "result": "W 76-57"
         ,"conference": false
+        ,"exh": false
+        ,"venue": "away"
         
     },
     {
@@ -368,6 +405,8 @@
         "result": "W 84-75"
         ,"conference": false
         ,"quad": 1
+        ,"exh": false
+        ,"venue": "away"
     },
     {
         "date": "March 28, 2025",
@@ -377,6 +416,8 @@
         "result": "L 65-78"
         ,"conference": false
         ,"quad": 1
+        ,"exh": false
+        ,"venue": "away"
     }
 
     
