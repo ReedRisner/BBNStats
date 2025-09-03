@@ -1,12 +1,11 @@
 let allPlayersData = null;
 let allGameLogsData = null;
+let allScheduleData = null;
 let player1 = null;
 let player2 = null;
 let averagesChart = null;
 let shootingChart = null;
 let advancedChart = null;
-
-
 
 async function loadPlayerData() {
     try {
@@ -20,14 +19,138 @@ async function loadPlayerData() {
         if (!gameLogsResponse.ok) throw new Error('Failed to load game logs');
         allGameLogsData = await gameLogsResponse.json();
         
+        // Load schedule data for all seasons
+        allScheduleData = {};
+        for (const season of Object.keys(allPlayersData.seasons)) {
+            try {
+                const scheduleResponse = await fetch(`data/${season}-schedule.json`);
+                if (scheduleResponse.ok) {
+                    allScheduleData[season] = await scheduleResponse.json();
+                }
+            } catch (error) {
+                console.error(`Error loading schedule for ${season}:`, error);
+                allScheduleData[season] = [];
+            }
+        }
+        
         // Process game logs and calculate stats
         await processGameLogs();
         
         setupPlayerSelects();
+        initializeTooltips();
     } catch (error) {
         console.error('Error loading player data:', error);
         alert('Failed to load player data. Please check console for details.');
     }
+}
+
+function initializeTooltips() {
+    // Initialize Bootstrap tooltips if available, otherwise use custom tooltip system
+    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+        // Bootstrap tooltip initialization will be handled in renderComparison
+    } else {
+        // Custom tooltip system
+        addCustomTooltipStyles();
+    }
+}
+
+function addCustomTooltipStyles() {
+    // Add custom tooltip styles if they don't exist
+    const styleId = 'custom-tooltip-styles';
+    if (!document.getElementById(styleId)) {
+        const style = document.createElement('style');
+        style.id = styleId;
+        style.textContent = `
+            .stat-label-tooltip {
+                position: relative;
+                cursor: help;
+            }
+            
+            .stat-label-tooltip:hover::after {
+                content: attr(data-tooltip);
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #333;
+                color: white;
+                padding: 8px 12px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: normal;
+                white-space: nowrap;
+                z-index: 1000;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+                max-width: 250px;
+                white-space: normal;
+                text-align: center;
+                line-height: 1.3;
+            }
+            
+            .stat-label-tooltip:hover::before {
+                content: '';
+                position: absolute;
+                bottom: 100%;
+                left: 50%;
+                transform: translateX(-50%) translateY(100%);
+                border: 5px solid transparent;
+                border-top-color: #333;
+                z-index: 1000;
+            }
+            
+            @media (max-width: 768px) {
+                .stat-label-tooltip:hover::after {
+                    position: fixed;
+                    bottom: auto;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    max-width: 90vw;
+                }
+                
+                .stat-label-tooltip:hover::before {
+                    display: none;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+function normalizeDate(dateStr) {
+    try {
+        // Handle various date formats
+        let date;
+        
+        // Check if it's already in YYYY-MM-DD format
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+            date = new Date(dateStr + 'T00:00:00');
+        } else {
+            // Handle formats like "November 4, 2024", "March 1, 2025", etc.
+            date = new Date(dateStr + ' 00:00:00');
+        }
+        
+        if (isNaN(date.getTime())) {
+            console.warn(`Invalid date: ${dateStr}`);
+            return null;
+        }
+        
+        // Return normalized date string in YYYY-MM-DD format
+        return date.toISOString().split('T')[0];
+    } catch (error) {
+        console.error(`Error normalizing date: ${dateStr}`, error);
+        return null;
+    }
+}
+
+function normalizeOpponentName(opponent) {
+    return opponent
+        .toLowerCase()
+        .replace(/^(vs\s+|at\s+)/, '') // Remove "vs " or "at " prefix
+        .replace(/\s*\(exh\)/, '') // Remove "(EXH)" suffix
+        .replace(/\s*\(sec tournament\)/, '') // Remove tournament suffixes
+        .replace(/\s*\(ncaa tournament\)/, '')
+        .trim();
 }
 
 async function processGameLogs() {
@@ -35,128 +158,77 @@ async function processGameLogs() {
     for (const season of Object.keys(allPlayersData.seasons)) {
         const players = allPlayersData.seasons[season].players;
         const seasonGames = allGameLogsData.seasons[season]?.games || [];
+        const scheduleData = allScheduleData[season] || [];
         
-        // Load schedule data for this season to identify exhibition games
-        let scheduleData = [];
-        try {
-            const scheduleResponse = await fetch(`data/${season}-schedule.json`);
-            if (scheduleResponse.ok) {
-                scheduleData = await scheduleResponse.json();
-            }
-        } catch (error) {
-            console.error(`Error loading schedule for ${season}:`, error);
-        }
+        console.log(`Processing season ${season} with ${seasonGames.length} games and ${scheduleData.length} schedule entries`);
         
-        // Create a map of exhibition games by opponent and date
-        const exhibitionGames = {};
-        scheduleData.forEach(game => {
-            if (game.exh) {
-                try {
-                    // Validate date format before processing
-                    if (!game.date || isNaN(new Date(game.date).getTime())) {
-                        console.warn(`Invalid date in schedule: ${game.date}`);
-                        return;
-                    }
-                    
-                    const gameDate = new Date(game.date);
-                    const normalizedDate = gameDate.toISOString().split('T')[0];
-                    
-                    // Use both opponent and date as key to avoid conflicts
-                    const key = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
-                    exhibitionGames[key] = true;
-                    
-                    console.log(`Exhibition game: ${key}`);
-                } catch (error) {
-                    console.error(`Error processing schedule game date: ${game.date}`, error);
-                }
-            }
+        // Create a map of games by normalized opponent and date
+        const gameMap = new Map();
+        scheduleData.forEach((game, index) => {
+            const normalizedDate = normalizeDate(game.date);
+            if (!normalizedDate) return;
+            
+            const normalizedOpponent = normalizeOpponentName(game.opponent);
+            const key = `${normalizedOpponent}_${normalizedDate}`;
+            
+            gameMap.set(key, {
+                exh: game.exh || false,
+                conference: game.conference || false,
+                venue: game.venue || 'home',
+                originalOpponent: game.opponent,
+                originalDate: game.date
+            });
+            
+            console.log(`Mapped: ${key}`, gameMap.get(key));
         });
         
         // Initialize stats for all players
         players.forEach(player => {
-            // Reset cumulative stats
-            player.min = 0;
-            player.pts = 0;
-            player.reb = 0;
-            player.ast = 0;
-            player.stl = 0;
-            player.blk = 0;
-            player.to = 0;
-            player.fgm = 0;
-            player.fga = 0;
-            player.threeFgm = 0;
-            player.threeFga = 0;
-            player.ftm = 0;
-            player.fta = 0;
-            player.gp = 0; // Games played
             player.gameLogs = [];
-            player.nonExhGameLogs = []; // Separate array for non-exhibition games
+            player.allGameStats = {};
         });
         
         // Process each game
-        seasonGames.forEach(game => {
-            try {
-                // Validate date format before processing
-                if (!game.date || isNaN(new Date(game.date).getTime())) {
-                    console.warn(`Invalid date in game log: ${game.date}`);
-                    return;
-                }
-                
-                const gameDate = new Date(game.date);
-                const normalizedDate = gameDate.toISOString().split('T')[0];
-                
-                // Create key for comparison (remove "vs " and "(EXH)" from opponent name)
-                const opponentKey = `${game.opponent.toLowerCase().replace('vs ', '').replace(' (exh)', '')}_${normalizedDate}`;
-                
-                // Check if this is an exhibition game
-                const isExhibition = exhibitionGames[opponentKey] || false;
-                
-                console.log(`Game: ${opponentKey}, isExhibition: ${isExhibition}`);
-                
-                game.boxscore.forEach(playerStat => {
-                    const player = players.find(p => p.number == playerStat.number);
-                    if (player) {
-                        // Add game to player's game logs (all games)
-                        player.gameLogs.push({
-                            ...playerStat,
-                            date: game.date,
-                            opponent: game.opponent,
-                            result: game.result,
-                            exh: isExhibition
-                        });
-                        
-                        // Only update cumulative stats for non-exhibition games
-                        if (!isExhibition) {
-                            player.nonExhGameLogs.push({
-                                ...playerStat,
-                                date: game.date,
-                                opponent: game.opponent,
-                                result: game.result,
-                                exh: false
-                            });
-                            
-                            // Update cumulative stats
-                            player.gp++;
-                            player.min += playerStat.min || 0;
-                            player.pts += playerStat.pts || 0;
-                            player.reb += playerStat.reb || 0;
-                            player.ast += playerStat.ast || 0;
-                            player.stl += playerStat.stl || 0;
-                            player.blk += playerStat.blk || 0;
-                            player.to += playerStat.to || 0;
-                            player.fgm += playerStat.fgm || 0;
-                            player.fga += playerStat.fga || 0;
-                            player.threeFgm += playerStat.threeFgm || 0;
-                            player.threeFga += playerStat.threeFga || 0;
-                            player.ftm += playerStat.ftm || 0;
-                            player.fta += playerStat.fta || 0;
-                        }
-                    }
-                });
-            } catch (error) {
-                console.error(`Error processing game: ${game.opponent} on ${game.date}`, error);
+        seasonGames.forEach((game, gameIndex) => {
+            const normalizedDate = normalizeDate(game.date);
+            if (!normalizedDate) {
+                console.warn(`Skipping game with invalid date: ${game.date}`);
+                return;
             }
+            
+            const normalizedOpponent = normalizeOpponentName(game.opponent);
+            const key = `${normalizedOpponent}_${normalizedDate}`;
+            
+            // Get game details from schedule
+            const gameDetails = gameMap.get(key) || {
+                exh: game.opponent.toLowerCase().includes('exh') || game.opponent.toLowerCase().includes('exhibition'),
+                conference: false,
+                venue: game.opponent.toLowerCase().startsWith('at ') ? 'away' : 'home'
+            };
+            
+            console.log(`Processing game: ${key}`, gameDetails);
+            
+            game.boxscore.forEach(playerStat => {
+                const player = players.find(p => p.number == playerStat.number);
+                if (player) {
+                    // Add game to player's game logs with enhanced details
+                    const gameLog = {
+                        ...playerStat,
+                        date: game.date,
+                        opponent: game.opponent,
+                        result: game.result,
+                        exh: gameDetails.exh,
+                        conference: gameDetails.conference,
+                        venue: gameDetails.venue,
+                        gameIndex: gameIndex
+                    };
+                    
+                    player.gameLogs.push(gameLog);
+                }
+            });
         });
+        
+        console.log(`Completed processing season ${season}`);
     }
 }
 
@@ -165,6 +237,8 @@ function setupPlayerSelects() {
     const player2Season = document.getElementById('player2Season');
     const player1Select = document.getElementById('player1Select');
     const player2Select = document.getElementById('player2Select');
+    const player1Filter = document.getElementById('player1Filter');
+    const player2Filter = document.getElementById('player2Filter');
     
     // Initialize dropdowns
     updatePlayerDropdown('player1Season', 'player1Select');
@@ -185,6 +259,35 @@ function setupPlayerSelects() {
     
     player1Select.addEventListener('change', (e) => handlePlayerSelect(e, 'player1'));
     player2Select.addEventListener('change', (e) => handlePlayerSelect(e, 'player2'));
+    
+    // Add filter event listeners with debugging and independence checks
+    player1Filter.addEventListener('change', () => {
+        if (player1) {
+            const filterValue = player1Filter.value;
+            console.log(`Player1 filter changed to: ${filterValue}`);
+            console.log(`Player2 filter currently: ${player2Filter.value}`);
+            console.log(`Before filter - Player1: ${player1.currentFilter}, Player2: ${player2 ? player2.currentFilter : 'none'}`);
+            
+            applyPlayerFilter(player1, filterValue);
+            
+            console.log(`After filter - Player1: ${player1.currentFilter}, Player2: ${player2 ? player2.currentFilter : 'none'}`);
+            renderComparison();
+        }
+    });
+    
+    player2Filter.addEventListener('change', () => {
+        if (player2) {
+            const filterValue = player2Filter.value;
+            console.log(`Player2 filter changed to: ${filterValue}`);
+            console.log(`Player1 filter currently: ${player1Filter.value}`);
+            console.log(`Before filter - Player1: ${player1 ? player1.currentFilter : 'none'}, Player2: ${player2.currentFilter}`);
+            
+            applyPlayerFilter(player2, filterValue);
+            
+            console.log(`After filter - Player1: ${player1 ? player1.currentFilter : 'none'}, Player2: ${player2.currentFilter}`);
+            renderComparison();
+        }
+    });
 }
 
 function updatePlayerDropdown(seasonSelectId, playerSelectId) {
@@ -204,7 +307,9 @@ function updatePlayerDropdown(seasonSelectId, playerSelectId) {
 
 function handlePlayerSelect(event, target) {
     const seasonSelectId = target === 'player1' ? 'player1Season' : 'player2Season';
+    const filterSelectId = target === 'player1' ? 'player1Filter' : 'player2Filter';
     const season = document.getElementById(seasonSelectId).value;
+    const filter = document.getElementById(filterSelectId).value;
     const players = allPlayersData.seasons[season]?.players || [];
     const playerNumber = event.target.value;
     
@@ -218,15 +323,103 @@ function handlePlayerSelect(event, target) {
     const player = players.find(p => p.number == playerNumber);
     if (!player) return;
 
-    // Calculate ratings
-    const gameRatings = (player.gameLogs || []).map(calculateGameRating);
-    player.rating = calculateAverageRating(gameRatings);
-    player.season = season; // Store the season with the player
+    // Create a deep copy of the player object to avoid shared references
+    const playerCopy = JSON.parse(JSON.stringify(player));
+    playerCopy.season = season; // Store the season with the player
     
-    if (target === 'player1') player1 = player;
-    if (target === 'player2') player2 = player;
+    // Apply the current filter
+    applyPlayerFilter(playerCopy, filter);
+    
+    if (target === 'player1') player1 = playerCopy;
+    if (target === 'player2') player2 = playerCopy;
     
     renderComparison();
+}
+
+function applyPlayerFilter(player, filterType) {
+    let filteredGames = [];
+    
+    console.log(`Applying filter ${filterType} to player ${player.name}`);
+    console.log(`Total games: ${player.gameLogs.length}`);
+    
+    // Start with non-exhibition games only
+    const nonExhGames = player.gameLogs.filter(game => !game.exh);
+    console.log(`Non-exhibition games: ${nonExhGames.length}`);
+    
+    switch (filterType) {
+        case 'whole':
+            filteredGames = nonExhGames;
+            break;
+        case 'last5':
+            // Get the most recent 5 non-exhibition games
+            filteredGames = nonExhGames.slice(-5);
+            break;
+        case 'home':
+            filteredGames = nonExhGames.filter(game => game.venue === 'home');
+            console.log(`Home games found: ${filteredGames.length}`);
+            break;
+        case 'away':
+            filteredGames = nonExhGames.filter(game => game.venue === 'away');
+            console.log(`Away games found: ${filteredGames.length}`);
+            break;
+        case 'conference':
+            filteredGames = nonExhGames.filter(game => game.conference === true);
+            console.log(`Conference games found: ${filteredGames.length}`);
+            break;
+        case 'nonconference':
+            filteredGames = nonExhGames.filter(game => game.conference === false);
+            console.log(`Non-conference games found: ${filteredGames.length}`);
+            break;
+        default:
+            filteredGames = nonExhGames;
+    }
+    
+    console.log(`Final filtered games: ${filteredGames.length}`);
+    
+    // Calculate stats based on filtered games
+    player.filteredStats = calculateStatsFromGames(filteredGames);
+    player.currentFilter = filterType;
+    
+    // Calculate ratings
+    const gameRatings = filteredGames.map(calculateGameRating);
+    player.rating = calculateAverageRating(gameRatings);
+}
+
+function calculateStatsFromGames(games) {
+    const stats = {
+        gp: games.length,
+        min: 0,
+        pts: 0,
+        reb: 0,
+        ast: 0,
+        stl: 0,
+        blk: 0,
+        to: 0,
+        fgm: 0,
+        fga: 0,
+        threeFgm: 0,
+        threeFga: 0,
+        ftm: 0,
+        fta: 0
+    };
+    
+    games.forEach(game => {
+        stats.min += game.min || 0;
+        stats.pts += game.pts || 0;
+        stats.reb += game.reb || 0;
+        stats.ast += game.ast || 0;
+        stats.stl += game.stl || 0;
+        stats.blk += game.blk || 0;
+        stats.to += game.to || 0;
+        stats.fgm += game.fgm || 0;
+        stats.fga += game.fga || 0;
+        stats.threeFgm += game.threeFgm || 0;
+        stats.threeFga += game.threeFga || 0;
+        stats.ftm += game.ftm || 0;
+        stats.fta += game.fta || 0;
+    });
+    
+    return stats;
 }
 
 function renderComparison() {
@@ -234,6 +427,24 @@ function renderComparison() {
     
     renderPlayerCards();
     renderComparisonChart();
+    initializeTooltipsForElements();
+}
+
+function initializeTooltipsForElements() {
+    // Initialize tooltips for newly created elements
+    const tooltipElements = document.querySelectorAll('[data-tooltip]');
+    
+    // If Bootstrap is available, use Bootstrap tooltips
+    if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+        tooltipElements.forEach(element => {
+            new bootstrap.Tooltip(element, {
+                title: element.getAttribute('data-tooltip'),
+                placement: 'top',
+                trigger: 'hover'
+            });
+        });
+    }
+    // Custom tooltip system is handled by CSS hover
 }
 
 function renderPlayerCards() {
@@ -243,6 +454,30 @@ function renderPlayerCards() {
 
 function renderPlayerCard(player, elementId, comparisonPlayer) {
     const container = document.getElementById(elementId);
+    
+    // Use filtered stats if available, otherwise fall back to whole season
+    const stats = player.filteredStats || {
+        gp: player.gp || 0,
+        min: player.min || 0,
+        pts: player.pts || 0,
+        reb: player.reb || 0,
+        ast: player.ast || 0,
+        stl: player.stl || 0,
+        blk: player.blk || 0,
+        to: player.to || 0,
+        fgm: player.fgm || 0,
+        fga: player.fga || 0,
+        threeFgm: player.threeFgm || 0,
+        threeFga: player.threeFga || 0,
+        ftm: player.ftm || 0,
+        fta: player.fta || 0
+    };
+    
+    // Create a temporary player object with filtered stats for calculations
+    const playerWithFilteredStats = { ...player, ...stats };
+    
+    const filterText = player.currentFilter ? getFilterDisplayText(player.currentFilter) : 'Whole Season';
+    
     container.innerHTML = `
         <div class="text-center">
             <img src="images/${player.season}/players/${player.number}.jpg" 
@@ -250,12 +485,25 @@ function renderPlayerCard(player, elementId, comparisonPlayer) {
                  onerror="this.src='images/players/default.jpg'">
             <h3 class="text-uk-blue mt-3 mb-1">#${player.number} ${player.name}</h3>
             <div class="text-muted mb-3">${player.pos} | ${player.ht} | ${player.wt}</div>
-            <div class="text-muted mb-3">${player.season}-${parseInt(player.season)+1} Season</div>
+            <div class="text-muted mb-1">${player.season}-${parseInt(player.season)+1} Season</div>
+            <div class="text-muted mb-3"><small>${filterText} (${stats.gp} games)</small></div>
             <div class="stats-box">
-                ${generateStatsList(player, comparisonPlayer)}
+                ${generateStatsList(playerWithFilteredStats, comparisonPlayer)}
             </div>
         </div>
     `;
+}
+
+function getFilterDisplayText(filter) {
+    const filterMap = {
+        'whole': 'Whole Season',
+        'last5': 'Past 5 Games',
+        'home': 'Home Games',
+        'away': 'Away Games',
+        'conference': 'Conference Games',
+        'nonconference': 'Non-Conference Games'
+    };
+    return filterMap[filter] || 'Whole Season';
 }
 
 function generateStatsList(player, comparisonPlayer) {
@@ -266,26 +514,92 @@ function generateStatsList(player, comparisonPlayer) {
         'ortg', 'drtg', 'usg%', 'bpm'
     ];
     
+    const statTooltips = {
+        'ppg': 'Points Per Game',
+        'rpg': 'Rebounds Per Game',
+        'apg': 'Assists Per Game',
+        'fg%': 'Field Goal Percentage',
+        '3p%': 'Three-Point Percentage',
+        'ft%': 'Free Throw Percentage',
+        'ts%': 'True Shooting Percentage',
+        'bpg': 'Blocks Per Game',
+        'spg': 'Steals Per Game',
+        'per': 'Player Efficiency Rating',
+        'eff': 'Efficiency Rating',
+        'ortg': 'Offensive Rating',
+        'drtg': 'Defensive Rating (lower is better)',
+        'usg%': 'Usage Rate',
+        'bpm': 'Box Plus/Minus'
+    };
+    
     // Calculate advanced stats once per player
     const advancedStats = calculateAdvancedStats(player);
     
+    // For comparison player, use filtered stats if available
+    let comparisonPlayerWithStats = null;
+    let comparisonAdvanced = null;
+    
+    if (comparisonPlayer) {
+        // Use filtered stats if available, otherwise use raw stats
+        const comparisonStats = comparisonPlayer.filteredStats || {
+            gp: comparisonPlayer.gp || 0,
+            min: comparisonPlayer.min || 0,
+            pts: comparisonPlayer.pts || 0,
+            reb: comparisonPlayer.reb || 0,
+            ast: comparisonPlayer.ast || 0,
+            stl: comparisonPlayer.stl || 0,
+            blk: comparisonPlayer.blk || 0,
+            to: comparisonPlayer.to || 0,
+            fgm: comparisonPlayer.fgm || 0,
+            fga: comparisonPlayer.fga || 0,
+            threeFgm: comparisonPlayer.threeFgm || 0,
+            threeFga: comparisonPlayer.threeFga || 0,
+            ftm: comparisonPlayer.ftm || 0,
+            fta: comparisonPlayer.fta || 0
+        };
+        
+        comparisonPlayerWithStats = { ...comparisonPlayer, ...comparisonStats };
+        comparisonAdvanced = calculateAdvancedStats(comparisonPlayerWithStats);
+    }
+    
     return statsToCompare.map(stat => {
         const value = getStatValue(player, advancedStats, stat);
-        const comparisonValue = comparisonPlayer ? 
-            getStatValue(comparisonPlayer, calculateAdvancedStats(comparisonPlayer), stat) : null;
+        const comparisonValue = comparisonPlayerWithStats ? 
+            getStatValue(comparisonPlayerWithStats, comparisonAdvanced, stat) : null;
         
-        // Handle percentage values for comparison
-        const cleanValue = value.replace('%', '');
-        const cleanComparisonValue = comparisonValue ? comparisonValue.replace('%', '') : null;
-        const isHigher = comparisonPlayer && (parseFloat(cleanValue) > parseFloat(cleanComparisonValue));
+        // Determine if this stat is higher (better)
+        const isHigher = comparisonPlayerWithStats && isStatHigher(value, comparisonValue, stat);
+        
+        // Get tooltip text
+        const tooltip = statTooltips[stat.toLowerCase()] || '';
 
         return `
             <div class="stat-row">
-                <div class="stat-label">${stat.toUpperCase()}</div>
+                <div class="stat-label stat-label-tooltip" 
+                     data-tooltip="${tooltip}" 
+                     title="${tooltip}">${stat.toUpperCase()}</div>
                 <div class="stat-value ${isHigher ? 'higher-stat' : ''}">${value}</div>
             </div>
         `;
     }).join('');
+}
+
+function isStatHigher(value, comparisonValue, stat) {
+    if (!comparisonValue || value === '-' || comparisonValue === '-') return false;
+    
+    // Clean percentage values and convert to numbers
+    const cleanValue = parseFloat(value.toString().replace('%', ''));
+    const cleanComparisonValue = parseFloat(comparisonValue.toString().replace('%', ''));
+    
+    if (isNaN(cleanValue) || isNaN(cleanComparisonValue)) return false;
+    
+    // For defensive rating, lower is better
+    if (stat.toLowerCase() === 'drtg') {
+        return cleanValue < cleanComparisonValue;
+    }
+    
+    // For all other stats, higher is better
+    return cleanValue > cleanComparisonValue;
 }
 
 function getStatValue(player, advancedStats, stat) {
@@ -336,47 +650,82 @@ function renderComparisonChart() {
         if (chart) chart.destroy();
     });
 
+    // Use filtered stats if available
+    const player1Stats = player1.filteredStats || {
+        gp: player1.gp || 0,
+        min: player1.min || 0,
+        pts: player1.pts || 0,
+        reb: player1.reb || 0,
+        ast: player1.ast || 0,
+        stl: player1.stl || 0,
+        blk: player1.blk || 0,
+        to: player1.to || 0,
+        fgm: player1.fgm || 0,
+        fga: player1.fga || 0,
+        threeFgm: player1.threeFgm || 0,
+        threeFga: player1.threeFga || 0,
+        ftm: player1.ftm || 0,
+        fta: player1.fta || 0
+    };
+    
+    const player2Stats = player2.filteredStats || {
+        gp: player2.gp || 0,
+        min: player2.min || 0,
+        pts: player2.pts || 0,
+        reb: player2.reb || 0,
+        ast: player2.ast || 0,
+        stl: player2.stl || 0,
+        blk: player2.blk || 0,
+        to: player2.to || 0,
+        fgm: player2.fgm || 0,
+        fga: player2.fga || 0,
+        threeFgm: player2.threeFgm || 0,
+        threeFga: player2.threeFga || 0,
+        ftm: player2.ftm || 0,
+        fta: player2.fta || 0
+    };
+    
+    // Create temporary player objects with filtered stats
+    const player1WithFiltered = { ...player1, ...player1Stats };
+    const player2WithFiltered = { ...player2, ...player2Stats };
+    
     // Calculate advanced stats once per player
-    const player1Advanced = calculateAdvancedStats(player1);
-    const player2Advanced = calculateAdvancedStats(player2);
+    const player1Advanced = calculateAdvancedStats(player1WithFiltered);
+    const player2Advanced = calculateAdvancedStats(player2WithFiltered);
     
     // Create averages chart
     averagesChart = new Chart(
         document.getElementById('averagesChart').getContext('2d'),
-        getChartConfig(averagesStats, 'Basic Stats', 15)
+        getChartConfig(averagesStats, 'Basic Stats', 15, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
     );
     
     // Create shooting stats chart
     shootingChart = new Chart(
         document.getElementById('shootingChart').getContext('2d'),
-        getChartConfig(shootingStats, 'Shooting Efficiency', 100)
+        getChartConfig(shootingStats, 'Shooting Efficiency', 100, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
     );
 
     // Create advanced stats chart
     advancedChart = new Chart(
         document.getElementById('advancedChart').getContext('2d'),
-        getChartConfig(advancedStats, 'Advanced Metrics', 40)
+        getChartConfig(advancedStats, 'Advanced Metrics', 40, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
     );
 }
 
-function getChartConfig(stats, title, yMax) {
-    // Calculate advanced stats once per player
-    const player1Advanced = calculateAdvancedStats(player1);
-    const player2Advanced = calculateAdvancedStats(player2);
-    
+function getChartConfig(stats, title, yMax, player1Data, player2Data, player1Advanced, player2Advanced) {
     return {
         type: 'bar',
         data: {
             labels: stats.map(stat => stat.toUpperCase()),
             datasets: [{
-                label: player1.name,
-                data: stats.map(stat => parseFloat(getStatValue(player1, player1Advanced, stat))) || 0,
+                label: player1Data.name,
+                data: stats.map(stat => parseFloat(getStatValue(player1Data, player1Advanced, stat))) || 0,
                 backgroundColor: 'rgba(0, 51, 160, 0.7)',
                 borderColor: 'rgba(0, 51, 160, 1)',
                 borderWidth: 2
             }, {
-                label: player2.name,
-                data: stats.map(stat => parseFloat(getStatValue(player2, player2Advanced, stat))) || 0,
+                label: player2Data.name,
+                data: stats.map(stat => parseFloat(getStatValue(player2Data, player2Advanced, stat))) || 0,
                 backgroundColor: 'rgba(128, 128, 128, 0.7)',
                 borderColor: 'rgba(128, 128, 128, 1)',
                 borderWidth: 2
