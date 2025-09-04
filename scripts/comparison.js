@@ -508,7 +508,7 @@ function getFilterDisplayText(filter) {
 
 function generateStatsList(player, comparisonPlayer) {
     const statsToCompare = [
-        'ppg', 'rpg', 'apg', 
+        'mpg', 'ppg', 'rpg', 'apg', 'topg',
         'fg%', '3p%', 'ft%', 'ts%',
         'bpg', 'spg', 'per', 'eff',
         'ortg', 'drtg', 'usg%', 'bpm'
@@ -518,6 +518,8 @@ function generateStatsList(player, comparisonPlayer) {
         'ppg': 'Points Per Game',
         'rpg': 'Rebounds Per Game',
         'apg': 'Assists Per Game',
+        'mpg': 'Minutes Per Game',
+        'topg': 'Turnovers Per Game',
         'fg%': 'Field Goal Percentage',
         '3p%': 'Three-Point Percentage',
         'ft%': 'Free Throw Percentage',
@@ -593,8 +595,8 @@ function isStatHigher(value, comparisonValue, stat) {
     
     if (isNaN(cleanValue) || isNaN(cleanComparisonValue)) return false;
     
-    // For defensive rating, lower is better
-    if (stat.toLowerCase() === 'drtg') {
+    // For defensive rating and turnovers, lower is better
+    if (stat.toLowerCase() === 'drtg' || stat.toLowerCase() === 'topg') {
         return cleanValue < cleanComparisonValue;
     }
     
@@ -609,6 +611,8 @@ function getStatValue(player, advancedStats, stat) {
         case 'ppg': return (player.pts / gp).toFixed(1);
         case 'rpg': return (player.reb / gp).toFixed(1);
         case 'apg': return (player.ast / gp).toFixed(1);
+        case 'mpg': return (player.min / gp).toFixed(1);
+        case 'topg': return (player.to / gp).toFixed(1);
         case 'fg%': 
             return player.fga > 0 ? ((player.fgm / player.fga) * 100).toFixed(1) + '%' : '-';
         case '3p%': 
@@ -641,14 +645,43 @@ function clearComparison() {
 }
 
 function renderComparisonChart() {
-    const averagesStats = ['ppg', 'rpg', 'apg', 'bpg', 'spg'];
+    const averagesStats = ['ppg', 'rpg', 'apg', 'topg', 'bpg', 'spg'];
     const shootingStats = ['fg%', '3p%', 'ft%', 'ts%'];
-    const advancedStats = ['per', 'eff', 'ortg', 'drtg', 'usg%', 'bpm'];
+    const playingTimeStats = ['mpg', 'ortg', 'drtg'];
+    const advancedStats = ['per', 'eff', 'usg%', 'bpm'];
+
+    // Debug: Check if canvases exist
+    const averagesCanvas = document.getElementById('averagesChart');
+    const shootingCanvas = document.getElementById('shootingChart');
+    const playingTimeCanvas = document.getElementById('playingTimeChart');
+    const advancedCanvas = document.getElementById('advancedChart');
+    
+    console.log('Canvas elements:', {
+        averages: averagesCanvas,
+        shooting: shootingCanvas,
+        playingTime: playingTimeCanvas,
+        advanced: advancedCanvas
+    });
 
     // Destroy existing charts
-    [averagesChart, shootingChart, advancedChart].forEach(chart => {
-        if (chart) chart.destroy();
-    });
+    // Destroy existing charts with proper null checking
+    if (averagesChart && typeof averagesChart.destroy === 'function') {
+        averagesChart.destroy();
+    }
+    if (shootingChart && typeof shootingChart.destroy === 'function') {
+        shootingChart.destroy();
+    }
+    if (playingTimeChart && typeof playingTimeChart.destroy === 'function') {
+        playingTimeChart.destroy();
+    }
+    if (advancedChart && typeof advancedChart.destroy === 'function') {
+        advancedChart.destroy();
+    }
+    // Reset chart variables
+    averagesChart = null;
+    shootingChart = null;
+    playingTimeChart = null;
+    advancedChart = null;
 
     // Use filtered stats if available
     const player1Stats = player1.filteredStats || {
@@ -693,39 +726,72 @@ function renderComparisonChart() {
     const player1Advanced = calculateAdvancedStats(player1WithFiltered);
     const player2Advanced = calculateAdvancedStats(player2WithFiltered);
     
-    // Create averages chart
-    averagesChart = new Chart(
-        document.getElementById('averagesChart').getContext('2d'),
-        getChartConfig(averagesStats, 'Basic Stats', 15, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
-    );
-    
-    // Create shooting stats chart
-    shootingChart = new Chart(
-        document.getElementById('shootingChart').getContext('2d'),
-        getChartConfig(shootingStats, 'Shooting Efficiency', 100, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
-    );
+    console.log('Player data:', {
+        player1: player1WithFiltered,
+        player2: player2WithFiltered,
+        player1Advanced,
+        player2Advanced
+    });
 
-    // Create advanced stats chart
-    advancedChart = new Chart(
-        document.getElementById('advancedChart').getContext('2d'),
-        getChartConfig(advancedStats, 'Advanced Metrics', 40, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
-    );
+    // Create charts with error handling
+    try {
+        if (averagesCanvas) {
+            averagesChart = new Chart(averagesCanvas.getContext('2d'),
+                getChartConfig(averagesStats, 'Basic Stats', 20, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
+            );
+            console.log('Averages chart created');
+        }
+        
+        if (shootingCanvas) {
+            shootingChart = new Chart(shootingCanvas.getContext('2d'),
+                getChartConfig(shootingStats, 'Shooting Efficiency', 100, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
+            );
+            console.log('Shooting chart created');
+        }
+
+        if (playingTimeCanvas) {
+            playingTimeChart = new Chart(playingTimeCanvas.getContext('2d'),
+                getChartConfig(playingTimeStats, 'Minutes & Ratings', 120, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
+            );
+            console.log('Playing time chart created');
+        }
+
+        if (advancedCanvas) {
+            advancedChart = new Chart(advancedCanvas.getContext('2d'),
+                getChartConfig(advancedStats, 'Advanced Metrics', 30, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
+            );
+            console.log('Advanced chart created');
+        }
+    } catch (error) {
+        console.error('Error creating charts:', error);
+    }
 }
 
 function getChartConfig(stats, title, yMax, player1Data, player2Data, player1Advanced, player2Advanced) {
+    // Helper function to clean and parse stat values
+    function parseStatValue(player, advanced, stat) {
+        const rawValue = getStatValue(player, advanced, stat);
+        if (rawValue === '-' || rawValue === null || rawValue === undefined) {
+            return 0;
+        }
+        // Remove percentage signs and parse
+        const cleanValue = parseFloat(rawValue.toString().replace('%', ''));
+        return isNaN(cleanValue) ? 0 : cleanValue;
+    }
+
     return {
         type: 'bar',
         data: {
             labels: stats.map(stat => stat.toUpperCase()),
             datasets: [{
                 label: player1Data.name,
-                data: stats.map(stat => parseFloat(getStatValue(player1Data, player1Advanced, stat))) || 0,
+                data: stats.map(stat => parseStatValue(player1Data, player1Advanced, stat)),
                 backgroundColor: 'rgba(0, 51, 160, 0.7)',
                 borderColor: 'rgba(0, 51, 160, 1)',
                 borderWidth: 2
             }, {
                 label: player2Data.name,
-                data: stats.map(stat => parseFloat(getStatValue(player2Data, player2Advanced, stat))) || 0,
+                data: stats.map(stat => parseStatValue(player2Data, player2Advanced, stat)),
                 backgroundColor: 'rgba(128, 128, 128, 0.7)',
                 borderColor: 'rgba(128, 128, 128, 1)',
                 borderWidth: 2
