@@ -24,6 +24,13 @@
         .stats-table {
             border-collapse: separate;
             border-spacing: 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Make table wider when advanced stats are shown */
+        .stats-table.show-advanced {
+            width: 100%;
+            min-width: 1200px; /* Increased width to accommodate all columns including MPG and TPG */
         }
 
         .stats-table thead th {
@@ -167,11 +174,11 @@
         }
 
         .asc .sort-arrow::after {
-        content: "↓";
+        content: "↑";
         }
 
         .desc .sort-arrow::after {
-        content: "↑";
+        content: "↓";
         }
         .bbn-title {
             color: var(--uk-blue);
@@ -338,10 +345,52 @@
             display: table-cell;
         }
 
+        /* Table responsive wrapper adjustments */
+        .table-responsive {
+            transition: all 0.3s ease;
+            overflow-x: auto;
+        }
+
+        /* Make table use full screen width when advanced stats are shown */
+        @media (min-width: 1200px) {
+            .table-responsive:has(.stats-table.show-advanced) {
+                overflow-x: visible;
+                width: calc(100vw - 40px); /* Subtract 40px total for 20px on each side */
+                margin-left: calc(-50vw + 50% + 20px); /* Add 20px to offset the left margin */
+            }
+        }
+
+        /* Column width controls for better spacing */
+        .stats-table.show-advanced th,
+        .stats-table.show-advanced td {
+            white-space: nowrap;
+            padding: 8px 12px;
+        }
+
+        .stats-table.show-advanced th:first-child,
+        .stats-table.show-advanced td:first-child {
+            min-width: 200px; /* Player name column */
+        }
+
+        .stats-table.show-advanced .advanced-stat {
+            min-width: 60px; /* Advanced stat columns */
+        }
+
         @media (max-width: 768px) {
             .stats-table th, 
             .stats-table td {
                 white-space: nowrap;
+                font-size: 0.8rem;
+                padding: 4px 6px;
+            }
+            
+            .stats-table.show-advanced {
+                min-width: 2000px; /* Even wider on mobile to accommodate all columns */
+            }
+
+            /* Force horizontal scroll on mobile when advanced stats shown */
+            .table-responsive:has(.stats-table.show-advanced) {
+                overflow-x: auto !important;
             }
         }
         /* Add to the existing styles in players.html */
@@ -480,6 +529,9 @@
         .past-seasons-table td:nth-child(13) {
             display: none;
         }
+
+       
+
     }
 
     
@@ -571,12 +623,15 @@
                                 <th data-sort-key="pos">POS<span class="sort-arrow"></span></th>
                                 <th data-sort-key="ht">HT<span class="sort-arrow"></span></th>
                                 <th data-sort-key="wt">WT<span class="sort-arrow"></span></th>
+                                <th class="advanced-stat" data-sort-key="mpg">MPG<span class="sort-arrow"></span></th>
                                 <th data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
                                 <th data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
                                 <th data-sort-key="apg">APG<span class="sort-arrow"></span></th>
                                 <th data-sort-key="spg">SPG<span class="sort-arrow"></span></th>
                                 <th data-sort-key="bpg">BPG<span class="sort-arrow"></span></th>
                                 <!-- Advanced stats columns -->
+                                
+                                <th class="advanced-stat" data-sort-key="tpg">TO<span class="sort-arrow"></span></th>
                                 <th class="advanced-stat" data-sort-key="fgPct">FG%<span class="sort-arrow"></span></th>
                                 <th class="advanced-stat" data-sort-key="threePct">3P%<span class="sort-arrow"></span></th>
                                 <th class="advanced-stat" data-sort-key="ftPct">FT%<span class="sort-arrow"></span></th>
