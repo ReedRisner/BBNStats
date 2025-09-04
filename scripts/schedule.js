@@ -1,4 +1,4 @@
-        function parseGameDate(dateStr) {
+function parseGameDate(dateStr) {
     // Enhanced date parsing with error handling
             const months = {
                 'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
@@ -79,14 +79,14 @@
                 }
             }
 
-            // Populate row
+            // Populate row - NOW INCLUDING OPPONENT RANKING
             row.innerHTML = `
                 <td data-label="Date" class="game-date">
                     ${game.day ? game.day + ', ' : ''}${game.date}
                 </td>
                 <td data-label="Matchup">
                     <img src="images/opponents/${game.logo}" class="team-logo" alt="${game.opponent} Logo">
-                    <strong>${game.opponent}</strong>
+                    <strong>${game.opponentRank && game.opponentRank <= 25 ? `<span class="opponent-rank">#${game.opponentRank}</span> ` : ''}${game.opponent}</strong>
                 </td>
                 <td data-label="Location">${game.location}</td>
                 <td data-label="Result">
@@ -99,6 +99,16 @@
                     </span>
                 </td>
             `;
+
+            // Add click handler AFTER setting innerHTML
+            if (game.result && game.result !== 'TBD') {
+                row.style.cursor = 'pointer';
+                row.addEventListener('click', () => {
+                    const season = document.getElementById('seasonSelect').value;
+                    const formattedDate = parseGameDate(game.date);
+                    window.location.href = `boxscore.html?season=${season}&date=${formattedDate}`;
+                });
+            }
 
             tbody.appendChild(row);
         });
@@ -149,4 +159,3 @@
             window.history.replaceState({}, '', url);
             loadSchedule(season);
         });
- 
