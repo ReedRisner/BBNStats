@@ -959,15 +959,16 @@ document.querySelectorAll('[data-sort-key]').forEach(header => {
     header.addEventListener('click', function() {
         const sortKey = this.dataset.sortKey;
         if (currentSortKey === sortKey) {
-            currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
         } else {
             currentSortKey = sortKey;
-            currentSortDirection = 'desc';
+            currentSortDirection = 'desc'; // Default to descending on first click
         }
         updateSortArrows(currentSortKey, currentSortDirection);
         loadPlayerStats(document.getElementById('seasonSelect').value);
     });
 });
+
 
 document.getElementById('seasonSelect').addEventListener('change', function() {
     try {
