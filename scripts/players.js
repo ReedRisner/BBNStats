@@ -302,10 +302,14 @@ function sortPlayers(players, sortKey, direction) {
             case 'ppg':
             case 'rpg':
             case 'apg':
+            case 'mpg':
+            case 'tpg': {
                 const statMap = {
                     ppg: 'pts',
                     rpg: 'reb',
-                    apg: 'ast'
+                    apg: 'ast',
+                    mpg: 'min',
+                    tpg: 'to'
                 };
                 const stat = statMap[sortKey];
                 const aGp = a.gp || 1;
@@ -313,6 +317,7 @@ function sortPlayers(players, sortKey, direction) {
                 aValue = (a[stat] || 0) / aGp;
                 bValue = (b[stat] || 0) / bGp;
                 break;
+            }
 
             // Advanced stats cases
             case 'fgPct':
@@ -570,6 +575,8 @@ function loadPlayerList(players, season) {
             <td>${(player.stl / (player.gp || 1)).toFixed(1)}</td>
             <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
             ${showAdvanced ? `
+            <td class="advanced-stat">${(player.min / (player.gp || 1)).toFixed(1)}</td>
+            <td class="advanced-stat">${(player.to / (player.gp || 1)).toFixed(1)}</td>
             <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
             <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
             <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
@@ -996,4 +1003,4 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
         console.error('Initialization error:', e);
     }
-})
+});
