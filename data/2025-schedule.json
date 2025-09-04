@@ -7,8 +7,8 @@
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "TBD",
         "quad": 1
-        ,"conference": false
-        , "exh": true,
+        ,"conference": false,
+        "exh": true,
         "day": "Tuesday"
         ,"venue": "home"
     },
@@ -60,7 +60,7 @@
         "quad": 1
         ,"conference": false
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Tuesday"
         ,"venue": "away"
     },
@@ -86,7 +86,7 @@
         "quad": 1
         ,"conference": false
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Tuesday"
         ,"venue": "away"
     },
@@ -123,7 +123,7 @@
         "quad": 1
         ,"conference": false
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Tuesday"
         ,"venue": "home"
     },
@@ -136,7 +136,7 @@
         "quad": 1
         ,"conference": false
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Friday"
         ,"venue": "away"
     },
@@ -161,7 +161,7 @@
         "quad": 1
         ,"conference": false
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "home"
     },
@@ -174,7 +174,7 @@
         "quad": 1
         ,"conference": false
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "away"
     },
@@ -199,7 +199,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "away"
     },
@@ -212,7 +212,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Tuesday"
         ,"venue": "home"
     },
@@ -249,7 +249,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "away"
     },
@@ -298,7 +298,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "away"
     },
@@ -323,7 +323,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "home"
     },
@@ -336,7 +336,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "away"
     },
@@ -361,7 +361,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "away"
 
@@ -411,7 +411,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
-        ,"opponentRank": 25
+        ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "home"
     }
