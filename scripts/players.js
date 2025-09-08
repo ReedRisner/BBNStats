@@ -158,11 +158,18 @@ function isMobileDevice() {
 
 // Add this function to set default view based on device
 function setDefaultView() {
-    const gridToggle = document.getElementById('gridViewToggle');
-    if (isMobileDevice() && !sessionStorage.getItem('viewPreference')) {
-        gridToggle.checked = true;
-        toggleView(true);
-    }
+            const gridToggle = document.getElementById('gridViewToggle');
+            if (isMobileDevice()) {
+                // Always default to grid view on mobile
+                gridToggle.checked = true;
+                toggleView(true);
+                // Force grid view preference for mobile
+                sessionStorage.setItem('viewPreference', 'grid');
+            } else if (!sessionStorage.getItem('viewPreference')) {
+                // Default behavior for desktop
+                gridToggle.checked = false;
+                toggleView(false);
+            }
 }
 
 // Add this function to handle view toggling
@@ -587,6 +594,7 @@ function loadPlayerList(players, season) {
     players.forEach(player => {
         const gameRatings = (player.nonExhGameLogs || []).map(calculateGameRating);
         const avgRating = calculateAverageRating(gameRatings);
+        // Moved advancedStats calculation here so it's available in both mobile and desktop views
         const advancedStats = calculateAdvancedStats(player);
         
         let ratingDisplay, ratingClass;
@@ -648,6 +656,7 @@ function loadPlayerList(players, season) {
                 <td>${player.pos}</td>
                 <td>${player.ht}</td>
                 <td>${player.wt}</td>
+                <td class="advanced-stat">${(player.min / (player.gp || 1)).toFixed(1)}</td>
                 <td>${(player.pts / (player.gp || 1)).toFixed(1)}</td>
                 <td>${(player.reb / (player.gp || 1)).toFixed(1)}</td>
                 <td>${(player.ast / (player.gp || 1)).toFixed(1)}</td>
@@ -655,7 +664,6 @@ function loadPlayerList(players, season) {
                 <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
                 ${showAdvanced ? `
                 <td class="advanced-stat">${(player.to / (player.gp || 1)).toFixed(1)}</td>
-                <td class="advanced-stat">${(player.min / (player.gp || 1)).toFixed(1)}</td>
                 <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
                 <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
                 <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
@@ -689,19 +697,19 @@ function loadPlayerList(players, season) {
 
 // FIXED: Update table headers function with proper event listener management
 function updateTableHeaders() {
-    const thead = document.querySelector('.stats-table thead tr');
-    const isMobile = isMobileDevice();
-    const showAdvanced = document.getElementById('advancedStatsToggle').checked;
-    
-    if (isMobile && !showAdvanced) {
-        thead.innerHTML = `
-            <th style="width:35%">Player</th>
-            <th style="width:15%" data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
-            <th style="width:15%" data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
-            <th style="width:15%" data-sort-key="apg">APG<span class="sort-arrow"></span></th>
-            <th style="width:20%" data-sort-key="rating">Rating<span class="sort-arrow"></span></th>
-        `;
-    } else {
+            const thead = document.querySelector('.stats-table thead tr');
+            const isMobile = isMobileDevice();
+            const showAdvanced = document.getElementById('advancedStatsToggle').checked;
+            
+            if (isMobile) {
+                thead.innerHTML = `
+                    <th style="width:40%">Player</th>
+                    <th style="width:15%" data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
+                    <th style="width:15%" data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
+                    <th style="width:15%" data-sort-key="apg">APG<span class="sort-arrow"></span></th>
+                    <th style="width:15%" data-sort-key="rating">Rating<span class="sort-arrow"></span></th>
+                `;
+            } else {
         // Reset to full desktop headers (existing HTML)
         thead.innerHTML = `
             <th>Player</th>
