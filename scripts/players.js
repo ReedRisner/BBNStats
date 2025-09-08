@@ -586,112 +586,124 @@ function loadPlayerStats(season) {
 }
 
 function loadPlayerList(players, season) {
-    const tbody = document.getElementById('playersTableBody');
-    const showAdvanced = document.getElementById('advancedStatsToggle').checked;
-    const isMobile = isMobileDevice();
-    tbody.innerHTML = '';
+  const tbody = document.getElementById('playersTableBody');
+  const showAdvanced = document.getElementById('advancedStatsToggle').checked;
+  const isMobile = isMobileDevice();
+  tbody.innerHTML = '';
 
-    players.forEach(player => {
-        const gameRatings = (player.nonExhGameLogs || []).map(calculateGameRating);
-        const avgRating = calculateAverageRating(gameRatings);
-        const advancedStats = calculateAdvancedStats(player);
-        
-        let ratingDisplay, ratingClass;
-        if (isNaN(avgRating)) {
-            ratingDisplay = 'N/A';
-            ratingClass = 'rating-na';
-        } else {
-            ratingDisplay = avgRating.toFixed(1);
-            ratingClass = `rating-${Math.floor(avgRating)}`;
-        }
+  players.forEach(player => {
+    const gameRatings = (player.nonExhGameLogs || []).map(calculateGameRating);
+    const avgRating = calculateAverageRating(gameRatings);
+    
+    let ratingDisplay, ratingClass;
+    if (isNaN(avgRating)) {
+        ratingDisplay = 'N/A';
+        ratingClass = 'rating-na';
+    } else {
+        ratingDisplay = avgRating.toFixed(1);
+        ratingClass = `rating-${Math.floor(avgRating)}`;
+    }
 
-        const row = document.createElement('tr');
-        
-        // For mobile, show a more compact version with essential stats
-        if (isMobile && !showAdvanced) {
-            row.innerHTML = `
-                <td class="mobile-player-cell">
-                    <div class="d-flex align-items-center">
-                        <img src="images/${season}/players/${player.number}.jpg" 
-                            class="player-photo me-2" alt="${player.name}"
-                            onerror="this.src='images/players/default.jpg'">
-                        <div class="flex-grow-1">
-                            <strong>#${player.number} ${player.name}</strong><br>
-                            <small class="text-muted">${player.grade || ''} ${player.pos}</small>
-                        </div>
-                    </div>
-                </td>
-                <td class="text-center">
-                    <div class="mobile-stats">
-                        <div><strong>${(player.pts / (player.gp || 1)).toFixed(1)}</strong><br><small>PPG</small></div>
-                    </div>
-                </td>
-                <td class="text-center">
-                    <div class="mobile-stats">
-                        <div><strong>${(player.reb / (player.gp || 1)).toFixed(1)}</strong><br><small>RPG</small></div>
-                    </div>
-                </td>
-                <td class="text-center">
-                    <div class="mobile-stats">
-                        <div><strong>${(player.ast / (player.gp || 1)).toFixed(1)}</strong><br><small>APG</small></div>
-                    </div>
-                </td>
-                <td class="text-center">
-                    <span class="rating-cell ${ratingClass}" style="font-size: 0.8rem;">
-                        ${ratingDisplay}
-                    </span>
-                </td>
-            `;
-        } else {
-            // Desktop version or mobile with advanced stats
-            row.innerHTML = `
-                <td>
+    const row = document.createElement('tr');
+    
+    // For mobile, show a more compact version with essential stats
+    if (isMobile && !showAdvanced) {
+        // Create first initial + last name format
+        const names = player.name.split(' ');
+        const shortName = names.length > 1 ? 
+            `${names[0].charAt(0)}. ${names[names.length - 1]}` : 
+            player.name;
+
+       
+            
+        row.innerHTML = `
+            <td class="mobile-player-cell">
+                <div class="d-flex align-items-center">
                     <img src="images/${season}/players/${player.number}.jpg" 
-                        class="player-photo" alt="${player.name}"
+                        class="player-photo me-2" alt="${player.name}"
                         onerror="this.src='images/players/default.jpg'">
-                    <strong>#${player.number} ${player.name}</strong>
-                </td>
-                <td>${player.grade || ''}</td>
-                <td>${player.pos}</td>
-                <td>${player.ht}</td>
-                <td>${player.wt}</td>
-                <td class="advanced-stat">${(player.min / (player.gp || 1)).toFixed(1)}</td>
-                <td>${(player.pts / (player.gp || 1)).toFixed(1)}</td>
-                <td>${(player.reb / (player.gp || 1)).toFixed(1)}</td>
-                <td>${(player.ast / (player.gp || 1)).toFixed(1)}</td>
-                <td>${(player.stl / (player.gp || 1)).toFixed(1)}</td>
-                <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
-                ${showAdvanced ? `
-                <td class="advanced-stat">${(player.to / (player.gp || 1)).toFixed(1)}</td>
-                <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
-                <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
-                <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
-                <td class="advanced-stat">${(advancedStats.tsPct * 100).toFixed(1)}%</td>
-                <td class="advanced-stat">${advancedStats.per.toFixed(1)}</td>
-                <td class="advanced-stat">${advancedStats.eff.toFixed(1)}</td>
-                <td class="advanced-stat">${advancedStats.usgRate.toFixed(1)}%</td>
-                <td class="advanced-stat">${advancedStats.ortg.toFixed(1)}</td>
-                <td class="advanced-stat">${advancedStats.drtg.toFixed(1)}</td>
-                ` : ''}
-                <td>
-                    <span class="rating-cell ${ratingClass}">
-                        ${ratingDisplay}
-                    </span>
-                </td>
-            `;
-        }
+                    <div class="flex-grow-1 mobile-player-name">
+                        <span class="short-name">#${player.number} ${shortName}</span>
+                        <span class="full-name">#${player.number} ${player.name}</span>
+                        <br>
+                        <small class="text-muted">${player.grade || ''} ${player.pos}</small>
+                    </div>
+                </div>
+            </td>
+            <td class="text-center">
+                <div class="mobile-stats">
+                    <div><strong>${(player.pts / (player.gp || 1)).toFixed(1)}</strong><br><small>PPG</small></div>
+                </div>
+            </td>
+            <td class="text-center">
+                <div class="mobile-stats">
+                    <div><strong>${(player.reb / (player.gp || 1)).toFixed(1)}</strong><br><small>RPG</small></div>
+                </div>
+            </td>
+            <td class="text-center">
+                <div class="mobile-stats">
+                    <div><strong>${(player.ast / (player.gp || 1)).toFixed(1)}</strong><br><small>APG</small></div>
+                </div>
+            </td>
+            <td class="text-center">
+                <span class="rating-cell ${ratingClass}" style="font-size: 0.8rem;">
+                    ${ratingDisplay}
+                </span>
+            </td>
+        `;
+    } else {
+        // Desktop version or mobile with advanced stats
 
-        row.addEventListener('click', () => {
-            try {
-                showPlayerDetail(player, gameRatings, season);
-            } catch (e) {
-                console.error('Error showing player detail:', e);
-                alert('Error showing player details. Check console.');
-            }
-        });
-        
-        tbody.appendChild(row);
+         // Desktop version or mobile with advanced stats
+        const advancedStats = calculateAdvancedStats(player); // Add this line
+        row.innerHTML = `
+            <td>
+                <img src="images/${season}/players/${player.number}.jpg" 
+                    class="player-photo" alt="${player.name}"
+                    onerror="this.src='images/players/default.jpg'">
+                <strong>#${player.number} ${player.name}</strong>
+            </td>
+            <td>${player.grade || ''}</td>
+            <td>${player.pos}</td>
+            <td>${player.ht}</td>
+            <td>${player.wt}</td>
+            <td class="advanced-stat">${(player.min / (player.gp || 1)).toFixed(1)}</td>
+            <td>${(player.pts / (player.gp || 1)).toFixed(1)}</td>
+            <td>${(player.reb / (player.gp || 1)).toFixed(1)}</td>
+            <td>${(player.ast / (player.gp || 1)).toFixed(1)}</td>
+            <td>${(player.stl / (player.gp || 1)).toFixed(1)}</td>
+            <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
+            ${showAdvanced ? `
+            <td class="advanced-stat">${(player.to / (player.gp || 1)).toFixed(1)}</td>
+            <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
+            <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
+            <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
+            <td class="advanced-stat">${(advancedStats.tsPct * 100).toFixed(1)}%</td>
+            <td class="advanced-stat">${advancedStats.per.toFixed(1)}</td>
+            <td class="advanced-stat">${advancedStats.eff.toFixed(1)}</td>
+            <td class="advanced-stat">${advancedStats.usgRate.toFixed(1)}%</td>
+            <td class="advanced-stat">${advancedStats.ortg.toFixed(1)}</td>
+            <td class="advanced-stat">${advancedStats.drtg.toFixed(1)}</td>
+            ` : ''}
+            <td>
+                <span class="rating-cell ${ratingClass}">
+                    ${ratingDisplay}
+                </span>
+            </td>
+        `;
+    }
+
+    row.addEventListener('click', () => {
+        try {
+            showPlayerDetail(player, gameRatings, season);
+        } catch (e) {
+            console.error('Error showing player detail:', e);
+            alert('Error showing player details. Check console.');
+        }
     });
+    
+    tbody.appendChild(row);
+  });
 }
 
 // FIXED: Update table headers function with proper event listener management
