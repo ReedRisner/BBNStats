@@ -892,6 +892,48 @@
 .view-preference-table #playersGridView {
     display: none !important;
 }
+
+ /* Add mobile-specific styles for season selector */
+        @media (max-width: 768px) {
+            .season-selector-container {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+            
+            .season-selector {
+                margin: 0 auto !important;
+                max-width: 200px;
+            }
+            
+            /* Ensure grid view is default on mobile */
+            #playerListSection {
+                display: none;
+            }
+            
+            #playersGridView {
+                display: grid;
+            }
+            
+            /* Adjust mobile table to show PPG, RPG, APG and Rating */
+            .stats-table.mobile-view th:nth-child(1),
+            .stats-table.mobile-view td:nth-child(1) {
+                width: 40% !important;
+            }
+            
+            .stats-table.mobile-view th:nth-child(2),
+            .stats-table.mobile-view td:nth-child(2),
+            .stats-table.mobile-view th:nth-child(3),
+            .stats-table.mobile-view td:nth-child(3),
+            .stats-table.mobile-view th:nth-child(4),
+            .stats-table.mobile-view td:nth-child(4),
+            .stats-table.mobile-view th:nth-child(5),
+            .stats-table.mobile-view td:nth-child(5) {
+                width: 15% !important;
+                text-align: center;
+            }
+        }
     
     </style>
     
