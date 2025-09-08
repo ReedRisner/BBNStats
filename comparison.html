@@ -86,6 +86,30 @@
             margin-bottom: 1rem;
         }
 
+        .per30-toggle-container {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background-color: rgba(0, 51, 160, 0.1);
+            border-radius: 10px;
+            border: 2px solid var(--uk-blue);
+        }
+
+        .per30-toggle-container label {
+            font-weight: bold;
+            color: var(--uk-blue);
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--uk-blue);
+            border-color: var(--uk-blue);
+        }
+
         /* Updated mobile styles to keep side-by-side layout */
         @media (max-width: 768px) {
             .player-select-container {
@@ -145,6 +169,16 @@
                 padding: 0.25rem 0.5rem;
                 font-size: 0.9rem;
             }
+
+            .per30-toggle-container {
+                padding: 0.75rem;
+                margin: 0.5rem 0;
+            }
+
+            .per30-toggle-container label {
+                font-size: 0.9rem;
+                margin-left: 8px;
+            }
         }
 
         /* Extra small screens - even more compact */
@@ -168,6 +202,14 @@
             
             .form-select {
                 font-size: 0.8rem;
+            }
+
+            .per30-toggle-container {
+                padding: 0.5rem;
+            }
+
+            .per30-toggle-container label {
+                font-size: 0.85rem;
             }
         }
 
@@ -265,7 +307,6 @@
                         <option value="nonconference">Non-Conference Games</option>
                     </select>
                 </div>
-                <div id="player1Card" class="player-card"></div>
             </div>
             <div>
                 <div class="mb-3">
@@ -287,9 +328,22 @@
                         <option value="nonconference">Non-Conference Games</option>
                     </select>
                 </div>
-                <div id="player2Card" class="player-card"></div>
             </div>
+            
+            <!-- Per-30 Minute Toggle -->
+            <div class="per30-toggle-container">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="per30Toggle">
+                    <label class="form-check-label" for="per30Toggle">
+                        Show Per-30-Minute Stats
+                    </label>
+                </div>
+            </div>
+
+            <div id="player1Card" class="player-card"></div>
+            <div id="player2Card" class="player-card"></div>
         </div>
+
         <!-- Updated comparison-box section with 4 charts in 2x2 grid -->
         <div class="comparison-box mt-4">
             <div class="row">
