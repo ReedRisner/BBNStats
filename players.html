@@ -751,6 +751,59 @@
     .stats-table.show-advanced .advanced-stat {
         min-width: 60px;
     }
+
+    @media (max-width: 768px) {
+    .stats-table.show-advanced th,
+    .stats-table.show-advanced td {
+        text-align: center;
+        padding: 8px 4px;
+    }
+
+    .stats-table.show-advanced td:first-child {
+    text-align: center;
+    }
+
+    .stats-table.show-advanced td:first-child .player-photo {
+    margin: 0 auto;
+    display: block;
+    }
+
+    .stats-table.show-advanced td:first-child strong {
+    display: block;
+    text-align: center;
+    margin-top: 4px;
+    }
+
+    .stats-table.show-advanced .advanced-stat {
+        font-size: 0.7rem;
+    }
+    
+    /* First initial + last name for mobile non-advanced view */
+    .mobile-player-name {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .mobile-player-name .full-name {
+        display: none;
+    }
+    
+    .mobile-player-name .short-name {
+        display: block;
+        font-weight: bold;
+    }
+    }
+
+    /* Show full name on desktop and tablet */
+    @media (min-width: 769px) {
+    .mobile-player-name .full-name {
+        display: block;
+    }
+    
+    .mobile-player-name .short-name {
+        display: none;
+    }
+    }
 </style>
     
 </head>
