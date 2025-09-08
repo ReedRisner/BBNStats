@@ -26,8 +26,6 @@ async function loadPlayerData() {
     }
 }
 
-// ... existing code ...
-
 async function processGameLogs() {
     // Reset and calculate player stats from game logs
     for (const season of Object.keys(allPlayersData.seasons)) {
@@ -154,8 +152,57 @@ async function processGameLogs() {
     }
 }
 
-// Rest of the file remains the same with adjustments to use non-exhibition games
-// ==============================================================================
+function isMobileDevice() {
+    return window.innerWidth <= 768;
+}
+
+// Add this function to set default view based on device
+function setDefaultView() {
+    const gridToggle = document.getElementById('gridViewToggle');
+    if (isMobileDevice() && !sessionStorage.getItem('viewPreference')) {
+        gridToggle.checked = true;
+        toggleView(true);
+    }
+}
+
+// Add this function to handle view toggling
+function toggleView(isGrid) {
+    const playerListSection = document.getElementById('playerListSection');
+    const playersGridView = document.getElementById('playersGridView');
+    
+    if (isGrid) {
+        playerListSection.style.display = 'none';
+        playersGridView.style.display = 'grid';
+        sessionStorage.setItem('viewPreference', 'grid');
+    } else {
+        playerListSection.style.display = 'block';
+        playersGridView.style.display = 'none';
+        sessionStorage.setItem('viewPreference', 'table');
+    }
+}
+
+// FIXED: Create a centralized function to add sort event listeners
+function addSortEventListeners() {
+    document.querySelectorAll('[data-sort-key]').forEach(header => {
+        // Remove existing listeners to prevent duplicates
+        header.replaceWith(header.cloneNode(true));
+    });
+    
+    // Re-select elements after cloning and add fresh listeners
+    document.querySelectorAll('[data-sort-key]').forEach(header => {
+        header.addEventListener('click', function() {
+            const sortKey = this.dataset.sortKey;
+            if (currentSortKey === sortKey) {
+                currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
+            } else {
+                currentSortKey = sortKey;
+                currentSortDirection = 'desc';
+            }
+            updateSortArrows(currentSortKey, currentSortDirection);
+            loadPlayerStats(document.getElementById('seasonSelect').value);
+        });
+    });
+}
 
 document.getElementById('advancedStatsToggle').addEventListener('change', function() {
     document.querySelector('.stats-table').classList.toggle('show-advanced');
@@ -239,17 +286,8 @@ function loadPlayerGrid(players, season) {
 
 // Update grid toggle functionality
 document.getElementById('gridViewToggle').addEventListener('change', function() {
-  const playerListSection = document.getElementById('playerListSection');
-  const playersGridView = document.getElementById('playersGridView');
-  
-  if (this.checked) {
-    playerListSection.style.display = 'none';
-    playersGridView.style.display = 'grid';
+    toggleView(this.checked);
     loadPlayerStats(document.getElementById('seasonSelect').value);
-  } else {
-    playerListSection.style.display = 'block';
-    playersGridView.style.display = 'none';
-  }
 });
 
 function sortPlayers(players, sortKey, direction) {
@@ -528,11 +566,17 @@ function loadPlayerStats(season) {
             players = sortPlayers(players, currentSortKey, currentSortDirection);
         }
 
+        // FIXED: Update table headers for mobile and re-add event listeners
+        updateTableHeaders();
+        
         loadPlayerList(players, season);
         
         if (document.getElementById('gridViewToggle').checked) {
             loadPlayerGrid(players, season);
         }
+        
+        // FIXED: Update sort arrows after loading the table
+        updateSortArrows(currentSortKey, currentSortDirection);
     } catch (e) {
         console.error('Error loading player stats:', e);
     }
@@ -541,6 +585,7 @@ function loadPlayerStats(season) {
 function loadPlayerList(players, season) {
     const tbody = document.getElementById('playersTableBody');
     const showAdvanced = document.getElementById('advancedStatsToggle').checked;
+    const isMobile = isMobileDevice();
     tbody.innerHTML = '';
 
     players.forEach(player => {
@@ -558,41 +603,80 @@ function loadPlayerList(players, season) {
         }
 
         const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>
-                <img src="images/${season}/players/${player.number}.jpg" 
-                    class="player-photo" alt="${player.name}"
-                    onerror="this.src='images/players/default.jpg'">
-                <strong>#${player.number} ${player.name}</strong>
-            </td>
-            <td>${player.grade || ''}</td>
-            <td>${player.pos}</td>
-            <td>${player.ht}</td>
-            <td>${player.wt}</td>
-            <td>${(player.pts / (player.gp || 1)).toFixed(1)}</td>
-            <td>${(player.reb / (player.gp || 1)).toFixed(1)}</td>
-            <td>${(player.ast / (player.gp || 1)).toFixed(1)}</td>
-            <td>${(player.stl / (player.gp || 1)).toFixed(1)}</td>
-            <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
-            ${showAdvanced ? `
-            <td class="advanced-stat">${(player.min / (player.gp || 1)).toFixed(1)}</td>
-            <td class="advanced-stat">${(player.to / (player.gp || 1)).toFixed(1)}</td>
-            <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
-            <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
-            <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
-            <td class="advanced-stat">${(advancedStats.tsPct * 100).toFixed(1)}%</td>
-            <td class="advanced-stat">${advancedStats.per.toFixed(1)}</td>
-            <td class="advanced-stat">${advancedStats.eff.toFixed(1)}</td>
-            <td class="advanced-stat">${advancedStats.usgRate.toFixed(1)}%</td>
-            <td class="advanced-stat">${advancedStats.ortg.toFixed(1)}</td>
-            <td class="advanced-stat">${advancedStats.drtg.toFixed(1)}</td>
-            ` : ''}
-            <td>
-                <span class="rating-cell ${ratingClass}">
-                    ${ratingDisplay}
-                </span>
-            </td>
-        `;
+        
+        // For mobile, show a more compact version
+        if (isMobile && !showAdvanced) {
+            row.innerHTML = `
+                <td class="mobile-player-cell">
+                    <div class="d-flex align-items-center">
+                        <img src="images/${season}/players/${player.number}.jpg" 
+                            class="player-photo me-2" alt="${player.name}"
+                            onerror="this.src='images/players/default.jpg'">
+                        <div class="flex-grow-1">
+                            <strong>#${player.number} ${player.name}</strong><br>
+                            <small class="text-muted">${player.grade || ''} ${player.pos} • ${player.ht}</small>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <div class="mobile-stats">
+                        <div><strong>${(player.pts / (player.gp || 1)).toFixed(1)}</strong><br><small>PPG</small></div>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <div class="mobile-stats">
+                        <div><strong>${(player.reb / (player.gp || 1)).toFixed(1)}</strong><br><small>RPG</small></div>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <div class="mobile-stats">
+                        <div><strong>${(player.ast / (player.gp || 1)).toFixed(1)}</strong><br><small>APG</small></div>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <span class="rating-cell ${ratingClass}" style="font-size: 0.8rem;">
+                        ${ratingDisplay}
+                    </span>
+                </td>
+            `;
+        } else {
+            // Desktop version (existing code)
+            row.innerHTML = `
+                <td>
+                    <img src="images/${season}/players/${player.number}.jpg" 
+                        class="player-photo" alt="${player.name}"
+                        onerror="this.src='images/players/default.jpg'">
+                    <strong>#${player.number} ${player.name}</strong>
+                </td>
+                <td>${player.grade || ''}</td>
+                <td>${player.pos}</td>
+                <td>${player.ht}</td>
+                <td>${player.wt}</td>
+                <td>${(player.pts / (player.gp || 1)).toFixed(1)}</td>
+                <td>${(player.reb / (player.gp || 1)).toFixed(1)}</td>
+                <td>${(player.ast / (player.gp || 1)).toFixed(1)}</td>
+                <td>${(player.stl / (player.gp || 1)).toFixed(1)}</td>
+                <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
+                ${showAdvanced ? `
+                <td class="advanced-stat">${(player.min / (player.gp || 1)).toFixed(1)}</td>
+                <td class="advanced-stat">${(player.to / (player.gp || 1)).toFixed(1)}</td>
+                <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
+                <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
+                <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
+                <td class="advanced-stat">${(advancedStats.tsPct * 100).toFixed(1)}%</td>
+                <td class="advanced-stat">${advancedStats.per.toFixed(1)}</td>
+                <td class="advanced-stat">${advancedStats.eff.toFixed(1)}</td>
+                <td class="advanced-stat">${advancedStats.usgRate.toFixed(1)}%</td>
+                <td class="advanced-stat">${advancedStats.ortg.toFixed(1)}</td>
+                <td class="advanced-stat">${advancedStats.drtg.toFixed(1)}</td>
+                ` : ''}
+                <td>
+                    <span class="rating-cell ${ratingClass}">
+                        ${ratingDisplay}
+                    </span>
+                </td>
+            `;
+        }
 
         row.addEventListener('click', () => {
             try {
@@ -605,6 +689,52 @@ function loadPlayerList(players, season) {
         
         tbody.appendChild(row);
     });
+}
+
+// FIXED: Update table headers function with proper event listener management
+function updateTableHeaders() {
+    const thead = document.querySelector('.stats-table thead tr');
+    const isMobile = isMobileDevice();
+    const showAdvanced = document.getElementById('advancedStatsToggle').checked;
+    
+    if (isMobile && !showAdvanced) {
+        thead.innerHTML = `
+            <th>Player</th>
+            <th data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
+            <th data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
+            <th data-sort-key="apg">APG<span class="sort-arrow"></span></th>
+            <th data-sort-key="rating">Rating<span class="sort-arrow"></span></th>
+        `;
+    } else {
+        // Reset to full desktop headers (existing HTML)
+        thead.innerHTML = `
+            <th>Player</th>
+            <th data-sort-key="grade">Grade<span class="sort-arrow"></span></th>
+            <th data-sort-key="pos">POS<span class="sort-arrow"></span></th>
+            <th data-sort-key="ht">HT<span class="sort-arrow"></span></th>
+            <th data-sort-key="wt">WT<span class="sort-arrow"></span></th>
+            <th class="advanced-stat" data-sort-key="mpg">MPG<span class="sort-arrow"></span></th>
+            <th data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
+            <th data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
+            <th data-sort-key="apg">APG<span class="sort-arrow"></span></th>
+            <th data-sort-key="spg">SPG<span class="sort-arrow"></span></th>
+            <th data-sort-key="bpg">BPG<span class="sort-arrow"></span></th>
+            <th class="advanced-stat" data-sort-key="tpg">TO<span class="sort-arrow"></span></th>
+            <th class="advanced-stat" data-sort-key="fgPct">FG%<span class="sort-arrow"></span></th>
+            <th class="advanced-stat" data-sort-key="threePct">3P%<span class="sort-arrow"></span></th>
+            <th class="advanced-stat" data-sort-key="ftPct">FT%<span class="sort-arrow"></span></th>
+            <th class="advanced-stat" data-sort-key="tsPct">TS%<span class="sort-arrow"></span></th>
+            <th class="advanced-stat" data-sort-key="per">PER<span class="sort-arrow"></span></th>
+            <th class="advanced-stat" data-sort-key="eff">EFF<span class="sort-arrow"></span></th>
+            <th class="advanced-stat" data-sort-key="usgRate">USG<span class="sort-arrow"></span></th>
+            <th class="advanced-stat" data-sort-key="ortg">ORtg<span class="sort-arrow"></span></th>
+            <th class="advanced-stat" data-sort-key="drtg">DRtg<span class="sort-arrow"></span></th>
+            <th data-sort-key="rating">Rating<span class="sort-arrow"></span></th>
+        `;
+    }
+    
+    // FIXED: Re-add event listeners after updating headers
+    addSortEventListeners();
 }
 
 function calculateAdvancedStats(player) {
@@ -698,6 +828,7 @@ function calculateAdvancedStats(player) {
     }
 }
 
+// FIXED: Update sort arrows function
 function updateSortArrows(sortKey, direction) {
     document.querySelectorAll('[data-sort-key]').forEach(header => {
         header.classList.remove('active-sort', 'asc', 'desc');
@@ -955,20 +1086,7 @@ function showPlayerDetail(player, gameRatings = [], season) {
     }
 }
 
-document.querySelectorAll('[data-sort-key]').forEach(header => {
-    header.addEventListener('click', function() {
-        const sortKey = this.dataset.sortKey;
-        if (currentSortKey === sortKey) {
-            currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
-        } else {
-            currentSortKey = sortKey;
-            currentSortDirection = 'desc'; // Default to descending on first click
-        }
-        updateSortArrows(currentSortKey, currentSortDirection);
-        loadPlayerStats(document.getElementById('seasonSelect').value);
-    });
-});
-
+// REMOVED: The duplicate event listener setup that was causing issues
 
 document.getElementById('seasonSelect').addEventListener('change', function() {
     try {
@@ -998,7 +1116,12 @@ document.addEventListener('DOMContentLoaded', () => {
         loadPlayerData();
         new bootstrap.Dropdown(document.querySelector('.dropdown-toggle'));
         
+        // Set default view for mobile
+        setDefaultView();
+        
+        // FIXED: Add initial sort event listeners after DOM is loaded
         setTimeout(() => {
+            addSortEventListeners();
             updateSortArrows(currentSortKey, currentSortDirection);
         }, 100);
     } catch (e) {
