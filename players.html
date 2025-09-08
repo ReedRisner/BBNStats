@@ -783,6 +783,115 @@
     display: none !important;
 }
 
+
+@media (max-width: 768px) {
+    /* Make the table fit the screen width */
+    .table-responsive {
+        width: 100%;
+        overflow-x: hidden;
+    }
+    
+    /* Simplify table structure for mobile */
+    .stats-table {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+    
+    /* Hide all columns except essential ones for mobile */
+    .stats-table th:not(:first-child):not(:nth-child(6)):not(:nth-child(7)):not(:nth-child(8)):not(:last-child),
+    .stats-table td:not(:first-child):not(:nth-child(6)):not(:nth-child(7)):not(:nth-child(8)):not(:last-child) {
+        display: none;
+    }
+    
+    /* Adjust column widths for better mobile fit */
+    .stats-table th:first-child,
+    .stats-table td:first-child {
+        width: 35% !important;
+        max-width: 35% !important;
+    }
+    
+    .stats-table th:nth-child(6),
+    .stats-table td:nth-child(6),
+    .stats-table th:nth-child(7),
+    .stats-table td:nth-child(7),
+    .stats-table th:nth-child(8),
+    .stats-table td:nth-child(8),
+    .stats-table th:last-child,
+    .stats-table td:last-child {
+        width: 15% !important;
+        max-width: 15% !important;
+        text-align: center;
+    }
+    
+    /* Mobile player cell styling */
+    .mobile-player-cell {
+        padding: 8px 6px !important;
+    }
+    
+    .mobile-stats {
+        font-size: 0.8rem;
+        line-height: 1.2;
+    }
+    
+    .mobile-stats div {
+        margin: 0;
+    }
+    
+    .mobile-stats strong {
+        font-size: 0.9rem;
+        color: var(--uk-blue);
+    }
+    
+    .mobile-stats small {
+        font-size: 0.7rem;
+        color: #666;
+        text-transform: uppercase;
+        font-weight: 500;
+    }
+    
+    /* Adjust table for mobile */
+    .stats-table {
+        font-size: 0.75rem;
+    }
+    
+    .stats-table th, 
+    .stats-table td {
+        padding: 6px 4px;
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+    
+    /* Player photo adjustments for mobile */
+    .player-photo {
+        width: 35px;
+        height: 35px;
+        margin-right: 8px;
+    }
+    
+    /* Rating cells on mobile */
+    .rating-cell {
+        font-size: 0.75rem !important;
+        width: 35px;
+        padding: 4px 6px;
+    }
+}
+
+/* Ensure grid view preference is maintained */
+.view-preference-grid #playerListSection {
+    display: none !important;
+}
+
+.view-preference-grid #playersGridView {
+    display: grid !important;
+}
+
+.view-preference-table #playerListSection {
+    display: block !important;
+}
+
+.view-preference-table #playersGridView {
+    display: none !important;
+}
     
     </style>
     
