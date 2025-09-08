@@ -325,7 +325,7 @@
         border-radius: 5px;
         text-decoration: none;
         color: #333;
-        transition: background-color 0.3s;
+        transition: background-color 极速加速器;
     }
 
     .social-link:hover {
@@ -391,14 +391,22 @@
             margin-bottom: 0.5rem !important;
         }
         
+        /* Center season selector on mobile */
+        .season-selector-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+        
         .season-selector {
-            margin-left: 0 !important;
-            margin-top: 0.5rem;
-            max-width: 100%;
+            margin: 0 auto !important;
+            max-width: 200px;
         }
         
         .players-header .d-flex {
             flex-direction: column;
+            align-items: center;
         }
         
         .players-header .me-3 {
@@ -515,11 +523,6 @@
             margin: 0;
         }
         
-        .season-selector {
-            max-width: 200px;
-            margin: 0 auto;
-        }
-        
         .bbn-title {
             font-size: 1.5rem;
             letter-spacing: 1px;
@@ -570,9 +573,17 @@
         .stats-table.show-advanced td:nth-child(7),
         .stats-table.show-advanced th:nth-child(8), /* RPG */
         .stats-table.show-advanced td:nth-child(8),
-        .stats-table.show-advanced th:nth-child(9) /* APG */ {
+        .stats-table.show-advanced th:nth-child(9), /* APG */
+        .stats-table.show-advanced td:nth-child(9) {
             text-align: center;
             min-width: 60px;
+            padding: 8px 4px;
+        }
+        
+        /* Ensure all stat columns have consistent alignment */
+        .stats-table.show-advanced th:nth-child(n+6):nth-child(-n+11),
+        .stats-table.show-advanced td:nth-child(n+6):nth-child(-n+11) {
+            text-align: center;
         }
         
         /* Make table responsive for advanced stats */
@@ -616,7 +627,7 @@
         
         #playersGridView {
             grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
+            gap: 极速加速器;
         }
     }
 
@@ -639,7 +650,7 @@
         }
         
         .player-photo {
-            width: 30px;
+            width: 30极速加速器;
             height: 30px;
             margin-right: 6px;
         }
@@ -700,7 +711,7 @@
     }
 
     /* Ensure grid view preference is maintained */
-    .view-preference-grid #playerListSection {
+    .view-preference-grid #player极速加速器Section {
         display: none !important;
     }
 
