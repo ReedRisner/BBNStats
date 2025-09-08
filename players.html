@@ -226,7 +226,7 @@
         position: relative;
     }
     
-    .player-card-backdrop {
+    .card-backdrop {
         position: absolute;
         width: 100%;
         height: 100%;
@@ -551,7 +551,7 @@
         .stats-table:not(.show-advanced) td:nth-child(4),
         .stats-table:not(.show-advanced) th:nth-child(5),
         .stats-table:not(.show-advanced) td:nth-child(5) {
-            width: 15% !important;
+            width: 17.5% !important;
             text-align: center;
         }
         
@@ -606,6 +606,103 @@
         .past-seasons-table td:nth-child(12),
         .past-seasons-table td:nth-child(13) {
             display: none;
+        }
+        
+        /* NEW: Mobile Advanced Stats Alignment Fix */
+        .stats-table.show-advanced th,
+        .stats-table.show-advanced td {
+            text-align: center;
+            padding: 8px 4px;
+        }
+
+        .stats-table.show-advanced td:first-child {
+            text-align: center;
+        }
+
+        .stats-table.show-advanced td:first-child .player-photo {
+            margin: 0 auto;
+            display: block;
+        }
+
+        .stats-table.show-advanced td:first-child strong {
+            display: block;
+            text-align: center;
+            margin-top: 4px;
+        }
+
+        .stats-table.show-advanced .advanced-stat {
+            font-size: 0.7rem;
+        }
+        
+        /* First initial + last name for mobile non-advanced view */
+        .mobile-player-name {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mobile-player-name .full-name {
+            display: none;
+        }
+        
+        .mobile-player-name .short-name {
+            display: block;
+            font-weight: bold;
+        }
+        
+        /* NEW: Make normal player list thinner for mobile */
+        .stats-table:not(.show-advanced) {
+            font-size: 0.7rem;
+        }
+        
+        .stats-table:not(.show-advanced) th, 
+        .stats-table:not(.show-advanced) td {
+            padding: 4px 2px;
+        }
+        
+        .stats-table:not(.show-advanced) th:nth-child(1),
+        .stats-table:not(.show-advanced) td:nth-child(1) {
+            width: 30% !important;
+        }
+        
+        .stats-table:not(.show-advanced) th:nth-child(2),
+        .stats-table:not(.show-advanced) td:nth-child(2),
+        .stats-table:not(.show-advanced) th:nth-child(3),
+        .stats-table:not(.show-advanced) td:nth-child(3),
+        .stats-table:not(.show-advanced) th:nth-child(4),
+        .stats-table:not(.show-advanced) td:nth-child(4),
+        .stats-table:not(.show-advanced) th:nth-child(5),
+        .stats-table:not(.show-advanced) td:nth-child(5) {
+            width: 17.5% !important;
+        }
+        
+        .player-photo {
+            width: 28px;
+            height: 28px;
+            margin-right: 4px;
+        }
+        
+        .mobile-stats {
+            font-size: 0.7rem;
+            line-height: 1.1;
+        }
+        
+        .mobile-stats strong {
+            font-size: 0.75rem;
+        }
+        
+        .mobile-stats small {
+            font-size: 0.6rem;
+        }
+        
+        .rating-cell {
+            width: 28px !important;
+            font-size: 0.65rem !important;
+            padding: 2px 3px !important;
+        }
+        
+        .mobile-player-cell {
+            min-width: 120px !important;
+            padding: 4px 2px !important;
         }
     }
 
@@ -689,6 +786,23 @@
         .form-check-label {
             font-size: 0.85rem;
         }
+        
+        /* NEW: Even smaller player column for very small screens */
+        .stats-table:not(.show-advanced) th:nth-child(1),
+        .stats-table:not(.show-advanced) td:nth-child(1) {
+            width: 30% !important;
+        }
+        
+        .stats-table:not(.show-advanced) th:nth-child(2),
+        .stats-table:not(.show-advanced) td:nth-child(2),
+        .stats-table:not(.show-advanced) th:nth-child(3),
+        .stats-table:not(.show-advanced) td:nth-child(3),
+        .stats-table:not(.show-advanced) th:nth-child(4),
+        .stats-table:not(.show-advanced) td:nth-child(4),
+        .stats-table:not(.show-advanced) th:nth-child(5),
+        .stats-table:not(.show-advanced) td:nth-child(5) {
+            width: 17.5% !important;
+        }
     }
 
     /* Landscape orientation on mobile */
@@ -752,57 +866,15 @@
         min-width: 60px;
     }
 
-    @media (max-width: 768px) {
-    .stats-table.show-advanced th,
-    .stats-table.show-advanced td {
-        text-align: center;
-        padding: 8px 4px;
-    }
-
-    .stats-table.show-advanced td:first-child {
-    text-align: center;
-    }
-
-    .stats-table.show-advanced td:first-child .player-photo {
-    margin: 0 auto;
-    display: block;
-    }
-
-    .stats-table.show-advanced td:first-child strong {
-    display: block;
-    text-align: center;
-    margin-top: 4px;
-    }
-
-    .stats-table.show-advanced .advanced-stat {
-        font-size: 0.7rem;
-    }
-    
-    /* First initial + last name for mobile non-advanced view */
-    .mobile-player-name {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .mobile-player-name .full-name {
-        display: none;
-    }
-    
-    .mobile-player-name .short-name {
-        display: block;
-        font-weight: bold;
-    }
-    }
-
     /* Show full name on desktop and tablet */
     @media (min-width: 769px) {
-    .mobile-player-name .full-name {
-        display: block;
-    }
-    
-    .mobile-player-name .short-name {
-        display: none;
-    }
+        .mobile-player-name .full-name {
+            display: block;
+        }
+        
+        .mobile-player-name .short-name {
+            display: none;
+        }
     }
 </style>
     
