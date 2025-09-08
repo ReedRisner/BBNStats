@@ -594,7 +594,6 @@ function loadPlayerList(players, season) {
     players.forEach(player => {
         const gameRatings = (player.nonExhGameLogs || []).map(calculateGameRating);
         const avgRating = calculateAverageRating(gameRatings);
-        // Moved advancedStats calculation here so it's available in both mobile and desktop views
         const advancedStats = calculateAdvancedStats(player);
         
         let ratingDisplay, ratingClass;
@@ -608,8 +607,8 @@ function loadPlayerList(players, season) {
 
         const row = document.createElement('tr');
         
-        // For mobile, show a more compact version with only essential stats
-         if (isMobile && !showAdvanced) {
+        // For mobile, show a more compact version with essential stats
+        if (isMobile && !showAdvanced) {
             row.innerHTML = `
                 <td class="mobile-player-cell">
                     <div class="d-flex align-items-center">
@@ -644,7 +643,7 @@ function loadPlayerList(players, season) {
                 </td>
             `;
         } else {
-            // Desktop version (existing code)
+            // Desktop version or mobile with advanced stats
             row.innerHTML = `
                 <td>
                     <img src="images/${season}/players/${player.number}.jpg" 
@@ -696,12 +695,14 @@ function loadPlayerList(players, season) {
 }
 
 // FIXED: Update table headers function with proper event listener management
+// Update the updateTableHeaders function
 function updateTableHeaders() {
     const thead = document.querySelector('.stats-table thead tr');
     const isMobile = isMobileDevice();
     const showAdvanced = document.getElementById('advancedStatsToggle').checked;
     
     if (isMobile && !showAdvanced) {
+        // Mobile compact view (without advanced stats)
         thead.innerHTML = `
             <th style="width:40%">Player</th>
             <th style="width:15%" data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
@@ -710,7 +711,7 @@ function updateTableHeaders() {
             <th style="width:15%" data-sort-key="rating">Rating<span class="sort-arrow"></span></th>
         `;
     } else {
-        // Full desktop headers
+        // Full desktop headers (also used for mobile with advanced stats ON)
         thead.innerHTML = `
             <th>Player</th>
             <th data-sort-key="grade">Grade<span class="sort-arrow"></span></th>
