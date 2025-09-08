@@ -229,7 +229,7 @@ function loadPlayerGrid(players, season) {
         ratingClass = `rating-${Math.floor(avgRating)}`;
     }
     
-    // Truncate bio to 100 characters for grid view
+    
     
     
     const card = document.createElement('div');
@@ -252,7 +252,7 @@ function loadPlayerGrid(players, season) {
               ${ratingDisplay}
             </span>
           </div>
-          <!-- Bio snippet -->
+          
           
         </div>
         <div class="player-stats mt-3">
@@ -600,7 +600,7 @@ function loadPlayerList(players, season) {
 
         const row = document.createElement('tr');
         
-        // For mobile, show a more compact version
+        // For mobile, show a more compact version with only essential stats
         if (isMobile && !showAdvanced) {
             row.innerHTML = `
                 <td class="mobile-player-cell">
@@ -610,7 +610,7 @@ function loadPlayerList(players, season) {
                             onerror="this.src='images/players/default.jpg'">
                         <div class="flex-grow-1">
                             <strong>#${player.number} ${player.name}</strong><br>
-                            <small class="text-muted">${player.grade || ''} ${player.pos} • ${player.ht}</small>
+                            <small class="text-muted">${player.grade || ''} ${player.pos}</small>
                         </div>
                     </div>
                 </td>
@@ -654,8 +654,8 @@ function loadPlayerList(players, season) {
                 <td>${(player.stl / (player.gp || 1)).toFixed(1)}</td>
                 <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
                 ${showAdvanced ? `
-                <td class="advanced-stat">${(player.min / (player.gp || 1)).toFixed(1)}</td>
                 <td class="advanced-stat">${(player.to / (player.gp || 1)).toFixed(1)}</td>
+                <td class="advanced-stat">${(player.min / (player.gp || 1)).toFixed(1)}</td>
                 <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
                 <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
                 <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
@@ -695,11 +695,11 @@ function updateTableHeaders() {
     
     if (isMobile && !showAdvanced) {
         thead.innerHTML = `
-            <th>Player</th>
-            <th data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
-            <th data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
-            <th data-sort-key="apg">APG<span class="sort-arrow"></span></th>
-            <th data-sort-key="rating">Rating<span class="sort-arrow"></span></th>
+            <th style="width:35%">Player</th>
+            <th style="width:15%" data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
+            <th style="width:15%" data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
+            <th style="width:15%" data-sort-key="apg">APG<span class="sort-arrow"></span></th>
+            <th style="width:20%" data-sort-key="rating">Rating<span class="sort-arrow"></span></th>
         `;
     } else {
         // Reset to full desktop headers (existing HTML)
@@ -729,7 +729,7 @@ function updateTableHeaders() {
         `;
     }
     
-    // FIXED: Re-add event listeners after updating headers
+    // Re-add event listeners after updating headers
     addSortEventListeners();
 }
 
