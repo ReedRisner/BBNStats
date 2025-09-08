@@ -609,7 +609,7 @@ function loadPlayerList(players, season) {
         const row = document.createElement('tr');
         
         // For mobile, show a more compact version with only essential stats
-        if (isMobile && !showAdvanced) {
+         if (isMobile && !showAdvanced) {
             row.innerHTML = `
                 <td class="mobile-player-cell">
                     <div class="d-flex align-items-center">
@@ -697,20 +697,20 @@ function loadPlayerList(players, season) {
 
 // FIXED: Update table headers function with proper event listener management
 function updateTableHeaders() {
-            const thead = document.querySelector('.stats-table thead tr');
-            const isMobile = isMobileDevice();
-            const showAdvanced = document.getElementById('advancedStatsToggle').checked;
-            
-            if (isMobile) {
-                thead.innerHTML = `
-                    <th style="width:40%">Player</th>
-                    <th style="width:15%" data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
-                    <th style="width:15%" data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
-                    <th style="width:15%" data-sort-key="apg">APG<span class="sort-arrow"></span></th>
-                    <th style="width:15%" data-sort-key="rating">Rating<span class="sort-arrow"></span></th>
-                `;
-            } else {
-        // Reset to full desktop headers (existing HTML)
+    const thead = document.querySelector('.stats-table thead tr');
+    const isMobile = isMobileDevice();
+    const showAdvanced = document.getElementById('advancedStatsToggle').checked;
+    
+    if (isMobile && !showAdvanced) {
+        thead.innerHTML = `
+            <th style="width:40%">Player</th>
+            <th style="width:15%" data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
+            <th style="width:15%" data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
+            <th style="width:15%" data-sort-key="apg">APG<span class="sort-arrow"></span></th>
+            <th style="width:15%" data-sort-key="rating">Rating<span class="sort-arrow"></span></th>
+        `;
+    } else {
+        // Full desktop headers
         thead.innerHTML = `
             <th>Player</th>
             <th data-sort-key="grade">Grade<span class="sort-arrow"></span></th>
