@@ -540,7 +540,7 @@
         
         .stats-table:not(.show-advanced) th:nth-child(1),
         .stats-table:not(.show-advanced) td:nth-child(1) {
-            width: 25% !important; /* Reduced from 30% */
+            width: 40% !important; /* Reduced from 30% */
         }
         
         .stats-table:not(.show-advanced) th:nth-child(2),
@@ -551,7 +551,7 @@
         .stats-table:not(.show-advanced) td:nth-child(4),
         .stats-table:not(.show-advanced) th:nth-child(5),
         .stats-table:not(.show-advanced) td:nth-child(5) {
-            width: 18.75% !important; /* Adjusted for new total */
+            width: 20% !important; /* Adjusted for new total */
             text-align: center;
         }
         
@@ -638,6 +638,7 @@
         .mobile-player-name {
             display: flex;
             flex-direction: column;
+            line-height: 1.2;
         }
         
         .mobile-player-name .full-name {
@@ -647,7 +648,7 @@
         .mobile-player-name .short-name {
             display: block;
             font-weight: bold;
-            
+            line-height: 0.5;
         }
         
         /* NEW: Make normal player list thinner for mobile */
