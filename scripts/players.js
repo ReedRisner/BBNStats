@@ -608,51 +608,44 @@ function loadPlayerList(players, season) {
     
     // For mobile, show a more compact version with essential stats
     if (isMobile && !showAdvanced) {
-        // Create first initial + last name format
-        const names = player.name.split(' ');
-        const shortName = names.length > 1 ? 
-            `${names[0].charAt(0)}. ${names[names.length - 1]}` : 
-            player.name;
+    // Create first initial + last name format
+    const names = player.name.split(' ');
+    const shortName = names.length > 1 ? 
+        `${names[0].charAt(0)}. ${names[names.length - 1]}` : 
+        player.name;
 
-       
-            
-        row.innerHTML = `
-            <td class="mobile-player-cell">
-                <div class="d-flex align-items-center">
-                    <img src="images/${season}/players/${player.number}.jpg" 
-                        class="player-photo me-2" alt="${player.name}"
-                        onerror="this.src='images/players/default.jpg'">
-                    <div class="flex-grow-1 mobile-player-name">
-                        <span class="short-name">#${player.number} ${shortName}</span>
-                        <span class="full-name">#${player.number} ${player.name}</span>
-                        <br>
-                        <small class="text-muted">${player.grade || ''} ${player.pos}</small>
-                    </div>
+    row.innerHTML = `
+        <td class="mobile-player-cell">
+            <div class="d-flex align-items-center">
+                <img src="images/${season}/players/${player.number}.jpg" 
+                    class="player-photo me-2" alt="${player.name}"
+                    onerror="this.src='images/players/default.jpg'">
+                <div class="flex-grow-1 mobile-player-name">
+                    <span class="short-name">#${player.number} ${shortName}</span>
+                    <span class="full-name">#${player.number} ${player.name}</span>
+                    <br>
+                    <small class="text-muted">${player.grade || ''} ${player.pos}</small>
                 </div>
-            </td>
-            <td class="text-center">
-                <div class="mobile-stats">
-                    <div><strong>${(player.pts / (player.gp || 1)).toFixed(1)}</strong><br><small>PPG</small></div>
-                </div>
-            </td>
-            <td class="text-center">
-                <div class="mobile-stats">
-                    <div><strong>${(player.reb / (player.gp || 1)).toFixed(1)}</strong><br><small>RPG</small></div>
-                </div>
-            </td>
-            <td class="text-center">
-                <div class="mobile-stats">
-                    <div><strong>${(player.ast / (player.gp || 1)).toFixed(1)}</strong><br><small>APG</small></div>
-                </div>
-            </td>
-            <td class="text-center">
-                <span class="rating-cell ${ratingClass}" style="font-size: 0.8rem;">
-                    ${ratingDisplay}
-                </span>
-            </td>
-        `;
-    } else {
-        // Desktop version or mobile with advanced stats
+            </div>
+        </td>
+        <td class="text-center">
+            <div class="mobile-stats">
+                <div><strong>${(player.pts / (player.gp || 1)).toFixed(1)}</strong><br><small>PPG</small></div>
+            </div>
+        </td>
+        <td class="text-center">
+            <div class="mobile-stats">
+                <div><strong>${(player.reb / (player.gp || 1)).toFixed(1)}</strong><br><small>RPG</small></div>
+            </div>
+        </td>
+        <td class="text-center">
+            <div class="mobile-stats">
+                <div><strong>${(player.ast / (player.gp || 1)).toFixed(1)}</strong><br><small>APG</small></div>
+            </div>
+        </td>
+    `;
+} else {
+    // Desktop version or mobile with advanced stats
 
          // Desktop version or mobile with advanced stats
         const advancedStats = calculateAdvancedStats(player); // Add this line
@@ -720,7 +713,7 @@ function updateTableHeaders() {
             <th style="width:15%" data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
             <th style="width:15%" data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
             <th style="width:15%" data-sort-key="apg">APG<span class="sort-arrow"></span></th>
-            <th style="width:15%" data-sort-key="rating">Rating<span class="sort-arrow"></span></th>
+            
         `;
     } else {
         // Full desktop headers (also used for mobile with advanced stats ON)
