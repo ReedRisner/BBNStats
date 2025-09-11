@@ -148,107 +148,98 @@
         }
 
         /* Mobile: Keep the table layout */
-        @media (max-width: 768px) {
-            .schedule-list {
-                display: none;
-            }
-            
-            .schedule-table {
-                display: table;
-                border-collapse: separate;
-                border-spacing: 0 1rem;
-                width: 100%;
-            }
-            
-            .schedule-table thead th {
-                background: var(--uk-blue);
-                color: white;
-                border: none;
-                padding: 1.2rem;
-            }
-            
-            .schedule-table tbody tr {
-                background: white;
-                transition: all 0.3s ease;
-                border-left: 4px solid transparent;
-                position: relative;
-                border: 2px solid var(--uk-blue);
-                border-radius: 8px;
-            }
-            
-            .schedule-table tbody tr:hover {
-                transform: translateX(10px);
-                box-shadow: 0 4px 15px rgba(0, 51, 160, 0.1);
-                border-left-color: var(--uk-silver);
-            }
-            
-            .game-date {
-                font-weight: 600;
-                color: var(--uk-blue);
-                white-space: nowrap;
-            }
-            
-            .schedule-table thead {
-                display: none;
-            }
-            
-            .schedule-table tbody tr {
-                display: block;
-                margin-bottom: 1.5rem;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                overflow: hidden;
-            }
-
-            .schedule-table td {
-                display: block;
-                text-align: right;
-                padding: 1rem;
-                position: relative;
-            }
-
-            .schedule-table td::before {
-                content: attr(data-label);
-                float: left;
-                font-weight: bold;
-                color: var(--uk-blue);
-                width: 45%;
-                text-align: left;
-            }
-
-            .schedule-table td:not(:last-child)::after {
-                content: "";
-                position: absolute;
-                left: 1rem;
-                right: 1rem;
-                bottom: 0;
-                border-bottom: 1px solid var(--uk-silver);
-            }
-
-            /* Remove hover effects on mobile */
-            .schedule-table tbody tr:hover {
-                transform: none;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                border-left-color: transparent;
-            }
-            
-            .navbar {
-                padding: 0.5rem 0;
-            }
-            
-            .bbn-title {
-                font-size: 1.8rem;
-                margin: 0 10px;
-            }
-            
-            .dropdown-toggle {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.9rem;
-            }
-
-            .game-date {
-                white-space: normal !important;
-            }
+            @media (max-width: 768px) {
+        .schedule-list {
+            display: flex !important;
+            flex-direction: column;
+            gap: 1rem;
         }
+        
+        .schedule-table {
+            display: none !important;
+        }
+        
+        .game-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 1rem;
+            transition: all 0.3s ease;
+            border: 2px solid var(--uk-blue);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 51, 160, 0.2);
+            border-color: var(--uk-gold);
+        }
+        
+        .game-card.completed {
+            cursor: pointer;
+        }
+        
+        .game-info {
+            width: 100%;
+        }
+        
+        .game-date {
+            font-weight: 600;
+            color: var(--uk-blue);
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+        
+        .game-matchup {
+            display: flex;
+            align-items: center;
+            margin: 0.5rem 0;
+        }
+        
+        .team-logo {
+            max-height: 35px;
+            width: auto;
+            margin-right: 0.8rem;
+        }
+        
+        .opponent-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .game-location {
+            color: var(--uk-silver);
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+        
+        .game-result {
+            align-self: center;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            margin-top: 0.8rem;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        
+        .navbar {
+            padding: 0.5rem 0;
+        }
+        
+        .bbn-title {
+            font-size: 1.8rem;
+            margin: 0 10px;
+        }
+        
+        .dropdown-toggle {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.9rem;
+        }
+    }
         
         .stats-card {
             border-top: 4px solid var(--uk-blue);
