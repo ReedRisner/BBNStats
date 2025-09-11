@@ -8,6 +8,7 @@
         ,"conference": false,
         "exh": true,
         "venue": "home"
+        ,"title": "Exhibition"
     },
     {
         "date": "October 29, 2024",
@@ -18,6 +19,7 @@
         ,"conference": false,
         "exh": true
         ,"venue": "home"
+        ,"title": "Exhibition"
     },
     {
         "date": "November 4, 2024",
@@ -370,7 +372,8 @@
         ,"conference": false
         ,"exh": false
         ,"quad": 1
-        ,"venue": "away"
+        ,"venue": "away",
+        "title": "SEC Tournament" 
         
     },
     {
@@ -383,7 +386,8 @@
         ,"exh": false
         ,"quad": 1
         ,"opponentRank": 5
-        ,"venue": "away"
+        ,"venue": "away",
+        "title": "SEC Tournament" 
         
     },
     {
@@ -393,7 +397,8 @@
         "location": "Fiserv Forum | Milwaukee, Wis.",
         "result": "W 76-57"
         ,"conference": false
-        ,"exh": false
+        ,"exh": false,
+        "title": "NCAA Tournament" 
         ,"venue": "away"
         
     },
@@ -406,7 +411,8 @@
         ,"conference": false
         ,"quad": 1
         ,"exh": false
-        ,"venue": "away"
+        ,"venue": "away",
+        "title": "NCAA Tournament" 
     },
     {
         "date": "March 28, 2025",
@@ -417,7 +423,8 @@
         ,"conference": false
         ,"quad": 1
         ,"exh": false
-        ,"venue": "away"
+        ,"venue": "away",
+        "title": "NCAA Tournament" 
     }
 
     

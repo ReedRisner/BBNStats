@@ -2,7 +2,7 @@
 
     {
         "date": "October 14, 2025",
-        "opponent": "vs Purdue (EXH)",
+        "opponent": "vs Purdue",
         "logo": "purdue.png",
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "TBD",
@@ -11,10 +11,11 @@
         "exh": true,
         "day": "Tuesday"
         ,"venue": "home"
+        ,"title": "Exhibition"
     },
     {
         "date": "October 30, 2025",
-        "opponent": "vs Georgetown (EXH)",
+        "opponent": "vs Georgetown",
         "logo": "georgetown.png",
         "location": "Rupp Arena | Lexington, Ky.",
         "result": "TBD",
@@ -23,6 +24,7 @@
         , "exh": true
         ,"day": "Thursday"
         ,"venue": "home"
+        ,"title": "Exhibition"
 
     },
     {
