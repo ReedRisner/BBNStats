@@ -31,8 +31,12 @@ const ftPct = document.getElementById('ft-pct');
 // Sorting state
 let currentSort = {
     column: 'rating', // Default to rating column
-    direction: 'desc' // Default to descending (highest first)
+    direction: 'desc' // Default to descending (highest to lowest)
 };
+
+// Global variables to store game data for PDF generation
+let gameData = {};
+let teamStatsData = {};
 
 // Use the calculateGameRating from players.js instead of local version
 function calculateGameRating(game) {
@@ -107,6 +111,125 @@ function calculateGameRating(game) {
     return Math.round(Math.min(10.0, Math.max(0.0, totalRating)) * 10) / 10;
 }
 
+// PDF Generation Functions
+function generatePDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Set up document
+    const pageWidth = doc.internal.pageSize.width;
+    const margin = 20;
+    let yPos = margin;
+    
+    // Header
+    doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
+    doc.text('Kentucky Wildcats Box Score', pageWidth / 2, yPos, { align: 'center' });
+    yPos += 15;
+    
+    // Game info
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'normal');
+    doc.text(`${gameData.opponent}`, pageWidth / 2, yPos, { align: 'center' });
+    yPos += 8;
+    doc.text(`${gameData.date} - ${gameData.location}`, pageWidth / 2, yPos, { align: 'center' });
+    yPos += 8;
+    doc.text(`${gameData.result}`, pageWidth / 2, yPos, { align: 'center' });
+    yPos += 15;
+    
+    // Table headers
+    const headers = ['Player', 'MIN', 'PTS', 'REB', 'AST', 'STL', 'BLK', 'TO', 'FG', '3PT', 'FT', 'RTG'];
+    const colWidths = [35, 12, 10, 10, 10, 10, 10, 10, 18, 18, 18, 12];
+    let xPos = margin;
+    
+    doc.setFontSize(10);
+    doc.setFont(undefined, 'bold');
+    
+    // Draw header row
+    headers.forEach((header, i) => {
+        doc.text(header, xPos, yPos);
+        xPos += colWidths[i];
+    });
+    yPos += 8;
+    
+    // Draw line under headers - make it span all columns
+    const totalWidth = colWidths.reduce((sum, width) => sum + width, 0);
+    doc.line(margin, yPos, margin + totalWidth, yPos);
+    yPos += 5;
+    
+    // Player data
+    doc.setFont(undefined, 'normal');
+    window.playerData.forEach(player => {
+        xPos = margin;
+        const rowData = [
+            `${player.number}. ${player.data.player}`,
+            player.data.min.toFixed(1),
+            player.data.pts.toString(),
+            player.data.reb.toString(),
+            player.data.ast.toString(),
+            player.data.stl.toString(),
+            player.data.blk.toString(),
+            player.data.to.toString(),
+            `${player.fgm}-${player.fga}`,
+            `${player.threeFgm}-${player.threeFga}`,
+            `${player.ftm}-${player.fta}`,
+            player.data.rating.toFixed(1)
+        ];
+        
+        rowData.forEach((data, i) => {
+            doc.text(data, xPos, yPos);
+            xPos += colWidths[i];
+        });
+        yPos += 6;
+        
+        // Check if we need a new page
+        if (yPos > 250) {
+            doc.addPage();
+            yPos = margin;
+        }
+    });
+    
+    // Team totals
+    yPos += 5;
+    doc.line(margin, yPos, margin + totalWidth, yPos);
+    yPos += 8;
+    
+    doc.setFont(undefined, 'bold');
+    xPos = margin;
+    const teamData = [
+        'TEAM',
+        teamStatsData.min.toFixed(1),
+        teamStatsData.pts.toString(),
+        teamStatsData.reb.toString(),
+        teamStatsData.ast.toString(),
+        teamStatsData.stl.toString(),
+        teamStatsData.blk.toString(),
+        teamStatsData.to.toString(),
+        `${teamStatsData.fgm}-${teamStatsData.fga}`,
+        `${teamStatsData.threeFgm}-${teamStatsData.threeFga}`,
+        `${teamStatsData.ftm}-${teamStatsData.fta}`,
+        '-'
+    ];
+    
+    teamData.forEach((data, i) => {
+        doc.text(data, xPos, yPos);
+        xPos += colWidths[i];
+    });
+    
+    // Team shooting percentages
+    yPos += 15;
+    doc.setFontSize(12);
+    const teamFgPct = teamStatsData.fga > 0 ? (teamStatsData.fgm / teamStatsData.fga * 100).toFixed(1) : '0.0';
+    const teamThreePct = teamStatsData.threeFga > 0 ? (teamStatsData.threeFgm / teamStatsData.threeFga * 100).toFixed(1) : '0.0';
+    const teamFtPct = teamStatsData.fta > 0 ? (teamStatsData.ftm / teamStatsData.fta * 100).toFixed(1) : '0.0';
+    
+    doc.text(`Team Shooting: FG ${teamFgPct}% | 3PT ${teamThreePct}% | FT ${teamFtPct}%`, pageWidth / 2, yPos, { align: 'center' });
+    
+    // Save the PDF
+    const filename = `Kentucky ${gameData.opponent}.pdf`;
+    doc.save(filename);
+}
+
 async function loadBoxScore() {
     try {
         // Load schedule data to get game info
@@ -117,6 +240,14 @@ async function loadBoxScore() {
         // Find the game in schedule
         const game = scheduleData.find(g => parseGameDate(g.date) === date);
         if (!game) throw new Error('Game not found in schedule');
+        
+        // Store game data for PDF
+        gameData = {
+            opponent: game.opponent,
+            date: game.date,
+            result: game.result,
+            location: game.location
+        };
         
         // Set game info
         opponentName.textContent = game.opponent;
@@ -202,8 +333,16 @@ async function loadBoxScore() {
             // Store player data for sorting
             const playerRowData = {
                 element: null, // Will be set when creating the row
+                number: parseInt(player.number), // Add number for sorting
+                fgm: playerStat.fgm || 0, // Store for PDF
+                fga: playerStat.fga || 0,
+                threeFgm: playerStat.threeFgm || 0,
+                threeFga: playerStat.threeFga || 0,
+                ftm: playerStat.ftm || 0,
+                fta: playerStat.fta || 0,
                 data: {
                     player: player.name,
+                    number: parseInt(player.number), // Add number to data for sorting
                     min: playerStat.min || 0,
                     pts: playerStat.pts || 0,
                     reb: playerStat.reb || 0,
@@ -238,6 +377,9 @@ async function loadBoxScore() {
             
             window.playerData.push(playerRowData);
         });
+        
+        // Store team stats for PDF
+        teamStatsData = teamStats;
         
         // Sort by rating (highest to lowest) initially
         sortPlayerData(currentSort.column, currentSort.direction);
@@ -289,6 +431,9 @@ async function loadBoxScore() {
             ratingHeader.classList.add('sort-desc');
         }
         
+        // Add PDF download button
+        addPDFButton();
+        
         // Hide loading, show content
         loading.style.display = 'none';
         boxscoreContent.style.display = 'block';
@@ -298,6 +443,20 @@ async function loadBoxScore() {
         errorMessage.style.display = 'block';
         errorMessage.textContent = `Error loading box score: ${error.message}`;
         console.error('Error loading box score:', error);
+    }
+}
+
+function addPDFButton() {
+    // Create PDF download button
+    const pdfButton = document.createElement('button');
+    pdfButton.className = 'btn btn-success ms-2';
+    pdfButton.innerHTML = '<i class="bi bi-download"></i> Download PDF';
+    pdfButton.onclick = generatePDF;
+    
+    // Add the button next to the video button in the game header
+    const gameHeaderButtons = document.querySelector('.game-header .text-end');
+    if (gameHeaderButtons) {
+        gameHeaderButtons.appendChild(pdfButton);
     }
 }
 
@@ -320,7 +479,8 @@ function setupSorting() {
             } else {
                 // For a new column, set default direction
                 currentSort.column = column;
-                // For player name, default to ascending, for all others default to descending
+                // For player name (which includes number), default to ascending for number sorting
+                // For all other stats, default to descending (highest first)
                 currentSort.direction = column === 'player' ? 'asc' : 'desc';
             }
             
@@ -338,10 +498,18 @@ function setupSorting() {
 
 function sortPlayerData(column, direction) {
     window.playerData.sort((a, b) => {
-        let valueA = a.data[column];
-        let valueB = b.data[column];
+        let valueA, valueB;
         
-        // For string comparison (player names)
+        // Special handling for player column - sort by number instead of name
+        if (column === 'player') {
+            valueA = a.data.number;
+            valueB = b.data.number;
+        } else {
+            valueA = a.data[column];
+            valueB = b.data[column];
+        }
+        
+        // For string comparison (if needed)
         if (typeof valueA === 'string') {
             valueA = valueA.toLowerCase();
             valueB = valueB.toLowerCase();
