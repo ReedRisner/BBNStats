@@ -936,17 +936,6 @@ async function downloadComparison() {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-// Replace the entire performDownload function with this updated version
 async function performDownload() {
     const downloadBtn = document.getElementById('downloadBtn');
     const originalText = downloadBtn.innerHTML;
@@ -998,23 +987,23 @@ async function performDownload() {
             height: 100%;
         `;
         
-        // Left side - Player comparison section (25% for both mobile and desktop)
+        // Left side - Player comparison section (mobile gets more space)
         const leftSide = document.createElement('div');
         leftSide.style.cssText = `
-            flex: 0 0 25%;
+            flex: 0 0 ${isMobile ? '35%' : '25%'};
             display: flex;
             flex-direction: column;
-            max-width: 480px;
+            max-width: ${isMobile ? '672px' : '480px'};
         `;
         
-        // Right side - Charts (75% for both mobile and desktop)
+        // Right side - Charts (mobile gets less space to fit better)
         const rightSide = document.createElement('div');
         rightSide.style.cssText = `
-            flex: 0 0 75%;
+            flex: 0 0 ${isMobile ? '65%' : '75%'};
             border: 3px solid #0033A0;
             border-radius: 15px;
             background: white;
-            padding: ${isMobile ? '20px' : '30px'};
+            padding: ${isMobile ? '15px' : '30px'};
         `;
         
         // Create the player selection container
@@ -1082,25 +1071,25 @@ async function performDownload() {
         leftSide.appendChild(playerSelectContainer);
         leftSide.appendChild(playerCardsContainer);
         
-        // Create charts section for right side - SAME LAYOUT FOR BOTH
+        // Create charts section for right side - smaller for mobile
         const chartsTitle = document.createElement('h2');
         chartsTitle.style.cssText = `
             text-align: center;
             color: #0033A0;
-            margin: 0 0 20px 0;
-            font-size: ${isMobile ? '22px' : '24px'};
+            margin: 0 0 ${isMobile ? '12px' : '20px'} 0;
+            font-size: ${isMobile ? '18px' : '24px'};
         `;
         chartsTitle.textContent = 'Statistical Comparison';
         rightSide.appendChild(chartsTitle);
         
-        // Create 2x2 grid for charts - SAME FOR BOTH
+        // Create 2x2 grid for charts - more compact for mobile
         const chartsGrid = document.createElement('div');
         chartsGrid.style.cssText = `
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
-            gap: ${isMobile ? '12px' : '15px'};
-            height: calc(100% - 60px);
+            gap: ${isMobile ? '8px' : '15px'};
+            height: calc(100% - ${isMobile ? '45px' : '60px'});
         `;
         
         // Convert each chart to image and add to grid
@@ -1118,7 +1107,7 @@ async function performDownload() {
                 chartContainer.style.cssText = `
                     border: 2px solid #0033A0;
                     border-radius: 10px;
-                    padding: ${isMobile ? '8px' : '10px'};
+                    padding: ${isMobile ? '6px' : '10px'};
                     background: white;
                     display: flex;
                     flex-direction: column;
@@ -1128,8 +1117,8 @@ async function performDownload() {
                 const chartTitle = document.createElement('h3');
                 chartTitle.style.cssText = `
                     color: #0033A0;
-                    margin: 0 0 10px 0;
-                    font-size: ${isMobile ? '14px' : '16px'};
+                    margin: 0 0 ${isMobile ? '6px' : '10px'} 0;
+                    font-size: ${isMobile ? '11px' : '16px'};
                     text-align: center;
                 `;
                 chartTitle.textContent = config.title;
@@ -1405,6 +1394,18 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
     
     return card;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
