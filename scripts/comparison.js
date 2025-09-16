@@ -1013,6 +1013,7 @@ async function performDownload() {
         `;
 
 
+
         
         // Create the player selection container
         const playerSelectContainer = document.createElement('div');
