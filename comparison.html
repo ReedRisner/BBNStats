@@ -232,6 +232,44 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+
+        .download-btn-container {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        #downloadBtn {
+            background-color: #28a745;
+            border-color: #28a745;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        #downloadBtn:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        #downloadBtn:disabled {
+            opacity: 0.6;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            #downloadBtn {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+        }
     </style>
 </head>
 <!-- Google tag (gtag.js) -->
@@ -340,6 +378,13 @@
                 </div>
             </div>
 
+            <!-- Download Button - Centered -->
+            <div class="download-btn-container">
+                <button id="downloadBtn" class="btn btn-success btn-lg" onclick="downloadComparison()" style="display: none;">
+                    <i class="fas fa-download"></i> Download Comparison
+                </button>
+            </div>
+
             <div id="player1Card" class="player-card"></div>
             <div id="player2Card" class="player-card"></div>
         </div>
@@ -385,3 +430,4 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
+
