@@ -945,147 +945,134 @@ async function performDownload() {
     downloadBtn.disabled = true;
     
     try {
-        // Create a temporary container with 16:9 landscape layout
+        // Detect if we're on mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                         window.innerWidth <= 768;
+        
+        // Create a temporary container with mobile-optimized dimensions
         const tempContainer = document.createElement('div');
-        tempContainer.style.cssText = `
-            position: fixed;
-            top: -20000px;
-            left: -20000px;
-            width: 1920px;
-            height: 1080px;
-            background: white;
-            padding: 40px;
-            font-family: Arial, sans-serif;
-            z-index: -1;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-        `;
+        
+        if (isMobile) {
+            // Mobile: Portrait layout (9:16 ratio)
+            tempContainer.style.cssText = `
+                position: fixed;
+                top: -20000px;
+                left: -20000px;
+                width: 1080px;
+                height: 1920px;
+                background: white;
+                padding: 30px;
+                font-family: Arial, sans-serif;
+                z-index: -1;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+            `;
+        } else {
+            // Desktop: Landscape layout (16:9 ratio)
+            tempContainer.style.cssText = `
+                position: fixed;
+                top: -20000px;
+                left: -20000px;
+                width: 1920px;
+                height: 1080px;
+                background: white;
+                padding: 40px;
+                font-family: Arial, sans-serif;
+                z-index: -1;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+            `;
+        }
         
         // Create title
         const title = document.createElement('div');
         title.style.cssText = `
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: ${isMobile ? '20px' : '30px'};
             color: #0033A0;
-            font-size: 36px;
+            font-size: ${isMobile ? '28px' : '36px'};
             font-weight: bold;
             letter-spacing: 1px;
         `;
         title.textContent = 'Player Comparison - bbnstats.com';
         
-        // Create main content container (side by side layout with right margin)
+        // Create main content container
         const mainContent = document.createElement('div');
-        mainContent.style.cssText = `
-            display: flex;
-            flex: 1;
-            gap: 40px;
-            height: 100%;
-            margin-right: 20px;
-        `;
         
-        // Left side - Player comparison section (25% width)
-        const leftSide = document.createElement('div');
-        leftSide.style.cssText = `
-            flex: 0 0 25%;
-            display: flex;
-            flex-direction: column;
-            max-width: 480px;
-        `;
+        if (isMobile) {
+            // Mobile: Stack vertically
+            mainContent.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                gap: 20px;
+                height: 100%;
+            `;
+        } else {
+            // Desktop: Side by side
+            mainContent.style.cssText = `
+                display: flex;
+                flex: 1;
+                gap: 40px;
+                height: 100%;
+                margin-right: 20px;
+            `;
+        }
         
-        // Right side - Charts (75% width)
-        const rightSide = document.createElement('div');
-        rightSide.style.cssText = `
-            flex: 0 0 75%;
-            border: 3px solid #0033A0;
-            border-radius: 15px;
-            background: white;
-            padding: 30px;
-        `;
+        // Player comparison section
+        const playerSection = document.createElement('div');
         
-        // Create the player selection container (compact)
+        if (isMobile) {
+            playerSection.style.cssText = `
+                flex: 0 0 auto;
+                display: flex;
+                flex-direction: column;
+            `;
+        } else {
+            playerSection.style.cssText = `
+                flex: 0 0 25%;
+                display: flex;
+                flex-direction: column;
+                max-width: 480px;
+            `;
+        }
+        
+        // Charts section
+        const chartsSection = document.createElement('div');
+        
+        if (isMobile) {
+            chartsSection.style.cssText = `
+                flex: 1;
+                border: 3px solid #0033A0;
+                border-radius: 15px;
+                background: white;
+                padding: 20px;
+            `;
+        } else {
+            chartsSection.style.cssText = `
+                flex: 0 0 75%;
+                border: 3px solid #0033A0;
+                border-radius: 15px;
+                background: white;
+                padding: 30px;
+            `;
+        }
+        
+        // Create player info section (compact for mobile)
         const playerSelectContainer = document.createElement('div');
         playerSelectContainer.style.cssText = `
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-            font-size: 12px;
+            gap: ${isMobile ? '8px' : '10px'};
+            margin-bottom: ${isMobile ? '10px' : '15px'};
+            font-size: ${isMobile ? '10px' : '12px'};
         `;
         
-        // Create season and player info sections for both players
-        const player1Section = document.createElement('div');
-        player1Section.style.cssText = `
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        `;
-        
-        const player2Section = document.createElement('div');
-        player2Section.style.cssText = `
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        `;
-        
-        // Add season info for player 1
-        const player1SeasonInfo = document.createElement('div');
-        player1SeasonInfo.style.cssText = `
-            background: #f8f9fa;
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid #0033A0;
-            text-align: center;
-            font-weight: bold;
-            color: #0033A0;
-            font-size: 10px;
-        `;
-        player1SeasonInfo.textContent = `${player1.season}-${parseInt(player1.season)+1}`;
-        
-        // Add filter info for player 1
-        const player1FilterInfo = document.createElement('div');
-        player1FilterInfo.style.cssText = `
-            background: #e9ecef;
-            padding: 3px 6px;
-            border-radius: 3px;
-            text-align: center;
-            font-size: 9px;
-            color: #666;
-        `;
-        const player1FilterText = player1.currentFilter ? getFilterDisplayText(player1.currentFilter) : 'Whole Season';
-        player1FilterInfo.textContent = player1FilterText;
-        
-        // Add season info for player 2
-        const player2SeasonInfo = document.createElement('div');
-        player2SeasonInfo.style.cssText = `
-            background: #f8f9fa;
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid #0033A0;
-            text-align: center;
-            font-weight: bold;
-            color: #0033A0;
-            font-size: 10px;
-        `;
-        player2SeasonInfo.textContent = `${player2.season}-${parseInt(player2.season)+1}`;
-        
-        // Add filter info for player 2
-        const player2FilterInfo = document.createElement('div');
-        player2FilterInfo.style.cssText = `
-            background: #e9ecef;
-            padding: 3px 6px;
-            border-radius: 3px;
-            text-align: center;
-            font-size: 9px;
-            color: #666;
-        `;
-        const player2FilterText = player2.currentFilter ? getFilterDisplayText(player2.currentFilter) : 'Whole Season';
-        player2FilterInfo.textContent = player2FilterText;
-        
-        player1Section.appendChild(player1SeasonInfo);
-        player1Section.appendChild(player1FilterInfo);
-        player2Section.appendChild(player2SeasonInfo);
-        player2Section.appendChild(player2FilterInfo);
+        // Add season and filter info for both players
+        const player1Section = createPlayerInfoSection(player1, isMobile);
+        const player2Section = createPlayerInfoSection(player2, isMobile);
         
         playerSelectContainer.appendChild(player1Section);
         playerSelectContainer.appendChild(player2Section);
@@ -1101,96 +1088,88 @@ async function performDownload() {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                margin: 5px 0;
-                padding: 5px;
+                margin: ${isMobile ? '3px 0' : '5px 0'};
+                padding: ${isMobile ? '3px' : '5px'};
                 background-color: rgba(0, 51, 160, 0.1);
                 border-radius: 6px;
                 border: 1px solid #0033A0;
                 font-weight: bold;
                 color: #0033A0;
-                font-size: 10px;
+                font-size: ${isMobile ? '8px' : '10px'};
             `;
             toggleInfo.textContent = '✓ Per-30-Minute Stats';
             playerSelectContainer.appendChild(toggleInfo);
         }
         
-        // Create player cards container (side by side, fixed alignment)
+        // Create player cards container
         const playerCardsContainer = document.createElement('div');
-        playerCardsContainer.style.cssText = `
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            flex: 1;
-            align-items: start;
-        `;
+        
+        if (isMobile) {
+            playerCardsContainer.style.cssText = `
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                margin-bottom: 10px;
+                align-items: start;
+            `;
+        } else {
+            playerCardsContainer.style.cssText = `
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+                flex: 1;
+                align-items: start;
+            `;
+        }
         
         // Get current stats for both players
-        const player1Stats = player1.filteredStats || {
-            gp: player1.gp || 0,
-            min: player1.min || 0,
-            pts: player1.pts || 0,
-            reb: player1.reb || 0,
-            ast: player1.ast || 0,
-            stl: player1.stl || 0,
-            blk: player1.blk || 0,
-            to: player1.to || 0,
-            fgm: player1.fgm || 0,
-            fga: player1.fga || 0,
-            threeFgm: player1.threeFgm || 0,
-            threeFga: player1.threeFga || 0,
-            ftm: player1.ftm || 0,
-            fta: player1.fta || 0
-        };
+        const player1Stats = getPlayerStats(player1);
+        const player2Stats = getPlayerStats(player2);
         
-        const player2Stats = player2.filteredStats || {
-            gp: player2.gp || 0,
-            min: player2.min || 0,
-            pts: player2.pts || 0,
-            reb: player2.reb || 0,
-            ast: player2.ast || 0,
-            stl: player2.stl || 0,
-            blk: player2.blk || 0,
-            to: player2.to || 0,
-            fgm: player2.fgm || 0,
-            fga: player2.fga || 0,
-            threeFgm: player2.threeFgm || 0,
-            threeFga: player2.threeFga || 0,
-            ftm: player2.ftm || 0,
-            fta: player2.fta || 0
-        };
-        
-        // Create compact player cards for left side
-        const player1Card = createPlayerCardForDownload(player1, player1Stats, player2, true);
-        const player2Card = createPlayerCardForDownload(player2, player2Stats, player1, true);
+        // Create player cards
+        const player1Card = createPlayerCardForDownload(player1, player1Stats, player2, true, isMobile);
+        const player2Card = createPlayerCardForDownload(player2, player2Stats, player1, true, isMobile);
         
         playerCardsContainer.appendChild(player1Card);
         playerCardsContainer.appendChild(player2Card);
         
-        leftSide.appendChild(playerSelectContainer);
-        leftSide.appendChild(playerCardsContainer);
+        playerSection.appendChild(playerSelectContainer);
+        playerSection.appendChild(playerCardsContainer);
         
-        // Create charts section for right side
+        // Create charts section
         const chartsTitle = document.createElement('h2');
         chartsTitle.style.cssText = `
             text-align: center;
             color: #0033A0;
-            margin: 0 0 20px 0;
-            font-size: 24px;
+            margin: 0 0 ${isMobile ? '15px' : '20px'} 0;
+            font-size: ${isMobile ? '18px' : '24px'};
         `;
         chartsTitle.textContent = 'Statistical Comparison';
-        rightSide.appendChild(chartsTitle);
+        chartsSection.appendChild(chartsTitle);
         
-        // Create 2x2 grid for charts
+        // Create charts grid
         const chartsGrid = document.createElement('div');
-        chartsGrid.style.cssText = `
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: 15px;
-            height: calc(100% - 60px);
-        `;
         
-        // Convert each chart to image and add to grid
+        if (isMobile) {
+            // Mobile: Single column, stacked charts
+            chartsGrid.style.cssText = `
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                height: calc(100% - 50px);
+            `;
+        } else {
+            // Desktop: 2x2 grid
+            chartsGrid.style.cssText = `
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr 1fr;
+                gap: 15px;
+                height: calc(100% - 60px);
+            `;
+        }
+        
+        // Convert charts to images
         const chartConfigs = [
             { id: 'averagesChart', title: 'Basic Stats' },
             { id: 'shootingChart', title: 'Shooting Efficiency' },
@@ -1205,29 +1184,28 @@ async function performDownload() {
                 chartContainer.style.cssText = `
                     border: 2px solid #0033A0;
                     border-radius: 10px;
-                    padding: 10px;
+                    padding: ${isMobile ? '8px' : '10px'};
                     background: white;
                     display: flex;
                     flex-direction: column;
+                    ${isMobile ? 'min-height: 200px;' : ''}
                 `;
                 
-                // Add chart title
                 const chartTitle = document.createElement('h3');
                 chartTitle.style.cssText = `
                     color: #0033A0;
-                    margin: 0 0 10px 0;
-                    font-size: 16px;
+                    margin: 0 0 ${isMobile ? '8px' : '10px'} 0;
+                    font-size: ${isMobile ? '14px' : '16px'};
                     text-align: center;
                 `;
                 chartTitle.textContent = config.title;
                 chartContainer.appendChild(chartTitle);
                 
-                // Convert chart to image
                 const chartImage = document.createElement('img');
                 chartImage.src = chartCanvas.toDataURL('image/png', 1.0);
                 chartImage.style.cssText = `
                     width: 100%;
-                    height: 100%;
+                    height: ${isMobile ? '150px' : '100%'};
                     object-fit: contain;
                     flex: 1;
                 `;
@@ -1237,28 +1215,33 @@ async function performDownload() {
             }
         }
         
-        rightSide.appendChild(chartsGrid);
+        chartsSection.appendChild(chartsGrid);
         
         // Append sections to main content
-        mainContent.appendChild(leftSide);
-        mainContent.appendChild(rightSide);
+        if (isMobile) {
+            mainContent.appendChild(playerSection);
+            mainContent.appendChild(chartsSection);
+        } else {
+            mainContent.appendChild(playerSection);
+            mainContent.appendChild(chartsSection);
+        }
         
         // Append all content to temp container
         tempContainer.appendChild(title);
         tempContainer.appendChild(mainContent);
         document.body.appendChild(tempContainer);
         
-        // Wait a moment for content to render
+        // Wait for content to render
         await new Promise(resolve => setTimeout(resolve, 1000));
         
         // Capture the image
         const canvas = await html2canvas(tempContainer, {
             backgroundColor: '#ffffff',
-            scale: 1.2,
+            scale: isMobile ? 0.8 : 1.2,
             useCORS: true,
             allowTaint: true,
-            width: 1920,
-            height: 1080,
+            width: isMobile ? 1080 : 1920,
+            height: isMobile ? 1920 : 1080,
             scrollX: 0,
             scrollY: 0,
             logging: false
@@ -1267,15 +1250,45 @@ async function performDownload() {
         // Clean up temp container
         document.body.removeChild(tempContainer);
         
-        // Create download link
-        const link = document.createElement('a');
-        link.download = `player-comparison-${player1.name.replace(/\s+/g, '-')}-vs-${player2.name.replace(/\s+/g, '-')}.png`;
-        link.href = canvas.toDataURL('image/png', 0.9);
-        
-        // Trigger download
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // Handle download/save based on device
+        if (isMobile && navigator.share && navigator.canShare) {
+            // Use Web Share API for mobile if available
+            canvas.toBlob(async (blob) => {
+                const file = new File([blob], `player-comparison-${player1.name.replace(/\s+/g, '-')}-vs-${player2.name.replace(/\s+/g, '-')}.png`, {
+                    type: 'image/png'
+                });
+                
+                if (navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file],
+                            title: 'Player Comparison',
+                            text: `Comparison between ${player1.name} and ${player2.name}`
+                        });
+                    } catch (error) {
+                        // Fallback to regular download
+                        downloadImage(canvas);
+                    }
+                } else {
+                    downloadImage(canvas);
+                }
+            }, 'image/png', 0.9);
+        } else if (isMobile) {
+            // Mobile fallback: Try to open image in new tab for saving
+            const dataUrl = canvas.toDataURL('image/png', 0.9);
+            const newWindow = window.open();
+            newWindow.document.write(`
+                <html>
+                <head><title>Player Comparison - Long press to save</title></head>
+                <body style="margin:0; background:#000; display:flex; justify-content:center; align-items:center;">
+                    <img src="${dataUrl}" style="max-width:100%; max-height:100%;" alt="Player Comparison - Long press to save to photos"/>
+                </body>
+                </html>
+            `);
+        } else {
+            // Desktop: Regular download
+            downloadImage(canvas);
+        }
         
     } catch (error) {
         console.error('Error generating download:', error);
@@ -1287,13 +1300,85 @@ async function performDownload() {
     }
 }
 
-function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact = false) {
+// Helper function to create player info sections
+function createPlayerInfoSection(player, isMobile) {
+    const section = document.createElement('div');
+    section.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: ${isMobile ? '3px' : '5px'};
+    `;
+    
+    const seasonInfo = document.createElement('div');
+    seasonInfo.style.cssText = `
+        background: #f8f9fa;
+        padding: ${isMobile ? '3px 6px' : '4px 8px'};
+        border-radius: 4px;
+        border: 1px solid #0033A0;
+        text-align: center;
+        font-weight: bold;
+        color: #0033A0;
+        font-size: ${isMobile ? '8px' : '10px'};
+    `;
+    seasonInfo.textContent = `${player.season}-${parseInt(player.season)+1}`;
+    
+    const filterInfo = document.createElement('div');
+    filterInfo.style.cssText = `
+        background: #e9ecef;
+        padding: ${isMobile ? '2px 4px' : '3px 6px'};
+        border-radius: 3px;
+        text-align: center;
+        font-size: ${isMobile ? '7px' : '9px'};
+        color: #666;
+    `;
+    const filterText = player.currentFilter ? getFilterDisplayText(player.currentFilter) : 'Whole Season';
+    filterInfo.textContent = filterText;
+    
+    section.appendChild(seasonInfo);
+    section.appendChild(filterInfo);
+    
+    return section;
+}
+
+// Helper function to get player stats
+function getPlayerStats(player) {
+    return player.filteredStats || {
+        gp: player.gp || 0,
+        min: player.min || 0,
+        pts: player.pts || 0,
+        reb: player.reb || 0,
+        ast: player.ast || 0,
+        stl: player.stl || 0,
+        blk: player.blk || 0,
+        to: player.to || 0,
+        fgm: player.fgm || 0,
+        fga: player.fga || 0,
+        threeFgm: player.threeFgm || 0,
+        threeFga: player.threeFga || 0,
+        ftm: player.ftm || 0,
+        fta: player.fta || 0
+    };
+}
+
+// Helper function to handle regular download
+function downloadImage(canvas) {
+    const link = document.createElement('a');
+    link.download = `player-comparison-${player1.name.replace(/\s+/g, '-')}-vs-${player2.name.replace(/\s+/g, '-')}.png`;
+    link.href = canvas.toDataURL('image/png', 0.9);
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Update the createPlayerCardForDownload function to handle mobile sizing
+function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact = false, isMobile = false) {
     const card = document.createElement('div');
     card.style.cssText = `
         border: 3px solid #0033A0;
         border-radius: 15px;
         background: white;
-        padding: ${isCompact ? '20px' : '30px'};
+        padding: ${isMobile ? '12px' : (isCompact ? '20px' : '30px')};
         text-align: center;
         flex: 1;
     `;
@@ -1302,12 +1387,12 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
     const photo = document.createElement('img');
     photo.src = `images/${player.season}/players/${player.number}.jpg`;
     photo.style.cssText = `
-        width: ${isCompact ? '80px' : '150px'};
-        height: ${isCompact ? '80px' : '150px'};
+        width: ${isMobile ? '50px' : (isCompact ? '80px' : '150px')};
+        height: ${isMobile ? '50px' : (isCompact ? '80px' : '150px')};
         border-radius: 50%;
         object-fit: cover;
         border: 4px solid #0033A0;
-        margin-bottom: ${isCompact ? '10px' : '20px'};
+        margin-bottom: ${isMobile ? '6px' : (isCompact ? '10px' : '20px')};
     `;
     photo.onerror = function() {
         this.style.display = 'none';
@@ -1318,8 +1403,8 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
     const name = document.createElement('h3');
     name.style.cssText = `
         color: #0033A0;
-        margin: 0 0 8px 0;
-        font-size: ${isCompact ? '18px' : '28px'};
+        margin: 0 0 ${isMobile ? '4px' : '8px'} 0;
+        font-size: ${isMobile ? '12px' : (isCompact ? '18px' : '28px')};
         font-weight: bold;
         white-space: nowrap;
         overflow: hidden;
@@ -1332,8 +1417,8 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
     const details = document.createElement('div');
     details.style.cssText = `
         color: #666;
-        margin-bottom: 15px;
-        font-size: ${isCompact ? '12px' : '16px'};
+        margin-bottom: ${isMobile ? '8px' : '15px'};
+        font-size: ${isMobile ? '8px' : (isCompact ? '12px' : '16px')};
     `;
     details.innerHTML = `${player.pos} | ${player.ht} | ${player.wt}`;
     card.appendChild(details);
@@ -1341,26 +1426,28 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
     const filter = document.createElement('div');
     filter.style.cssText = `
         color: #666;
-        margin-bottom: 15px;
-        font-size: ${isCompact ? '11px' : '14px'};
+        margin-bottom: ${isMobile ? '8px' : '15px'};
+        font-size: ${isMobile ? '7px' : (isCompact ? '11px' : '14px')};
     `;
     const filterText = player.currentFilter ? getFilterDisplayText(player.currentFilter) : 'Whole Season';
     filter.textContent = `${filterText} (${stats.gp} games)`;
     card.appendChild(filter);
     
-    // Stats section - more compact for download
+    // Stats section - more compact for mobile
     const statsSection = document.createElement('div');
     statsSection.style.cssText = `
         border-top: 2px solid #0033A0;
-        padding-top: 15px;
-        margin-top: 15px;
+        padding-top: ${isMobile ? '8px' : '15px'};
+        margin-top: ${isMobile ? '8px' : '15px'};
     `;
     
     // Create player object with filtered stats for calculations
     const playerWithFilteredStats = { ...player, ...stats };
     
-    // Show all stats for both compact and full layouts
-    const statsToShow = ['mpg', 'ppg', 'rpg', 'apg', 'topg', 'fg%', '3p%', 'ft%', 'ts%', 'bpg', 'spg', 'per', 'eff', 'ortg', 'drtg', 'usg%', 'bpm'];
+    // Show fewer stats on mobile to fit better
+    const statsToShow = isMobile 
+        ? ['ppg', 'rpg', 'apg', 'fg%', '3p%', 'ft%', 'per', 'eff'] 
+        : ['mpg', 'ppg', 'rpg', 'apg', 'topg', 'fg%', '3p%', 'ft%', 'ts%', 'bpg', 'spg', 'per', 'eff', 'ortg', 'drtg', 'usg%', 'bpm'];
     
     const per30Toggle = document.getElementById('per30Toggle');
     const isPer30Mode = per30Toggle && per30Toggle.checked;
@@ -1371,110 +1458,52 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
     let comparisonAdvanced = null;
     
     if (comparisonPlayer) {
-        const comparisonStats = comparisonPlayer.filteredStats || {
-            gp: comparisonPlayer.gp || 0,
-            min: comparisonPlayer.min || 0,
-            pts: comparisonPlayer.pts || 0,
-            reb: comparisonPlayer.reb || 0,
-            ast: comparisonPlayer.ast || 0,
-            stl: comparisonPlayer.stl || 0,
-            blk: comparisonPlayer.blk || 0,
-            to: comparisonPlayer.to || 0,
-            fgm: comparisonPlayer.fgm || 0,
-            fga: comparisonPlayer.fga || 0,
-            threeFgm: comparisonPlayer.threeFgm || 0,
-            threeFga: comparisonPlayer.threeFga || 0,
-            ftm: comparisonPlayer.ftm || 0,
-            fta: comparisonPlayer.fta || 0
-        };
-        
+        const comparisonStats = getPlayerStats(comparisonPlayer);
         comparisonPlayerWithStats = { ...comparisonPlayer, ...comparisonStats };
         comparisonAdvanced = calculateAdvancedStats(comparisonPlayerWithStats, isPer30Mode);
     }
     
-    // Create stats layout - side by side rows for all stats (even larger size)
-    if (isCompact) {
-        const statsContainer = document.createElement('div');
-        statsContainer.style.cssText = `
+    // Create stats layout
+    const statsContainer = document.createElement('div');
+    statsContainer.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: ${isMobile ? '2px' : '4px'};
+        font-size: ${isMobile ? '9px' : '13px'};
+    `;
+    
+    statsToShow.forEach(stat => {
+        const value = getStatValue(playerWithFilteredStats, advancedStats, stat);
+        const comparisonValue = comparisonPlayerWithStats ? 
+            getStatValue(comparisonPlayerWithStats, comparisonAdvanced, stat) : null;
+        
+        const isHigher = comparisonPlayerWithStats && isStatHigher(value, comparisonValue, stat);
+        
+        const statRow = document.createElement('div');
+        statRow.style.cssText = `
             display: flex;
-            flex-direction: column;
-            gap: 4px;
-            font-size: 13px;
+            justify-content: space-between;
+            align-items: center;
+            padding: ${isMobile ? '2px 6px' : '5px 10px'};
+            border-radius: 5px;
+            min-height: ${isMobile ? '16px' : '24px'};
+            ${isHigher ? 'background-color: rgba(0, 51, 160, 0.1); font-weight: bold; color: #0033A0;' : ''}
         `;
         
-        statsToShow.forEach(stat => {
-            const value = getStatValue(playerWithFilteredStats, advancedStats, stat);
-            const comparisonValue = comparisonPlayerWithStats ? 
-                getStatValue(comparisonPlayerWithStats, comparisonAdvanced, stat) : null;
-            
-            const isHigher = comparisonPlayerWithStats && isStatHigher(value, comparisonValue, stat);
-            
-            const statRow = document.createElement('div');
-            statRow.style.cssText = `
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 5px 10px;
-                border-radius: 5px;
-                min-height: 24px;
-                ${isHigher ? 'background-color: rgba(0, 51, 160, 0.1); font-weight: bold; color: #0033A0;' : ''}
-            `;
-            
-            const label = document.createElement('span');
-            label.style.cssText = 'font-weight: bold; color: #0033A0; font-size: 12px;';
-            label.textContent = stat.toUpperCase();
-            
-            const val = document.createElement('span');
-            val.style.cssText = 'font-size: 13px; font-weight: 600;';
-            val.textContent = value;
-            
-            statRow.appendChild(label);
-            statRow.appendChild(val);
-            statsContainer.appendChild(statRow);
-        });
+        const label = document.createElement('span');
+        label.style.cssText = `font-weight: bold; color: #0033A0; font-size: ${isMobile ? '8px' : '12px'};`;
+        label.textContent = stat.toUpperCase();
         
-        statsSection.appendChild(statsContainer);
-    } else {
-        // Original layout for non-compact
-        statsToShow.forEach(stat => {
-            const value = getStatValue(playerWithFilteredStats, advancedStats, stat);
-            const comparisonValue = comparisonPlayerWithStats ? 
-                getStatValue(comparisonPlayerWithStats, comparisonAdvanced, stat) : null;
-            
-            const isHigher = comparisonPlayerWithStats && isStatHigher(value, comparisonValue, stat);
-            
-            const statRow = document.createElement('div');
-            statRow.style.cssText = `
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px 0;
-                border-bottom: 1px solid rgba(0, 51, 160, 0.1);
-            `;
-            
-            const statLabel = document.createElement('span');
-            statLabel.style.cssText = `
-                font-weight: bold;
-                color: #0033A0;
-                font-size: 14px;
-            `;
-            statLabel.textContent = stat.toUpperCase();
-            
-            const statValue = document.createElement('span');
-            statValue.style.cssText = `
-                font-size: 14px;
-                padding: 4px 8px;
-                border-radius: 4px;
-                ${isHigher ? 'background-color: rgba(0, 51, 160, 0.1); font-weight: bold; color: #0033A0;' : ''}
-            `;
-            statValue.textContent = value;
-            
-            statRow.appendChild(statLabel);
-            statRow.appendChild(statValue);
-            statsSection.appendChild(statRow);
-        });
-    }
+        const val = document.createElement('span');
+        val.style.cssText = `font-size: ${isMobile ? '9px' : '13px'}; font-weight: 600;`;
+        val.textContent = value;
+        
+        statRow.appendChild(label);
+        statRow.appendChild(val);
+        statsContainer.appendChild(statRow);
+    });
     
+    statsSection.appendChild(statsContainer);
     card.appendChild(statsSection);
     
     return card;
