@@ -936,6 +936,7 @@ async function downloadComparison() {
     }
 }
 
+
 async function performDownload() {
     const downloadBtn = document.getElementById('downloadBtn');
     const originalText = downloadBtn.innerHTML;
@@ -945,7 +946,11 @@ async function performDownload() {
     downloadBtn.disabled = true;
     
     try {
-        // Create a temporary container with fixed landscape dimensions
+        // Detect if we're on mobile
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                         window.innerWidth <= 768;
+        
+        // Create a temporary container with landscape layout for both mobile and desktop
         const tempContainer = document.createElement('div');
         tempContainer.style.cssText = `
             position: fixed;
@@ -974,7 +979,7 @@ async function performDownload() {
         `;
         title.textContent = 'Player Comparison - bbnstats.com';
         
-        // Create main content container (side by side layout)
+        // Create main content container (side by side layout - SAME FOR BOTH)
         const mainContent = document.createElement('div');
         mainContent.style.cssText = `
             display: flex;
@@ -983,39 +988,40 @@ async function performDownload() {
             height: 100%;
         `;
         
-        // Left side - Player info and stats (fixed width)
+        // Left side - Player info and stats (smaller on mobile to make room for charts)
         const leftSide = document.createElement('div');
         leftSide.style.cssText = `
-            flex: 0 0 40%;
+            flex: 0 0 ${isMobile ? '35%' : '40%'};
             display: flex;
             flex-direction: column;
-            max-width: 600px;
+            max-width: ${isMobile ? '500px' : '600px'};
             height: 100%;
         `;
         
-        // Right side - Charts (takes remaining space)
+        // Right side - Charts (mobile = smaller to fit 2x2 grid)
         const rightSide = document.createElement('div');
         rightSide.style.cssText = `
             flex: 1;
             border: 3px solid #0033A0;
             border-radius: 15px;
             background: white;
-            padding: 30px;
+            padding: ${isMobile ? '15px' : '30px'};
             display: flex;
             flex-direction: column;
             height: 100%;
             box-sizing: border-box;
+            min-width: 0; /* Allow shrinking */
         `;
         
-        // Chart grid inside right side
+        // Chart grid inside right side (make smaller on mobile)
         const chartsGrid = document.createElement('div');
         chartsGrid.style.cssText = `
             display: grid;
             grid-template-columns: 1fr 1fr;
             grid-template-rows: 1fr 1fr;
-            gap: 15px;
+            gap: ${isMobile ? '8px' : '15px'};
             flex: 1;
-            height: calc(100% - 60px);
+            height: calc(100% - ${isMobile ? '40px' : '60px'});
         `;
         
         // Create the player selection container
@@ -1025,12 +1031,12 @@ async function performDownload() {
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-bottom: 15px;
-            font-size: 12px;
+            font-size: ${isMobile ? '11px' : '12px'};
         `;
         
         // Create season and player info sections for both players
-        const player1Section = createPlayerInfoSection(player1, false);
-        const player2Section = createPlayerInfoSection(player2, false);
+        const player1Section = createPlayerInfoSection(player1, isMobile);
+        const player2Section = createPlayerInfoSection(player2, isMobile);
         
         playerSelectContainer.appendChild(player1Section);
         playerSelectContainer.appendChild(player2Section);
@@ -1053,13 +1059,13 @@ async function performDownload() {
                 border: 1px solid #0033A0;
                 font-weight: bold;
                 color: #0033A0;
-                font-size: 10px;
+                font-size: ${isMobile ? '9px' : '10px'};
             `;
             toggleInfo.textContent = '✓ Per-30-Minute Stats';
             playerSelectContainer.appendChild(toggleInfo);
         }
         
-        // Create player cards container (side by side)
+        // Create player cards container (side by side, fixed alignment)
         const playerCardsContainer = document.createElement('div');
         playerCardsContainer.style.cssText = `
             display: flex;
@@ -1074,9 +1080,9 @@ async function performDownload() {
         const player1Stats = getPlayerStats(player1);
         const player2Stats = getPlayerStats(player2);
         
-        // Create player cards
-        const player1Card = createPlayerCardForDownload(player1, player1Stats, player2, true, false);
-        const player2Card = createPlayerCardForDownload(player2, player2Stats, player1, true, false);
+        // Create player cards - use same sizing approach for both mobile and desktop
+        const player1Card = createPlayerCardForDownload(player1, player1Stats, player2, true, isMobile);
+        const player2Card = createPlayerCardForDownload(player2, player2Stats, player1, true, isMobile);
         
         playerCardsContainer.appendChild(player1Card);
         playerCardsContainer.appendChild(player2Card);
@@ -1084,13 +1090,13 @@ async function performDownload() {
         leftSide.appendChild(playerSelectContainer);
         leftSide.appendChild(playerCardsContainer);
         
-        // Create charts section for right side
+        // Create charts section for right side - smaller for mobile
         const chartsTitle = document.createElement('h2');
         chartsTitle.style.cssText = `
             text-align: center;
             color: #0033A0;
-            margin: 0 0 20px 0;
-            font-size: 24px;
+            margin: 0 0 ${isMobile ? '12px' : '20px'} 0;
+            font-size: ${isMobile ? '18px' : '24px'};
         `;
         chartsTitle.textContent = 'Statistical Comparison';
         rightSide.appendChild(chartsTitle);
@@ -1110,18 +1116,19 @@ async function performDownload() {
                 chartContainer.style.cssText = `
                     border: 2px solid #0033A0;
                     border-radius: 10px;
-                    padding: 10px;
+                    padding: ${isMobile ? '6px' : '10px'};
                     background: white;
                     display: flex;
                     flex-direction: column;
+                    min-height: 0; /* Allow shrinking */
                 `;
                 
                 // Add chart title
                 const chartTitle = document.createElement('h3');
                 chartTitle.style.cssText = `
                     color: #0033A0;
-                    margin: 0 0 10px 0;
-                    font-size: 16px;
+                    margin: 0 0 ${isMobile ? '4px' : '10px'} 0;
+                    font-size: ${isMobile ? '11px' : '16px'};
                     text-align: center;
                 `;
                 chartTitle.textContent = config.title;
@@ -1135,6 +1142,7 @@ async function performDownload() {
                     height: 100%;
                     object-fit: contain;
                     flex: 1;
+                    min-height: 0; /* Allow image to shrink */
                 `;
                 chartContainer.appendChild(chartImage);
                 
@@ -1156,7 +1164,7 @@ async function performDownload() {
         // Wait a moment for content to render
         await new Promise(resolve => setTimeout(resolve, 1000));
         
-        // Capture the image
+        // Capture the image with same settings for both mobile and desktop
         const canvas = await html2canvas(tempContainer, {
             backgroundColor: '#ffffff',
             scale: 1.2,
@@ -1173,9 +1181,6 @@ async function performDownload() {
         document.body.removeChild(tempContainer);
         
         // Handle download/save based on device
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                         window.innerWidth <= 768;
-        
         if (isMobile && navigator.share && navigator.canShare) {
             // Use Web Share API for mobile if available
             canvas.toBlob(async (blob) => {
@@ -1225,158 +1230,6 @@ async function performDownload() {
     }
 }
 
-// Update the createPlayerCardForDownload function to use consistent sizing for mobile landscape
-function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact = false, isMobile = false) {
-    const card = document.createElement('div');
-    card.style.cssText = `
-        border: 3px solid #0033A0;
-        border-radius: 15px;
-        background: white;
-        padding: 20px;
-        text-align: center;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-height: 0; /* Allow content to shrink if needed */
-    `;
-    
-    // Player photo
-    const photo = document.createElement('img');
-    photo.src = `images/${player.season}/players/${player.number}.jpg`;
-    photo.style.cssText = `
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 4px solid #0033A0;
-        margin: 0 auto 10px auto;
-    `;
-    photo.onerror = function() {
-        this.style.display = 'none';
-    };
-    card.appendChild(photo);
-    
-    // Player name and info
-    const name = document.createElement('h3');
-    name.style.cssText = `
-        color: #0033A0;
-        margin: 0 0 4px 0;
-        font-size: 18px;
-        font-weight: bold;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
-    `;
-    name.textContent = `#${player.number} ${player.name}`;
-    card.appendChild(name);
-    
-    const details = document.createElement('div');
-    details.style.cssText = `
-        color: #666;
-        margin-bottom: 8px;
-        font-size: 12px;
-    `;
-    details.innerHTML = `${player.pos} | ${player.ht} | ${player.wt}`;
-    card.appendChild(details);
-    
-    const filter = document.createElement('div');
-    filter.style.cssText = `
-        color: #666;
-        margin-bottom: 10px;
-        font-size: 11px;
-    `;
-    const filterText = player.currentFilter ? getFilterDisplayText(player.currentFilter) : 'Whole Season';
-    filter.textContent = `${filterText} (${stats.gp} games)`;
-    card.appendChild(filter);
-    
-    // Stats section
-    const statsSection = document.createElement('div');
-    statsSection.style.cssText = `
-        border-top: 2px solid #0033A0;
-        padding-top: 8px;
-        margin-top: 8px;
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-    `;
-    
-    // Create player object with filtered stats for calculations
-    const playerWithFilteredStats = { ...player, ...stats };
-    
-    // Show all stats
-    const statsToShow = ['mpg', 'ppg', 'rpg', 'apg', 'topg', 'fg%', '3p%', 'ft%', 'ts%', 'bpg', 'spg', 'per', 'eff', 'ortg', 'drtg', 'usg%', 'bpm'];
-    
-    const per30Toggle = document.getElementById('per30Toggle');
-    const isPer30Mode = per30Toggle && per30Toggle.checked;
-    const advancedStats = calculateAdvancedStats(playerWithFilteredStats, isPer30Mode);
-    
-    // For comparison player, use filtered stats if available
-    let comparisonPlayerWithStats = null;
-    let comparisonAdvanced = null;
-    
-    if (comparisonPlayer) {
-        const comparisonStats = getPlayerStats(comparisonPlayer);
-        comparisonPlayerWithStats = { ...comparisonPlayer, ...comparisonStats };
-        comparisonAdvanced = calculateAdvancedStats(comparisonPlayerWithStats, isPer30Mode);
-    }
-    
-    // Stats container with scroll if needed
-    const statsContainer = document.createElement('div');
-    statsContainer.style.cssText = `
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        flex: 1;
-        overflow-y: auto;
-        font-size: 11px;
-        padding-right: 5px;
-    `;
-    
-    // Custom scrollbar styling
-    statsContainer.style.cssText += `
-        scrollbar-width: thin;
-        scrollbar-color: #0033A0 #f0f0f0;
-    `;
-    
-    statsToShow.forEach(stat => {
-        const value = getStatValue(playerWithFilteredStats, advancedStats, stat);
-        const comparisonValue = comparisonPlayerWithStats ? 
-            getStatValue(comparisonPlayerWithStats, comparisonAdvanced, stat) : null;
-        
-        const isHigher = comparisonPlayerWithStats && isStatHigher(value, comparisonValue, stat);
-        
-        const statRow = document.createElement('div');
-        statRow.style.cssText = `
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 3px 6px;
-            border-radius: 3px;
-            min-height: 16px;
-            ${isHigher ? 'background-color: rgba(0, 51, 160, 0.1); font-weight: bold; color: #0033A0;' : ''}
-        `;
-        
-        const label = document.createElement('span');
-        label.style.cssText = `font-weight: bold; color: #0033A0; font-size: 10px;`;
-        label.textContent = stat.toUpperCase();
-        
-        const val = document.createElement('span');
-        val.style.cssText = `font-size: 11px; font-weight: 600;`;
-        val.textContent = value;
-        
-        statRow.appendChild(label);
-        statRow.appendChild(val);
-        statsContainer.appendChild(statRow);
-    });
-    
-    statsSection.appendChild(statsContainer);
-    card.appendChild(statsSection);
-    
-    return card;
-}
-
 // Updated helper function for player info sections with consistent sizing
 function createPlayerInfoSection(player, isMobile) {
     const section = document.createElement('div');
@@ -1416,6 +1269,154 @@ function createPlayerInfoSection(player, isMobile) {
     
     return section;
 }
+
+// Updated createPlayerCardForDownload function with better mobile scaling
+function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact = false, isMobile = false) {
+    const card = document.createElement('div');
+    card.style.cssText = `
+        border: 3px solid #0033A0;
+        border-radius: 15px;
+        background: white;
+        padding: ${isMobile ? '12px' : '20px'};
+        text-align: center;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    `;
+    
+    // Player photo
+    const photo = document.createElement('img');
+    photo.src = `images/${player.season}/players/${player.number}.jpg`;
+    photo.style.cssText = `
+        width: ${isMobile ? '50px' : '80px'};
+        height: ${isMobile ? '50px' : '80px'};
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #0033A0;
+        margin: 0 auto ${isMobile ? '6px' : '10px'} auto;
+    `;
+    photo.onerror = function() {
+        this.style.display = 'none';
+    };
+    card.appendChild(photo);
+    
+    // Player name and info
+    const name = document.createElement('h3');
+    name.style.cssText = `
+        color: #0033A0;
+        margin: 0 0 4px 0;
+        font-size: ${isMobile ? '12px' : '18px'};
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    `;
+    name.textContent = `#${player.number} ${player.name}`;
+    card.appendChild(name);
+    
+    const details = document.createElement('div');
+    details.style.cssText = `
+        color: #666;
+        margin-bottom: 8px;
+        font-size: ${isMobile ? '8px' : '12px'};
+    `;
+    details.innerHTML = `${player.pos} | ${player.ht} | ${player.wt}`;
+    card.appendChild(details);
+    
+    const filter = document.createElement('div');
+    filter.style.cssText = `
+        color: #666;
+        margin-bottom: 10px;
+        font-size: ${isMobile ? '7px' : '11px'};
+    `;
+    const filterText = player.currentFilter ? getFilterDisplayText(player.currentFilter) : 'Whole Season';
+    filter.textContent = `${filterText} (${stats.gp} games)`;
+    card.appendChild(filter);
+    
+    // Stats section
+    const statsSection = document.createElement('div');
+    statsSection.style.cssText = `
+        border-top: 2px solid #0033A0;
+        padding-top: 8px;
+        margin-top: 8px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    `;
+    
+    // Create player object with filtered stats for calculations
+    const playerWithFilteredStats = { ...player, ...stats };
+    
+    // Show all stats with better mobile sizing
+    const statsToShow = ['mpg', 'ppg', 'rpg', 'apg', 'topg', 'fg%', '3p%', 'ft%', 'ts%', 'bpg', 'spg', 'per', 'eff', 'ortg', 'drtg', 'usg%', 'bpm'];
+    
+    const per30Toggle = document.getElementById('per30Toggle');
+    const isPer30Mode = per30Toggle && per30Toggle.checked;
+    const advancedStats = calculateAdvancedStats(playerWithFilteredStats, isPer30Mode);
+    
+    // For comparison player, use filtered stats if available
+    let comparisonPlayerWithStats = null;
+    let comparisonAdvanced = null;
+    
+    if (comparisonPlayer) {
+        const comparisonStats = getPlayerStats(comparisonPlayer);
+        comparisonPlayerWithStats = { ...comparisonPlayer, ...comparisonStats };
+        comparisonAdvanced = calculateAdvancedStats(comparisonPlayerWithStats, isPer30Mode);
+    }
+    
+    // Stats container with scroll if needed
+    const statsContainer = document.createElement('div');
+    statsContainer.style.cssText = `
+        display: flex;
+        flex-direction: column;
+        gap: ${isMobile ? '4px' : '8px'};
+        flex: 1;
+        overflow-y: auto;
+        font-size: ${isMobile ? '7px' : '11px'};
+        padding-right: 2px;
+    `;
+    
+    statsToShow.forEach(stat => {
+        const value = getStatValue(playerWithFilteredStats, advancedStats, stat);
+        const comparisonValue = comparisonPlayerWithStats ? 
+            getStatValue(comparisonPlayerWithStats, comparisonAdvanced, stat) : null;
+        
+        const isHigher = comparisonPlayerWithStats && isStatHigher(value, comparisonValue, stat);
+        
+        const statRow = document.createElement('div');
+        statRow.style.cssText = `
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: ${isMobile ? '1px 4px' : '3px 6px'};
+            border-radius: 3px;
+            min-height: ${isMobile ? '12px' : '16px'};
+            ${isHigher ? 'background-color: rgba(0, 51, 160, 0.1); font-weight: bold; color: #0033A0;' : ''}
+        `;
+        
+        const label = document.createElement('span');
+        label.style.cssText = `font-weight: bold; color: #0033A0; font-size: ${isMobile ? '7px' : '10px'};`;
+        label.textContent = stat.toUpperCase();
+        
+        const val = document.createElement('span');
+        val.style.cssText = `font-size: ${isMobile ? '7px' : '11px'}; font-weight: 600;`;
+        val.textContent = value;
+        
+        statRow.appendChild(label);
+        statRow.appendChild(val);
+        statsContainer.appendChild(statRow);
+    });
+    
+    statsSection.appendChild(statsContainer);
+    card.appendChild(statsSection);
+    
+    return card;
+}
+
+
 
 
 
