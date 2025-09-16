@@ -878,6 +878,118 @@
             display: none;
         }
     }
+
+    /* Replace the existing desktop-specific styles section with this updated version */
+
+    /* Desktop-specific styles - Updated to handle advanced stats properly */
+    @media (min-width: 992px) {
+        /* Remove the problematic full-width rule that was causing overflow */
+        .table-responsive:has(.stats-table.show-advanced) {
+            overflow-x: auto;
+            /* Removed the problematic full-width styling */
+        }
+
+        /* Better column management for advanced stats on desktop */
+        .stats-table.show-advanced {
+            width: 100%;
+            table-layout: fixed;
+            min-width: auto; /* Override the mobile min-width */
+        }
+
+        /* Optimize column widths for desktop advanced view */
+        .stats-table.show-advanced th,
+        .stats-table.show-advanced td {
+            padding: 6px 8px; /* Reduced padding */
+            font-size: 0.85rem; /* Slightly smaller font */
+            white-space: nowrap;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Player name column - wider since it contains the most info */
+        .stats-table.show-advanced th:first-child,
+        .stats-table.show-advanced td:first-child {
+            width: 200px;
+            text-align: left;
+            min-width: 200px;
+        }
+
+        /* Basic info columns */
+        .stats-table.show-advanced th:nth-child(2), /* Grade */
+        .stats-table.show-advanced td:nth-child(2),
+        .stats-table.show-advanced th:nth-child(3), /* POS */
+        .stats-table.show-advanced td:nth-child(3) {
+            width: 65px;
+        }
+
+        .stats-table.show-advanced th:nth-child(4), /* HT */
+        .stats-table.show-advanced td:nth-child(4),
+        .stats-table.show-advanced th:nth-child(5), /* WT */
+        .stats-table.show-advanced td:nth-child(5) {
+            width: 75px;
+        }
+
+        /* Stats columns - wider for better readability */
+        .stats-table.show-advanced th:nth-child(n+6):nth-child(-n+21), /* All stat columns */
+        .stats-table.show-advanced td:nth-child(n+6):nth-child(-n+21) {
+            width: 70px;
+            min-width: 65px;
+        }
+
+        /* Rating column - wider for visibility */
+        .stats-table.show-advanced th:last-child, /* Rating */
+        .stats-table.show-advanced td:last-child {
+            width: 80px;
+        }
+
+        /* Ensure the table container doesn't exceed viewport */
+        .stats-table.show-advanced {
+            max-width: calc(100vw - 80px); /* Account for container padding */
+        }
+
+        /* Make sure the container respects the max-width */
+        .container:has(.stats-table.show-advanced) {
+            max-width: none;
+            padding: 0 20px;
+        }
+
+        /* Alternative: If you prefer scrolling for advanced stats, uncomment this instead */
+        /*
+        .table-responsive:has(.stats-table.show-advanced) {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+        
+        .stats-table.show-advanced {
+            min-width: 1400px;
+            width: auto;
+            table-layout: auto;
+        }
+        */
+    }
+
+    /* Large desktop optimization (1400px+) */
+    @media (min-width: 1400px) {
+        .stats-table.show-advanced th,
+        .stats-table.show-advanced td {
+            padding: 8px 10px; /* Slightly more padding on large screens */
+            font-size: 0.9rem;
+        }
+
+        .stats-table.show-advanced th:first-child,
+        .stats-table.show-advanced td:first-child {
+            width: 200px;
+            min-width: 200px;
+        }
+
+        .stats-table.show-advanced th:nth-child(n+6):nth-child(-n+21),
+        .stats-table.show-advanced td:nth-child(n+6):nth-child(-n+21) {
+            width: 60px;
+            min-width: 55px;
+        }
+    }
 </style>
     
 </head>
