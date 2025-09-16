@@ -990,21 +990,22 @@ async function performDownload() {
         // Left side - Player comparison section (mobile gets more space)
         const leftSide = document.createElement('div');
         leftSide.style.cssText = `
-            flex: 0 0 ${isMobile ? '35%' : '25%'};
+            flex: 0 0 ${isMobile ? '50%' : '25%'};
             display: flex;
             flex-direction: column;
-            max-width: ${isMobile ? '672px' : '480px'};
+            max-width: ${isMobile ? '960px' : '480px'};
         `;
-        
+
         // Right side - Charts (mobile gets less space to fit better)
         const rightSide = document.createElement('div');
         rightSide.style.cssText = `
-            flex: 0 0 ${isMobile ? '65%' : '75%'};
+            flex: 0 0 ${isMobile ? '50%' : '75%'};
             border: 3px solid #0033A0;
             border-radius: 15px;
             background: white;
             padding: ${isMobile ? '15px' : '30px'};
         `;
+
         
         // Create the player selection container
         const playerSelectContainer = document.createElement('div');
