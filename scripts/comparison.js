@@ -987,24 +987,31 @@ async function performDownload() {
             height: 100%;
         `;
         
-        // Left side - Player comparison section (mobile gets more space)
+        // Left side - Player comparison section (mobile gets narrower but taller)
         const leftSide = document.createElement('div');
         leftSide.style.cssText = `
-            flex: 0 0 ${isMobile ? '50%' : '25%'};
+            flex: 0 0 ${isMobile ? '25%' : '25%'};
             display: flex;
             flex-direction: column;
-            max-width: ${isMobile ? '960px' : '480px'};
+            max-width: ${isMobile ? '480px' : '480px'};
+            overflow-y: auto;
+            height: 100%; /* make it fill vertically */
         `;
 
-        // Right side - Charts (mobile gets less space to fit better)
+        // Right side - Charts (mobile takes most of the width)
         const rightSide = document.createElement('div');
         rightSide.style.cssText = `
-            flex: 0 0 ${isMobile ? '50%' : '75%'};
+            flex: 1; /* take the rest of the space */
             border: 3px solid #0033A0;
             border-radius: 15px;
             background: white;
-            padding: ${isMobile ? '15px' : '30px'};
+            padding: ${isMobile ? '10px' : '30px'};
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* ensure it fits screen image height */
+            box-sizing: border-box;
         `;
+
 
         
         // Create the player selection container
