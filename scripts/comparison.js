@@ -946,8 +946,7 @@ async function performDownload() {
     
     try {
         // Detect if we're on mobile
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                         window.innerWidth <= 768;
+        const isMobile = false;
         
         // Create a temporary container with landscape layout for both mobile and desktop
         const tempContainer = document.createElement('div');
@@ -987,30 +986,39 @@ async function performDownload() {
             height: 100%;
         `;
         
-        // Left side - Player comparison section (mobile gets narrower but taller)
-        const leftSide = document.createElement('div');
-        leftSide.style.cssText = `
-            flex: 0 0 ${isMobile ? '25%' : '25%'};
-            display: flex;
-            flex-direction: column;
-            max-width: ${isMobile ? '480px' : '480px'};
-            overflow-y: auto;
-            height: 100%; /* make it fill vertically */
-        `;
+    const leftSide = document.createElement('div');
+    leftSide.style.cssText = `
+        flex: 0 0 ${isMobile ? '28%' : '28%'};
+        display: flex;
+        flex-direction: column;
+        max-width: ${isMobile ? '540px' : '600px'};
+        height: 100%; /* always take full vertical space (desktop + mobile) */
+    `;
 
-        // Right side - Charts (mobile takes most of the width)
-        const rightSide = document.createElement('div');
-        rightSide.style.cssText = `
-            flex: 1; /* take the rest of the space */
-            border: 3px solid #0033A0;
-            border-radius: 15px;
-            background: white;
-            padding: ${isMobile ? '10px' : '30px'};
-            display: flex;
-            flex-direction: column;
-            height: 100%; /* ensure it fits screen image height */
-            box-sizing: border-box;
-        `;
+    // Right side - Charts (mobile = smaller so all fit on screen)
+    const rightSide = document.createElement('div');
+    rightSide.style.cssText = `
+        flex: 1; /* take remaining space */
+        border: 3px solid #0033A0;
+        border-radius: 15px;
+        background: white;
+        padding: ${isMobile ? '10px' : '30px'};
+        display: flex;
+        flex-direction: column;
+        height: 100%; /* fit entire image height */
+        box-sizing: border-box;
+    `;
+
+    // Chart grid inside right side (make smaller on mobile)
+    const chartsGrid = document.createElement('div');
+    chartsGrid.style.cssText = `
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: ${isMobile ? '6px' : '15px'};
+        flex: 1;
+        height: ${isMobile ? '85%' : 'calc(100% - 60px)'}; /* shrink grid on mobile */
+    `;
 
 
 
@@ -1059,12 +1067,14 @@ async function performDownload() {
         // Create player cards container (side by side, fixed alignment)
         const playerCardsContainer = document.createElement('div');
         playerCardsContainer.style.cssText = `
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            display: flex;
+            flex-direction: row; /* row layout on desktop */
+            gap: 12px;
             flex: 1;
-            align-items: start;
+            align-items: stretch; /* make both player cards stretch evenly */
+            height: 100%; /* fill full height of left side */
         `;
+
         
         // Get current stats for both players
         const player1Stats = getPlayerStats(player1);
@@ -1091,15 +1101,7 @@ async function performDownload() {
         chartsTitle.textContent = 'Statistical Comparison';
         rightSide.appendChild(chartsTitle);
         
-        // Create 2x2 grid for charts - more compact for mobile
-        const chartsGrid = document.createElement('div');
-        chartsGrid.style.cssText = `
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 1fr 1fr;
-            gap: ${isMobile ? '8px' : '15px'};
-            height: calc(100% - ${isMobile ? '45px' : '60px'});
-        `;
+        
         
         // Convert each chart to image and add to grid
         const chartConfigs = [
@@ -1336,6 +1338,9 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
         border-top: 2px solid #0033A0;
         padding-top: 8px;
         margin-top: 8px;
+        flex: 1; /* make stats section take up remaining height */
+        display: flex;
+        flex-direction: column;
     `;
     
     // Create player object with filtered stats for calculations
@@ -1358,12 +1363,14 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
         comparisonAdvanced = calculateAdvancedStats(comparisonPlayerWithStats, isPer30Mode);
     }
     
-    // Create stats layout
+
+    // Stats container
     const statsContainer = document.createElement('div');
     statsContainer.style.cssText = `
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: ${isMobile ? '4px' : '14px'};
+        flex: 1; /* stretch to fill card */
         font-size: ${isMobile ? '7px' : '11px'};
     `;
     
