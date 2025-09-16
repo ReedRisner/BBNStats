@@ -438,6 +438,15 @@ function renderComparison() {
     renderPlayerCards();
     renderComparisonChart();
     initializeTooltipsForElements();
+    showDownloadButton();
+}
+
+function showDownloadButton() {
+    // Show the download button when both players are selected
+    const downloadBtn = document.getElementById('downloadBtn');
+    if (downloadBtn) {
+        downloadBtn.style.display = 'block';
+    }
 }
 
 function initializeTooltipsForElements() {
@@ -674,6 +683,14 @@ function clearComparison() {
             chart = null;
         }
     });
+    hideDownloadButton();
+}
+
+function hideDownloadButton() {
+    const downloadBtn = document.getElementById('downloadBtn');
+    if (downloadBtn) {
+        downloadBtn.style.display = 'none';
+    }
 }
 
 function renderComparisonChart() {
@@ -772,28 +789,28 @@ function renderComparisonChart() {
     try {
         if (averagesCanvas) {
             averagesChart = new Chart(averagesCanvas.getContext('2d'),
-                getChartConfig(averagesStats, 'Basic Stats', 20, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
+                getChartConfig(averagesStats, 'Basic Stats', player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
             );
             console.log('Averages chart created');
         }
         
         if (shootingCanvas) {
             shootingChart = new Chart(shootingCanvas.getContext('2d'),
-                getChartConfig(shootingStats, 'Shooting Efficiency', 100, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
+                getChartConfig(shootingStats, 'Shooting Efficiency', player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
             );
             console.log('Shooting chart created');
         }
 
         if (playingTimeCanvas) {
             playingTimeChart = new Chart(playingTimeCanvas.getContext('2d'),
-                getChartConfig(playingTimeStats, 'Minutes & Ratings', 120, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
+                getChartConfig(playingTimeStats, 'Minutes & Ratings', player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
             );
             console.log('Playing time chart created');
         }
 
         if (advancedCanvas) {
             advancedChart = new Chart(advancedCanvas.getContext('2d'),
-                getChartConfig(advancedStats, 'Advanced Metrics', 30, player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
+                getChartConfig(advancedStats, 'Advanced Metrics', player1WithFiltered, player2WithFiltered, player1Advanced, player2Advanced)
             );
             console.log('Advanced chart created');
         }
@@ -802,7 +819,7 @@ function renderComparisonChart() {
     }
 }
 
-function getChartConfig(stats, title, yMax, player1Data, player2Data, player1Advanced, player2Advanced) {
+function getChartConfig(stats, title, player1Data, player2Data, player1Advanced, player2Advanced) {
     // Helper function to clean and parse stat values
     function parseStatValue(player, advanced, stat) {
         const rawValue = getStatValue(player, advanced, stat);
@@ -814,19 +831,45 @@ function getChartConfig(stats, title, yMax, player1Data, player2Data, player1Adv
         return isNaN(cleanValue) ? 0 : cleanValue;
     }
 
+    // Calculate values for dynamic Y-axis scaling
+    const player1Values = stats.map(stat => parseStatValue(player1Data, player1Advanced, stat));
+    const player2Values = stats.map(stat => parseStatValue(player2Data, player2Advanced, stat));
+    const allValues = [...player1Values, ...player2Values].filter(val => val > 0);
+    
+    // Determine appropriate Y-axis max based on chart type and values
+    let yMax;
+    const maxValue = Math.max(...allValues);
+    
+    if (title === 'Basic Stats') {
+        // For basic stats, if all values are under 10, use a smaller scale
+        if (maxValue <= 10) {
+            yMax = 12;
+        } else {
+            yMax = 20;
+        }
+    } else if (title === 'Shooting Efficiency') {
+        yMax = 100;
+    } else if (title === 'Minutes & Ratings') {
+        yMax = 120;
+    } else if (title === 'Advanced Metrics') {
+        yMax = 30;
+    } else {
+        yMax = Math.max(20, maxValue * 1.2);
+    }
+
     return {
         type: 'bar',
         data: {
             labels: stats.map(stat => stat.toUpperCase()),
             datasets: [{
                 label: player1Data.name,
-                data: stats.map(stat => parseStatValue(player1Data, player1Advanced, stat)),
+                data: player1Values,
                 backgroundColor: 'rgba(0, 51, 160, 0.7)',
                 borderColor: 'rgba(0, 51, 160, 1)',
                 borderWidth: 2
             }, {
                 label: player2Data.name,
-                data: stats.map(stat => parseStatValue(player2Data, player2Advanced, stat)),
+                data: player2Values,
                 backgroundColor: 'rgba(128, 128, 128, 0.7)',
                 borderColor: 'rgba(128, 128, 128, 1)',
                 borderWidth: 2
@@ -869,6 +912,573 @@ function getChartConfig(stats, title, yMax, player1Data, player2Data, player1Adv
 }
 
 document.addEventListener('DOMContentLoaded', loadPlayerData);
+
+async function downloadComparison() {
+    if (!player1 || !player2) {
+        alert('Please select both players before downloading.');
+        return;
+    }
+
+    try {
+        // Import html2canvas dynamically
+        if (!window.html2canvas) {
+            // Load html2canvas library
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            script.onload = () => performDownload();
+            document.head.appendChild(script);
+        } else {
+            performDownload();
+        }
+    } catch (error) {
+        console.error('Error loading html2canvas:', error);
+        alert('Error loading download functionality. Please try again.');
+    }
+}
+
+async function performDownload() {
+    const downloadBtn = document.getElementById('downloadBtn');
+    const originalText = downloadBtn.innerHTML;
+    
+    // Show loading state
+    downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+    downloadBtn.disabled = true;
+    
+    try {
+        // Create a temporary container with 16:9 landscape layout
+        const tempContainer = document.createElement('div');
+        tempContainer.style.cssText = `
+            position: fixed;
+            top: -20000px;
+            left: -20000px;
+            width: 1920px;
+            height: 1080px;
+            background: white;
+            padding: 40px;
+            font-family: Arial, sans-serif;
+            z-index: -1;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        `;
+        
+        // Create title
+        const title = document.createElement('div');
+        title.style.cssText = `
+            text-align: center;
+            margin-bottom: 30px;
+            color: #0033A0;
+            font-size: 36px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        `;
+        title.textContent = 'Player Comparison - bbnstats.com';
+        
+        // Create main content container (side by side layout with right margin)
+        const mainContent = document.createElement('div');
+        mainContent.style.cssText = `
+            display: flex;
+            flex: 1;
+            gap: 40px;
+            height: 100%;
+            margin-right: 20px;
+        `;
+        
+        // Left side - Player comparison section (25% width)
+        const leftSide = document.createElement('div');
+        leftSide.style.cssText = `
+            flex: 0 0 25%;
+            display: flex;
+            flex-direction: column;
+            max-width: 480px;
+        `;
+        
+        // Right side - Charts (75% width)
+        const rightSide = document.createElement('div');
+        rightSide.style.cssText = `
+            flex: 0 0 75%;
+            border: 3px solid #0033A0;
+            border-radius: 15px;
+            background: white;
+            padding: 30px;
+        `;
+        
+        // Create the player selection container (compact)
+        const playerSelectContainer = document.createElement('div');
+        playerSelectContainer.style.cssText = `
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 12px;
+        `;
+        
+        // Create season and player info sections for both players
+        const player1Section = document.createElement('div');
+        player1Section.style.cssText = `
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        `;
+        
+        const player2Section = document.createElement('div');
+        player2Section.style.cssText = `
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        `;
+        
+        // Add season info for player 1
+        const player1SeasonInfo = document.createElement('div');
+        player1SeasonInfo.style.cssText = `
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #0033A0;
+            text-align: center;
+            font-weight: bold;
+            color: #0033A0;
+            font-size: 10px;
+        `;
+        player1SeasonInfo.textContent = `${player1.season}-${parseInt(player1.season)+1}`;
+        
+        // Add filter info for player 1
+        const player1FilterInfo = document.createElement('div');
+        player1FilterInfo.style.cssText = `
+            background: #e9ecef;
+            padding: 3px 6px;
+            border-radius: 3px;
+            text-align: center;
+            font-size: 9px;
+            color: #666;
+        `;
+        const player1FilterText = player1.currentFilter ? getFilterDisplayText(player1.currentFilter) : 'Whole Season';
+        player1FilterInfo.textContent = player1FilterText;
+        
+        // Add season info for player 2
+        const player2SeasonInfo = document.createElement('div');
+        player2SeasonInfo.style.cssText = `
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #0033A0;
+            text-align: center;
+            font-weight: bold;
+            color: #0033A0;
+            font-size: 10px;
+        `;
+        player2SeasonInfo.textContent = `${player2.season}-${parseInt(player2.season)+1}`;
+        
+        // Add filter info for player 2
+        const player2FilterInfo = document.createElement('div');
+        player2FilterInfo.style.cssText = `
+            background: #e9ecef;
+            padding: 3px 6px;
+            border-radius: 3px;
+            text-align: center;
+            font-size: 9px;
+            color: #666;
+        `;
+        const player2FilterText = player2.currentFilter ? getFilterDisplayText(player2.currentFilter) : 'Whole Season';
+        player2FilterInfo.textContent = player2FilterText;
+        
+        player1Section.appendChild(player1SeasonInfo);
+        player1Section.appendChild(player1FilterInfo);
+        player2Section.appendChild(player2SeasonInfo);
+        player2Section.appendChild(player2FilterInfo);
+        
+        playerSelectContainer.appendChild(player1Section);
+        playerSelectContainer.appendChild(player2Section);
+        
+        // Add per-30 toggle info if enabled
+        const per30Toggle = document.getElementById('per30Toggle');
+        const isPer30Mode = per30Toggle && per30Toggle.checked;
+        
+        if (isPer30Mode) {
+            const toggleInfo = document.createElement('div');
+            toggleInfo.style.cssText = `
+                grid-column: 1 / -1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin: 5px 0;
+                padding: 5px;
+                background-color: rgba(0, 51, 160, 0.1);
+                border-radius: 6px;
+                border: 1px solid #0033A0;
+                font-weight: bold;
+                color: #0033A0;
+                font-size: 10px;
+            `;
+            toggleInfo.textContent = '✓ Per-30-Minute Stats';
+            playerSelectContainer.appendChild(toggleInfo);
+        }
+        
+        // Create player cards container (side by side, fixed alignment)
+        const playerCardsContainer = document.createElement('div');
+        playerCardsContainer.style.cssText = `
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            flex: 1;
+            align-items: start;
+        `;
+        
+        // Get current stats for both players
+        const player1Stats = player1.filteredStats || {
+            gp: player1.gp || 0,
+            min: player1.min || 0,
+            pts: player1.pts || 0,
+            reb: player1.reb || 0,
+            ast: player1.ast || 0,
+            stl: player1.stl || 0,
+            blk: player1.blk || 0,
+            to: player1.to || 0,
+            fgm: player1.fgm || 0,
+            fga: player1.fga || 0,
+            threeFgm: player1.threeFgm || 0,
+            threeFga: player1.threeFga || 0,
+            ftm: player1.ftm || 0,
+            fta: player1.fta || 0
+        };
+        
+        const player2Stats = player2.filteredStats || {
+            gp: player2.gp || 0,
+            min: player2.min || 0,
+            pts: player2.pts || 0,
+            reb: player2.reb || 0,
+            ast: player2.ast || 0,
+            stl: player2.stl || 0,
+            blk: player2.blk || 0,
+            to: player2.to || 0,
+            fgm: player2.fgm || 0,
+            fga: player2.fga || 0,
+            threeFgm: player2.threeFgm || 0,
+            threeFga: player2.threeFga || 0,
+            ftm: player2.ftm || 0,
+            fta: player2.fta || 0
+        };
+        
+        // Create compact player cards for left side
+        const player1Card = createPlayerCardForDownload(player1, player1Stats, player2, true);
+        const player2Card = createPlayerCardForDownload(player2, player2Stats, player1, true);
+        
+        playerCardsContainer.appendChild(player1Card);
+        playerCardsContainer.appendChild(player2Card);
+        
+        leftSide.appendChild(playerSelectContainer);
+        leftSide.appendChild(playerCardsContainer);
+        
+        // Create charts section for right side
+        const chartsTitle = document.createElement('h2');
+        chartsTitle.style.cssText = `
+            text-align: center;
+            color: #0033A0;
+            margin: 0 0 20px 0;
+            font-size: 24px;
+        `;
+        chartsTitle.textContent = 'Statistical Comparison';
+        rightSide.appendChild(chartsTitle);
+        
+        // Create 2x2 grid for charts
+        const chartsGrid = document.createElement('div');
+        chartsGrid.style.cssText = `
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 15px;
+            height: calc(100% - 60px);
+        `;
+        
+        // Convert each chart to image and add to grid
+        const chartConfigs = [
+            { id: 'averagesChart', title: 'Basic Stats' },
+            { id: 'shootingChart', title: 'Shooting Efficiency' },
+            { id: 'playingTimeChart', title: 'Minutes & Ratings' },
+            { id: 'advancedChart', title: 'Advanced Metrics' }
+        ];
+        
+        for (const config of chartConfigs) {
+            const chartCanvas = document.getElementById(config.id);
+            if (chartCanvas) {
+                const chartContainer = document.createElement('div');
+                chartContainer.style.cssText = `
+                    border: 2px solid #0033A0;
+                    border-radius: 10px;
+                    padding: 10px;
+                    background: white;
+                    display: flex;
+                    flex-direction: column;
+                `;
+                
+                // Add chart title
+                const chartTitle = document.createElement('h3');
+                chartTitle.style.cssText = `
+                    color: #0033A0;
+                    margin: 0 0 10px 0;
+                    font-size: 16px;
+                    text-align: center;
+                `;
+                chartTitle.textContent = config.title;
+                chartContainer.appendChild(chartTitle);
+                
+                // Convert chart to image
+                const chartImage = document.createElement('img');
+                chartImage.src = chartCanvas.toDataURL('image/png', 1.0);
+                chartImage.style.cssText = `
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                    flex: 1;
+                `;
+                chartContainer.appendChild(chartImage);
+                
+                chartsGrid.appendChild(chartContainer);
+            }
+        }
+        
+        rightSide.appendChild(chartsGrid);
+        
+        // Append sections to main content
+        mainContent.appendChild(leftSide);
+        mainContent.appendChild(rightSide);
+        
+        // Append all content to temp container
+        tempContainer.appendChild(title);
+        tempContainer.appendChild(mainContent);
+        document.body.appendChild(tempContainer);
+        
+        // Wait a moment for content to render
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Capture the image
+        const canvas = await html2canvas(tempContainer, {
+            backgroundColor: '#ffffff',
+            scale: 1.2,
+            useCORS: true,
+            allowTaint: true,
+            width: 1920,
+            height: 1080,
+            scrollX: 0,
+            scrollY: 0,
+            logging: false
+        });
+        
+        // Clean up temp container
+        document.body.removeChild(tempContainer);
+        
+        // Create download link
+        const link = document.createElement('a');
+        link.download = `player-comparison-${player1.name.replace(/\s+/g, '-')}-vs-${player2.name.replace(/\s+/g, '-')}.png`;
+        link.href = canvas.toDataURL('image/png', 0.9);
+        
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+    } catch (error) {
+        console.error('Error generating download:', error);
+        alert('Error generating image. Please try again.');
+    } finally {
+        // Reset button
+        downloadBtn.innerHTML = originalText;
+        downloadBtn.disabled = false;
+    }
+}
+
+function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact = false) {
+    const card = document.createElement('div');
+    card.style.cssText = `
+        border: 3px solid #0033A0;
+        border-radius: 15px;
+        background: white;
+        padding: ${isCompact ? '20px' : '30px'};
+        text-align: center;
+        flex: 1;
+    `;
+    
+    // Player photo
+    const photo = document.createElement('img');
+    photo.src = `images/${player.season}/players/${player.number}.jpg`;
+    photo.style.cssText = `
+        width: ${isCompact ? '80px' : '150px'};
+        height: ${isCompact ? '80px' : '150px'};
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #0033A0;
+        margin-bottom: ${isCompact ? '10px' : '20px'};
+    `;
+    photo.onerror = function() {
+        this.style.display = 'none';
+    };
+    card.appendChild(photo);
+    
+    // Player name and info
+    const name = document.createElement('h3');
+    name.style.cssText = `
+        color: #0033A0;
+        margin: 0 0 8px 0;
+        font-size: ${isCompact ? '18px' : '28px'};
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    `;
+    name.textContent = `#${player.number} ${player.name}`;
+    card.appendChild(name);
+    
+    const details = document.createElement('div');
+    details.style.cssText = `
+        color: #666;
+        margin-bottom: 15px;
+        font-size: ${isCompact ? '12px' : '16px'};
+    `;
+    details.innerHTML = `${player.pos} | ${player.ht} | ${player.wt}`;
+    card.appendChild(details);
+    
+    const filter = document.createElement('div');
+    filter.style.cssText = `
+        color: #666;
+        margin-bottom: 15px;
+        font-size: ${isCompact ? '11px' : '14px'};
+    `;
+    const filterText = player.currentFilter ? getFilterDisplayText(player.currentFilter) : 'Whole Season';
+    filter.textContent = `${filterText} (${stats.gp} games)`;
+    card.appendChild(filter);
+    
+    // Stats section - more compact for download
+    const statsSection = document.createElement('div');
+    statsSection.style.cssText = `
+        border-top: 2px solid #0033A0;
+        padding-top: 15px;
+        margin-top: 15px;
+    `;
+    
+    // Create player object with filtered stats for calculations
+    const playerWithFilteredStats = { ...player, ...stats };
+    
+    // Show all stats for both compact and full layouts
+    const statsToShow = ['mpg', 'ppg', 'rpg', 'apg', 'topg', 'fg%', '3p%', 'ft%', 'ts%', 'bpg', 'spg', 'per', 'eff', 'ortg', 'drtg', 'usg%', 'bpm'];
+    
+    const per30Toggle = document.getElementById('per30Toggle');
+    const isPer30Mode = per30Toggle && per30Toggle.checked;
+    const advancedStats = calculateAdvancedStats(playerWithFilteredStats, isPer30Mode);
+    
+    // For comparison player, use filtered stats if available
+    let comparisonPlayerWithStats = null;
+    let comparisonAdvanced = null;
+    
+    if (comparisonPlayer) {
+        const comparisonStats = comparisonPlayer.filteredStats || {
+            gp: comparisonPlayer.gp || 0,
+            min: comparisonPlayer.min || 0,
+            pts: comparisonPlayer.pts || 0,
+            reb: comparisonPlayer.reb || 0,
+            ast: comparisonPlayer.ast || 0,
+            stl: comparisonPlayer.stl || 0,
+            blk: comparisonPlayer.blk || 0,
+            to: comparisonPlayer.to || 0,
+            fgm: comparisonPlayer.fgm || 0,
+            fga: comparisonPlayer.fga || 0,
+            threeFgm: comparisonPlayer.threeFgm || 0,
+            threeFga: comparisonPlayer.threeFga || 0,
+            ftm: comparisonPlayer.ftm || 0,
+            fta: comparisonPlayer.fta || 0
+        };
+        
+        comparisonPlayerWithStats = { ...comparisonPlayer, ...comparisonStats };
+        comparisonAdvanced = calculateAdvancedStats(comparisonPlayerWithStats, isPer30Mode);
+    }
+    
+    // Create stats layout - side by side rows for all stats (even larger size)
+    if (isCompact) {
+        const statsContainer = document.createElement('div');
+        statsContainer.style.cssText = `
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 13px;
+        `;
+        
+        statsToShow.forEach(stat => {
+            const value = getStatValue(playerWithFilteredStats, advancedStats, stat);
+            const comparisonValue = comparisonPlayerWithStats ? 
+                getStatValue(comparisonPlayerWithStats, comparisonAdvanced, stat) : null;
+            
+            const isHigher = comparisonPlayerWithStats && isStatHigher(value, comparisonValue, stat);
+            
+            const statRow = document.createElement('div');
+            statRow.style.cssText = `
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 5px 10px;
+                border-radius: 5px;
+                min-height: 24px;
+                ${isHigher ? 'background-color: rgba(0, 51, 160, 0.1); font-weight: bold; color: #0033A0;' : ''}
+            `;
+            
+            const label = document.createElement('span');
+            label.style.cssText = 'font-weight: bold; color: #0033A0; font-size: 12px;';
+            label.textContent = stat.toUpperCase();
+            
+            const val = document.createElement('span');
+            val.style.cssText = 'font-size: 13px; font-weight: 600;';
+            val.textContent = value;
+            
+            statRow.appendChild(label);
+            statRow.appendChild(val);
+            statsContainer.appendChild(statRow);
+        });
+        
+        statsSection.appendChild(statsContainer);
+    } else {
+        // Original layout for non-compact
+        statsToShow.forEach(stat => {
+            const value = getStatValue(playerWithFilteredStats, advancedStats, stat);
+            const comparisonValue = comparisonPlayerWithStats ? 
+                getStatValue(comparisonPlayerWithStats, comparisonAdvanced, stat) : null;
+            
+            const isHigher = comparisonPlayerWithStats && isStatHigher(value, comparisonValue, stat);
+            
+            const statRow = document.createElement('div');
+            statRow.style.cssText = `
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 0;
+                border-bottom: 1px solid rgba(0, 51, 160, 0.1);
+            `;
+            
+            const statLabel = document.createElement('span');
+            statLabel.style.cssText = `
+                font-weight: bold;
+                color: #0033A0;
+                font-size: 14px;
+            `;
+            statLabel.textContent = stat.toUpperCase();
+            
+            const statValue = document.createElement('span');
+            statValue.style.cssText = `
+                font-size: 14px;
+                padding: 4px 8px;
+                border-radius: 4px;
+                ${isHigher ? 'background-color: rgba(0, 51, 160, 0.1); font-weight: bold; color: #0033A0;' : ''}
+            `;
+            statValue.textContent = value;
+            
+            statRow.appendChild(statLabel);
+            statRow.appendChild(statValue);
+            statsSection.appendChild(statRow);
+        });
+    }
+    
+    card.appendChild(statsSection);
+    
+    return card;
+}
 
 function calculateGameRating(game) {
     // Extract stats from game object
@@ -1058,7 +1668,9 @@ function calculateAdvancedStats(player, isPer30Mode = false) {
             (pts / (fga + 0.44 * fta + to)) * 100 : 0;
         
         // Defensive Rating (normalized, lower is better)
-        const drtg = 100 - ((stl + blk * 1.2) * 3);
+        const drtg = player.gp > 0 
+            ? 100 - ((player.stl + player.blk * 1.2) / player.gp * 3) 
+            : 0;
 
         return {
             fgPct: fgPct,
