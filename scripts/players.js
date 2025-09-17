@@ -4,6 +4,52 @@ let allGameLogsData = null;
 let currentSortKey = 'rating'; // Default to rating
 let currentSortDirection = 'desc'; // Default to descending
 
+// Add this function to handle URL parameters
+function handleURLParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const playerName = urlParams.get('player');
+    const season = urlParams.get('season') || '2025';
+    
+    if (playerName) {
+        // Wait for data to be loaded, then find and show the player
+        const checkDataAndShowPlayer = () => {
+            if (!allPlayersData || !allPlayersData.seasons?.[season]) {
+                setTimeout(checkDataAndShowPlayer, 100);
+                return;
+            }
+            
+            const players = allPlayersData.seasons[season]?.players || [];
+            const player = players.find(p => p.name === playerName);
+            
+            if (player) {
+                // Set the season select to match
+                const seasonSelect = document.getElementById('seasonSelect');
+                if (seasonSelect) {
+                    seasonSelect.value = season;
+                }
+                
+                // Calculate game ratings for the player
+                const gameRatings = (player.nonExhGameLogs || []).map(calculateGameRating);
+                
+                // Show the player detail
+                showPlayerDetail(player, gameRatings, season);
+                
+                // Update the URL to remove parameters (clean URL)
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else {
+                console.warn(`Player "${playerName}" not found in ${season} season`);
+                // Load the normal player list if player not found
+                loadPlayerStats(season);
+            }
+        };
+        
+        checkDataAndShowPlayer();
+    } else {
+        // No player specified, load default season
+        loadPlayerStats('2025');
+    }
+}
+
 async function loadPlayerData() {
     try {
         // Load players data
@@ -19,10 +65,12 @@ async function loadPlayerData() {
         // Process game logs and calculate stats
         await processGameLogs();
         
-        loadPlayerStats('2025');
+        // Don't automatically load default stats here - let URL handler decide
+        return Promise.resolve();
     } catch (error) {
         console.error('Error loading player data:', error);
         alert('Failed to load player data. Please check console for details.');
+        return Promise.reject(error);
     }
 }
 
@@ -236,9 +284,6 @@ function loadPlayerGrid(players, season) {
         ratingClass = `rating-${Math.floor(avgRating)}`;
     }
     
-    
-    
-    
     const card = document.createElement('div');
     card.className = 'player-card';
     
@@ -259,8 +304,6 @@ function loadPlayerGrid(players, season) {
               ${ratingDisplay}
             </span>
           </div>
-          
-          
         </div>
         <div class="player-stats mt-3">
           <div class="player-stat">
@@ -646,44 +689,42 @@ function loadPlayerList(players, season) {
     `;
 } else {
     // Desktop version or mobile with advanced stats
-
-         // Desktop version or mobile with advanced stats
-        const advancedStats = calculateAdvancedStats(player); // Add this line
-        row.innerHTML = `
-            <td>
-                <img src="images/${season}/players/${player.number}.jpg" 
-                    class="player-photo" alt="${player.name}"
-                    onerror="this.src='images/players/default.jpg'">
-                <strong>#${player.number} ${player.name}</strong>
-            </td>
-            <td>${player.grade || ''}</td>
-            <td>${player.pos}</td>
-            <td>${player.ht}</td>
-            <td>${player.wt}</td>
-            <td class="advanced-stat">${(player.min / (player.gp || 1)).toFixed(1)}</td>
-            <td>${(player.pts / (player.gp || 1)).toFixed(1)}</td>
-            <td>${(player.reb / (player.gp || 1)).toFixed(1)}</td>
-            <td>${(player.ast / (player.gp || 1)).toFixed(1)}</td>
-            <td>${(player.stl / (player.gp || 1)).toFixed(1)}</td>
-            <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
-            ${showAdvanced ? `
-            <td class="advanced-stat">${(player.to / (player.gp || 1)).toFixed(1)}</td>
-            <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
-            <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
-            <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
-            <td class="advanced-stat">${(advancedStats.tsPct * 100).toFixed(1)}%</td>
-            <td class="advanced-stat">${advancedStats.per.toFixed(1)}</td>
-            <td class="advanced-stat">${advancedStats.eff.toFixed(1)}</td>
-            <td class="advanced-stat">${advancedStats.usgRate.toFixed(1)}%</td>
-            <td class="advanced-stat">${advancedStats.ortg.toFixed(1)}</td>
-            <td class="advanced-stat">${advancedStats.drtg.toFixed(1)}</td>
-            ` : ''}
-            <td>
-                <span class="rating-cell ${ratingClass}">
-                    ${ratingDisplay}
-                </span>
-            </td>
-        `;
+    const advancedStats = calculateAdvancedStats(player);
+    row.innerHTML = `
+        <td>
+            <img src="images/${season}/players/${player.number}.jpg" 
+                class="player-photo" alt="${player.name}"
+                onerror="this.src='images/players/default.jpg'">
+            <strong>#${player.number} ${player.name}</strong>
+        </td>
+        <td>${player.grade || ''}</td>
+        <td>${player.pos}</td>
+        <td>${player.ht}</td>
+        <td>${player.wt}</td>
+        <td class="advanced-stat">${(player.min / (player.gp || 1)).toFixed(1)}</td>
+        <td>${(player.pts / (player.gp || 1)).toFixed(1)}</td>
+        <td>${(player.reb / (player.gp || 1)).toFixed(1)}</td>
+        <td>${(player.ast / (player.gp || 1)).toFixed(1)}</td>
+        <td>${(player.stl / (player.gp || 1)).toFixed(1)}</td>
+        <td>${(player.blk / (player.gp || 1)).toFixed(1)}</td>
+        ${showAdvanced ? `
+        <td class="advanced-stat">${(player.to / (player.gp || 1)).toFixed(1)}</td>
+        <td class="advanced-stat">${(advancedStats.fgPct * 100).toFixed(1)}%</td>
+        <td class="advanced-stat">${(advancedStats.threePct * 100).toFixed(1)}%</td>
+        <td class="advanced-stat">${(advancedStats.ftPct * 100).toFixed(1)}%</td>
+        <td class="advanced-stat">${(advancedStats.tsPct * 100).toFixed(1)}%</td>
+        <td class="advanced-stat">${advancedStats.per.toFixed(1)}</td>
+        <td class="advanced-stat">${advancedStats.eff.toFixed(1)}</td>
+        <td class="advanced-stat">${advancedStats.usgRate.toFixed(1)}%</td>
+        <td class="advanced-stat">${advancedStats.ortg.toFixed(1)}</td>
+        <td class="advanced-stat">${advancedStats.drtg.toFixed(1)}</td>
+        ` : ''}
+        <td>
+            <span class="rating-cell ${ratingClass}">
+                ${ratingDisplay}
+            </span>
+        </td>
+    `;
     }
 
     row.addEventListener('click', () => {
@@ -713,7 +754,6 @@ function updateTableHeaders() {
             <th style="width:15%" data-sort-key="ppg">PPG<span class="sort-arrow"></span></th>
             <th style="width:15%" data-sort-key="rpg">RPG<span class="sort-arrow"></span></th>
             <th style="width:15%" data-sort-key="apg">APG<span class="sort-arrow"></span></th>
-            
         `;
     } else {
         // Full desktop headers (also used for mobile with advanced stats ON)
@@ -1096,8 +1136,6 @@ function showPlayerDetail(player, gameRatings = [], season) {
     }
 }
 
-// REMOVED: The duplicate event listener setup that was causing issues
-
 document.getElementById('seasonSelect').addEventListener('change', function() {
     try {
         loadPlayerStats(this.value);
@@ -1123,7 +1161,11 @@ document.getElementById('backButton').addEventListener('click', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
     try {
-        loadPlayerData();
+        loadPlayerData().then(() => {
+            // Handle URL parameters after data is loaded
+            handleURLParameters();
+        });
+        
         new bootstrap.Dropdown(document.querySelector('.dropdown-toggle'));
         
         // Set default view for mobile
