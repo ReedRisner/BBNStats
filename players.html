@@ -7,6 +7,7 @@
     <link rel="icon" type="image/x-icon" href="images/uk-logo/favicon.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles/search.css">
 <style>
     :root {
         --uk-blue: #0033A0;
@@ -166,7 +167,7 @@
     }
 
     .sort-arrow::after {
-        content: "↕";
+        content: "â†•";
         color: var(--uk-silver);
     }
 
@@ -175,11 +176,11 @@
     }
 
     .asc .sort-arrow::after {
-        content: "↓";
+        content: "â†"";
     }
 
     .desc .sort-arrow::after {
-        content: "↑";
+        content: "â†'";
     }
 
     .bbn-title {
@@ -843,44 +844,6 @@
         display: none !important;
     }
 
-    /* Desktop-specific styles */
-    @media (min-width: 1200px) {
-        .table-responsive:has(.stats-table.show-advanced) {
-            overflow-x: visible;
-            width: calc(100vw - 40px);
-            margin-left: calc(-50vw + 50% + 20px);
-        }
-    }
-
-    /* Column width controls for better spacing */
-    .stats-table.show-advanced th,
-    .stats-table.show-advanced td {
-        white-space: nowrap;
-        padding: 8px 12px;
-    }
-
-    .stats-table.show-advanced th:first-child,
-    .stats-table.show-advanced td:first-child {
-        min-width: 200px;
-    }
-
-    .stats-table.show-advanced .advanced-stat {
-        min-width: 60px;
-    }
-
-    /* Show full name on desktop and tablet */
-    @media (min-width: 769px) {
-        .mobile-player-name .full-name {
-            display: block;
-        }
-        
-        .mobile-player-name .short-name {
-            display: none;
-        }
-    }
-
-    /* Replace the existing desktop-specific styles section with this updated version */
-
     /* Desktop-specific styles - Updated to handle advanced stats properly */
     @media (min-width: 992px) {
         /* Remove the problematic full-width rule that was causing overflow */
@@ -953,21 +916,6 @@
             max-width: none;
             padding: 0 20px;
         }
-
-        /* Alternative: If you prefer scrolling for advanced stats, uncomment this instead */
-        /*
-        .table-responsive:has(.stats-table.show-advanced) {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            max-width: 100%;
-        }
-        
-        .stats-table.show-advanced {
-            min-width: 1400px;
-            width: auto;
-            table-layout: auto;
-        }
-        */
     }
 
     /* Large desktop optimization (1400px+) */
@@ -988,6 +936,17 @@
         .stats-table.show-advanced td:nth-child(n+6):nth-child(-n+21) {
             width: 60px;
             min-width: 55px;
+        }
+    }
+
+    /* Show full name on desktop and tablet */
+    @media (min-width: 769px) {
+        .mobile-player-name .full-name {
+            display: block;
+        }
+        
+        .mobile-player-name .short-name {
+            display: none;
         }
     }
 </style>
@@ -1024,19 +983,51 @@
                 </div>
 
                 <!-- Title - centered -->
-                <div class="order-2 order-lg-1 mx-auto mx-lg-0 text-center">
+                <div class="order-2 mx-auto text-center">
                     <h1 class="bbn-title mb-0">BBN Stats</h1>
                 </div>
 
-                <!-- Back Button - hidden on mobile -->
-                <div class="order-3 d-none d-lg-block">
-                    <a href="index.html" class="btn btn-primary ms-3">
-                        <i class="fas fa-arrow-left"></i> Back to Home
+                <!-- Search Button + Back Button Container -->
+                <div class="order-3 d-flex align-items-center gap-2">
+                    <!-- Search Button - always visible -->
+                    <button class="search-btn" onclick="openSearch()" title="Search (Ctrl+K)">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    
+                    <!-- Back Button - hidden on mobile -->
+                    <a href="index.html" class="btn btn-primary d-none d-lg-inline-flex align-items-center gap-2">
+                        <i class="fas fa-arrow-left"></i> <span>Back to Home</span>
                     </a>
                 </div>
             </div>
         </div>
     </nav>
+
+    <!-- Search Modal -->
+    <div id="searchModal" class="search-modal">
+        <div class="search-container">
+            <div class="search-header">
+                <h3 style="margin: 0;">Search BBN Stats</h3>
+                <button class="search-close" onclick="closeSearch()">&times;</button>
+            </div>
+            
+            <div class="search-input-container">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search players, staff, games, and more..."
+                    autocomplete="off"
+                >
+            </div>
+            
+            <div id="searchResults" class="search-results">
+                <div class="no-results">
+                    Start typing to search for players, staff, games, and more...
+                </div>
+            </div>
+        </div>
+    </div>
         
     
         <!-- Header -->
@@ -1376,6 +1367,7 @@
     </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="scripts/players.js"></script>
+<script src="scripts/search.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
    
 </body>
