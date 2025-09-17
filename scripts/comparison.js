@@ -1246,7 +1246,7 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
         border: 3px solid #0033A0;
         border-radius: 15px;
         background: white;
-        padding: ${isMobile ? '10px' : '20px'};
+        padding: ${isMobile ? '12px' : '20px'};
         text-align: center;
         flex: 1;
         display: flex;
@@ -1255,16 +1255,16 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
         overflow: hidden;
     `;
     
-    // Player photo (smaller on mobile)
+    // Player photo (slightly larger on mobile for better visibility)
     const photo = document.createElement('img');
     photo.src = `images/${player.season}/players/${player.number}.jpg`;
     photo.style.cssText = `
-        width: ${isMobile ? '45px' : '80px'};
-        height: ${isMobile ? '45px' : '80px'};
+        width: ${isMobile ? '55px' : '80px'};
+        height: ${isMobile ? '55px' : '80px'};
         border-radius: 50%;
         object-fit: cover;
         border: 3px solid #0033A0;
-        margin: 0 auto ${isMobile ? '5px' : '10px'} auto;
+        margin: 0 auto ${isMobile ? '8px' : '10px'} auto;
         flex-shrink: 0;
     `;
     photo.onerror = function() {
@@ -1272,12 +1272,12 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
     };
     card.appendChild(photo);
     
-    // Player name and info (smaller on mobile)
+    // Player name and info (larger on mobile)
     const name = document.createElement('h3');
     name.style.cssText = `
         color: #0033A0;
-        margin: 0 0 3px 0;
-        font-size: ${isMobile ? '11px' : '18px'};
+        margin: 0 0 4px 0;
+        font-size: ${isMobile ? '14px' : '18px'};
         font-weight: bold;
         white-space: nowrap;
         overflow: hidden;
@@ -1291,8 +1291,8 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
     const details = document.createElement('div');
     details.style.cssText = `
         color: #666;
-        margin-bottom: 6px;
-        font-size: ${isMobile ? '7px' : '12px'};
+        margin-bottom: ${isMobile ? '8px' : '6px'};
+        font-size: ${isMobile ? '10px' : '12px'};
         flex-shrink: 0;
     `;
     details.innerHTML = `${player.pos} | ${player.ht} | ${player.wt}`;
@@ -1301,20 +1301,20 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
     const filter = document.createElement('div');
     filter.style.cssText = `
         color: #666;
-        margin-bottom: 8px;
-        font-size: ${isMobile ? '6px' : '11px'};
+        margin-bottom: ${isMobile ? '12px' : '8px'};
+        font-size: ${isMobile ? '9px' : '11px'};
         flex-shrink: 0;
     `;
     const filterText = player.currentFilter ? getFilterDisplayText(player.currentFilter) : 'Whole Season';
     filter.textContent = `${filterText} (${stats.gp} games)`;
     card.appendChild(filter);
     
-    // Stats section - FIXED: Allow vertical expansion
+    // Stats section - Allow more vertical expansion
     const statsSection = document.createElement('div');
     statsSection.style.cssText = `
         border-top: 2px solid #0033A0;
-        padding-top: 6px;
-        margin-top: 6px;
+        padding-top: ${isMobile ? '10px' : '6px'};
+        margin-top: ${isMobile ? '8px' : '6px'};
         flex: 1;
         display: flex;
         flex-direction: column;
@@ -1325,7 +1325,7 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
     // Create player object with filtered stats for calculations
     const playerWithFilteredStats = { ...player, ...stats };
     
-    // Show all stats with better mobile sizing
+    // Show all stats with MUCH better mobile sizing
     const statsToShow = ['mpg', 'ppg', 'rpg', 'apg', 'topg', 'fg%', '3p%', 'ft%', 'ts%', 'bpg', 'spg', 'per', 'eff', 'ortg', 'drtg', 'usg%', 'bpm'];
     
     const per30Toggle = document.getElementById('per30Toggle');
@@ -1342,17 +1342,18 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
         comparisonAdvanced = calculateAdvancedStats(comparisonPlayerWithStats, isPer30Mode);
     }
     
-    // Stats container - FIXED: Allow vertical scrolling
+    // Stats container - MUCH larger spacing and fonts for mobile
     const statsContainer = document.createElement('div');
     statsContainer.style.cssText = `
         display: flex;
         flex-direction: column;
-        gap: ${isMobile ? '3px' : '6px'};
+        gap: ${isMobile ? '8px' : '6px'};
         flex: 1;
         overflow-y: auto;
-        font-size: ${isMobile ? '6px' : '11px'};
-        padding-right: 2px;
+        font-size: ${isMobile ? '11px' : '11px'};
+        padding-right: ${isMobile ? '4px' : '2px'};
         min-height: 0;
+        padding-bottom: ${isMobile ? '8px' : '4px'};
     `;
     
     // Custom scrollbar styling
@@ -1373,19 +1374,32 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: ${isMobile ? '1px 3px' : '2px 5px'};
-            border-radius: 2px;
-            min-height: ${isMobile ? '10px' : '14px'};
-            ${isHigher ? 'background-color: rgba(0, 51, 160, 0.1); font-weight: bold; color: #0033A0;' : ''}
+            padding: ${isMobile ? '6px 8px' : '2px 5px'};
+            border-radius: 4px;
+            min-height: ${isMobile ? '20px' : '14px'};
+            ${isHigher ? 'background-color: rgba(0, 51, 160, 0.15); font-weight: bold; color: #0033A0; border: 1px solid rgba(0, 51, 160, 0.3);' : 'border: 1px solid transparent;'}
             flex-shrink: 0;
+            margin-bottom: ${isMobile ? '2px' : '0px'};
         `;
         
         const label = document.createElement('span');
-        label.style.cssText = `font-weight: bold; color: #0033A0; font-size: ${isMobile ? '6px' : '10px'};`;
+        label.style.cssText = `
+            font-weight: bold; 
+            color: #0033A0; 
+            font-size: ${isMobile ? '11px' : '10px'};
+            min-width: ${isMobile ? '40px' : '35px'};
+            text-align: left;
+        `;
         label.textContent = stat.toUpperCase();
         
         const val = document.createElement('span');
-        val.style.cssText = `font-size: ${isMobile ? '6px' : '11px'}; font-weight: 600;`;
+        val.style.cssText = `
+            font-size: ${isMobile ? '12px' : '11px'}; 
+            font-weight: 600;
+            color: ${isHigher ? '#0033A0' : '#333'};
+            text-align: right;
+            min-width: ${isMobile ? '45px' : '40px'};
+        `;
         val.textContent = value;
         
         statRow.appendChild(label);
