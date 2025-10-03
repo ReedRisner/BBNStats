@@ -12,6 +12,7 @@
         "day": "Tuesday"
         ,"venue": "home"
         ,"title": "Exhibition"
+        ,"time": "6:00 PM ET"
     },
     {
         "date": "October 30, 2025",
@@ -25,6 +26,7 @@
         ,"day": "Thursday"
         ,"venue": "home"
         ,"title": "Exhibition"
+        ,"time": "7:00 PM ET"
 
     },
     {
@@ -38,6 +40,7 @@
         , "exh": false
         ,"day": "Tuesday"
         ,"venue": "home"
+        ,"time": "7:00 PM ET"
 
     },
     {
@@ -51,6 +54,7 @@
         , "exh": false
         ,"day": "Friday"
         ,"venue": "home"
+        ,"time": "7:00 PM ET"
 
     },
     {
@@ -77,6 +81,7 @@
         , "exh": false
         ,"day": "Friday"
         ,"venue": "home"
+        ,"time": "7:00 PM ET"
 
     },
     {
@@ -91,6 +96,7 @@
         ,"opponentRank": 0
         ,"day": "Tuesday"
         ,"venue": "away"
+        ,"time": "6:30 PM ET"
     },
     {
         "date": "November 21, 2025",
@@ -103,6 +109,7 @@
         , "exh": false
         ,"day": "Friday"
         ,"venue": "home"
+        ,"time": "7:00 PM ET"
     },
     {
         "date": "November 26, 2025",
@@ -115,6 +122,7 @@
         , "exh": false
         ,"day": "Wednesday"
         ,"venue": "home"
+        ,"time": "7:00 PM ET"
     },
     {
         "date": "December 2, 2025",
@@ -128,6 +136,7 @@
         ,"opponentRank": 0
         ,"day": "Tuesday"
         ,"venue": "home"
+        ,"time": "9:30 PM ET"
     },
     {
         "date": "December 5, 2025",
@@ -141,6 +150,7 @@
         ,"opponentRank": 0
         ,"day": "Friday"
         ,"venue": "away"
+        ,"time": "7:00 PM ET"
     },
     {
         "date": "December 9, 2025",
@@ -153,6 +163,7 @@
         , "exh": false
         ,"day": "Tuesday"
         ,"venue": "home"
+        ,"time": "7:00 PM ET"
     },
     {
         "date": "December 13, 2025",
@@ -166,6 +177,7 @@
         ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "home"
+        ,"time": "7:30 PM ET"
     },
     {
         "date": "December 20, 2025",
@@ -179,6 +191,7 @@
         ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "away"
+        ,"time": "12:30 PM ET"
     },
     {
         "date": "December 23, 2025",
@@ -191,6 +204,7 @@
         , "exh": false
         ,"day": "Tuesday"
         ,"venue": "home"
+        ,"time": "1:00 PM ET"
     },
     {
         "date": "January 3, 2025",
@@ -341,6 +355,7 @@
         ,"opponentRank": 0
         ,"day": "Saturday"
         ,"venue": "away"
+        ,"time": "3:00 PM ET"
     },
     {
         "date": "February 17, 2025",
