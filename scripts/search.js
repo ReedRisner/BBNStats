@@ -58,7 +58,7 @@ async function loadSearchData() {
 
     // Load players data from players.json (new structure)
     try {
-        const playersResponse = await fetch('data/players.json');
+        const playersResponse = await fetch('../data/players.json');
         if (playersResponse.ok) {
             const playersData = await playersResponse.json();
             
@@ -92,7 +92,7 @@ async function loadSearchData() {
         console.error('Failed to load players:', error);
         // Fallback: try old format
         try {
-            const players2025Response = await fetch('data/2025-players.json');
+            const players2025Response = await fetch('../data/2025-players.json');
             if (players2025Response.ok) {
                 const players = await players2025Response.json();
                 searchData.players = players.map(player => ({
@@ -177,7 +177,7 @@ async function loadSearchData() {
 
     // Load schedule data
     try {
-        const scheduleResponse = await fetch('data/2025-schedule.json');
+        const scheduleResponse = await fetch('../data/2025-schedule.json');
         if (scheduleResponse.ok) {
             const schedule = await scheduleResponse.json();
             searchData.schedule = schedule.map(game => ({
@@ -194,7 +194,7 @@ async function loadSearchData() {
 
     // Try to load 2024 schedule as well
     try {
-        const schedule2024Response = await fetch('data/2024-schedule.json');
+        const schedule2024Response = await fetch('../data/2024-schedule.json');
         if (schedule2024Response.ok) {
             const schedule2024 = await schedule2024Response.json();
             schedule2024.forEach(game => {

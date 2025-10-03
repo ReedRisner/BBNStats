@@ -10,12 +10,12 @@ let advancedChart = null;
 async function loadPlayerData() {
     try {
         // Load players data
-        const playersResponse = await fetch('data/players.json');
+        const playersResponse = await fetch('../data/players.json');
         if (!playersResponse.ok) throw new Error(`HTTP error! status: ${playersResponse.status}`);
         allPlayersData = await playersResponse.json();
         
         // Load game logs data
-        const gameLogsResponse = await fetch('data/gameLogs.json');
+        const gameLogsResponse = await fetch('../data/gameLogs.json');
         if (!gameLogsResponse.ok) throw new Error('Failed to load game logs');
         allGameLogsData = await gameLogsResponse.json();
         
@@ -23,7 +23,7 @@ async function loadPlayerData() {
         allScheduleData = {};
         for (const season of Object.keys(allPlayersData.seasons)) {
             try {
-                const scheduleResponse = await fetch(`data/${season}-schedule.json`);
+                const scheduleResponse = await fetch(`../data/${season}-schedule.json`);
                 if (scheduleResponse.ok) {
                     allScheduleData[season] = await scheduleResponse.json();
                 }
@@ -499,9 +499,9 @@ function renderPlayerCard(player, elementId, comparisonPlayer) {
     
     container.innerHTML = `
         <div class="text-center">
-            <img src="images/${player.season}/players/${player.number}.jpg" 
+            <img src="../images/${player.season}/players/${player.number}.jpg" 
                  class="player-photo-lg" alt="${player.name}"
-                 onerror="this.src='images/players/default.jpg'">
+                 onerror="this.src='../images/players/default.jpg'">
             <h3 class="text-uk-blue mt-3 mb-1">#${player.number} ${player.name}</h3>
             <div class="text-muted mb-3">${player.pos} | ${player.ht} | ${player.wt}</div>
             <div class="text-muted mb-1">${player.season}-${parseInt(player.season)+1} Season</div>
@@ -1257,7 +1257,7 @@ function createPlayerCardForDownload(player, stats, comparisonPlayer, isCompact 
     
     // Player photo (slightly larger on mobile for better visibility)
     const photo = document.createElement('img');
-    photo.src = `images/${player.season}/players/${player.number}.jpg`;
+    photo.src = `../images/${player.season}/players/${player.number}.jpg`;
     photo.style.cssText = `
         width: ${isMobile ? '55px' : '80px'};
         height: ${isMobile ? '55px' : '80px'};

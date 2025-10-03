@@ -53,12 +53,12 @@ function handleURLParameters() {
 async function loadPlayerData() {
     try {
         // Load players data
-        const playersResponse = await fetch('data/players.json');
+        const playersResponse = await fetch('../data/players.json');
         if (!playersResponse.ok) throw new Error(`HTTP error! status: ${playersResponse.status}`);
         allPlayersData = await playersResponse.json();
         
         // Load game logs data
-        const gameLogsResponse = await fetch('data/gameLogs.json');
+        const gameLogsResponse = await fetch('../data/gameLogs.json');
         if (!gameLogsResponse.ok) throw new Error('Failed to load game logs');
         allGameLogsData = await gameLogsResponse.json();
         
@@ -83,7 +83,7 @@ async function processGameLogs() {
         // Load schedule data for this season to identify exhibition games
         let scheduleData = [];
         try {
-            const scheduleResponse = await fetch(`data/${season}-schedule.json`);
+            const scheduleResponse = await fetch(`../data/${season}-schedule.json`);
             if (scheduleResponse.ok) {
                 scheduleData = await scheduleResponse.json();
             }
@@ -290,9 +290,9 @@ function loadPlayerGrid(players, season) {
     card.innerHTML = `
       <div class="player-card-header">
         <div class="player-card-backdrop"></div>
-        <img src="images/${season}/players/${player.number}.jpg" 
+        <img src="../images/${season}/players/${player.number}.jpg" 
              class="player-card-img" alt="${player.name}"
-             onerror="this.src='images/players/default.jpg'">
+             onerror="this.src='../images/players/default.jpg'">
       </div>
       <div class="card-body">
         <h5 class="card-title">#${player.number} ${player.name}</h5>
@@ -466,7 +466,7 @@ async function showGameModal(game, rating) {
     try {
         const gameDate = new Date(game.date);
         const season = gameDate.getFullYear();
-        const scheduleResponse = await fetch(`data/${season}-schedule.json`);
+        const scheduleResponse = await fetch(`../data/${season}-schedule.json`);
         
         if (!scheduleResponse.ok) {
             throw new Error(`Failed to load schedule for ${season}`);
@@ -660,9 +660,9 @@ function loadPlayerList(players, season) {
     row.innerHTML = `
         <td class="mobile-player-cell">
             <div class="d-flex align-items-center">
-                <img src="images/${season}/players/${player.number}.jpg" 
+                <img src="../images/${season}/players/${player.number}.jpg" 
                     class="player-photo me-2" alt="${player.name}"
-                    onerror="this.src='images/players/default.jpg'">
+                    onerror="this.src='../images/players/default.jpg'">
                 <div class="flex-grow-1 mobile-player-name">
                     <span class="short-name">#${player.number} ${shortName}</span>
                     <span class="full-name">#${player.number} ${player.name}</span>
@@ -692,9 +692,9 @@ function loadPlayerList(players, season) {
     const advancedStats = calculateAdvancedStats(player);
     row.innerHTML = `
         <td>
-            <img src="images/${season}/players/${player.number}.jpg" 
+            <img src="../images/${season}/players/${player.number}.jpg" 
                 class="player-photo" alt="${player.name}"
-                onerror="this.src='images/players/default.jpg'">
+                onerror="this.src='../images/players/default.jpg'">
             <strong>#${player.number} ${player.name}</strong>
         </td>
         <td>${player.grade || ''}</td>
@@ -900,8 +900,8 @@ function showPlayerDetail(player, gameRatings = [], season) {
         const avgRating = calculateAverageRating(nonExhRatings);
 
         const playerImg = document.getElementById('detailPlayerPhoto');
-        playerImg.src = `images/${season}/players/${player.number}.jpg`;
-        playerImg.onerror = () => playerImg.src = 'images/players/default.jpg';
+        playerImg.src = `../images/${season}/players/${player.number}.jpg`;
+        playerImg.onerror = () => playerImg.src = '../images/players/default.jpg';
         
         const validNonExhRatings = nonExhRatings.filter(r => !isNaN(r));
         const ratingStats = {

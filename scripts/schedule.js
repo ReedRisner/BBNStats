@@ -23,7 +23,7 @@ function parseGameDate(dateStr) {
 
 async function loadSchedule(season) {
     try {
-        const response = await fetch(`data/${season}-schedule.json`);
+        const response = await fetch(`../data/${season}-schedule.json`);
         if (!response.ok) throw new Error('Schedule not found');
         const games = await response.json();
 
@@ -97,7 +97,7 @@ async function loadSchedule(season) {
                     ${game.day ? game.day + ', ' : ''}${game.date}
                 </td>
                 <td data-label="Matchup">
-                    <img src="images/opponents/${game.logo}" class="team-logo" alt="${game.opponent} Logo">
+                    <img src="../images/opponents/${game.logo}" class="team-logo" alt="${game.opponent} Logo">
                     <strong>${game.opponentRank && game.opponentRank <= 25 ? `<span class="opponent-rank">#${game.opponentRank}</span> ` : ''}${game.opponent}</strong>
                 </td>
                 <td data-label="Location">${game.location}</td>
@@ -139,7 +139,7 @@ async function loadSchedule(season) {
                     <div class="game-details">
                         <h5 class="game-date">${game.day ? game.day + ', ' : ''}${game.date}</h5>
                         <div class="game-matchup">
-                            <img src="images/opponents/${game.logo}" class="team-logo" alt="${game.opponent} Logo">
+                            <img src="../images/opponents/${game.logo}" class="team-logo" alt="${game.opponent} Logo">
                             <div>
                                 <div class="opponent-name">
                                     ${game.opponentRank && game.opponentRank <= 25 ? `<span class="opponent-rank">#${game.opponentRank}</span>` : ''}

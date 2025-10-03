@@ -2,8 +2,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const seasonSelect = document.getElementById('seasonSelect');
     let rankingsData = {};
 
-    // Fetch data from update.json
-    fetch('update.json')
+    // Fetch data from data/update.json
+    fetch('../data/update.json')
         .then(response => response.json())
         .then(data => {
             rankingsData = data;

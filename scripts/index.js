@@ -224,7 +224,7 @@ function initLineBackground() {
 // ==================== Existing Functions ====================
 async function loadStatsFromUpdateJson() {
     try {
-        const response = await fetch('update.json');
+        const response = await fetch('../data/update.json');
         if (!response.ok) throw new Error('Update data not found');
         const data = await response.json();
         
@@ -252,7 +252,7 @@ async function loadStatsFromUpdateJson() {
         }
         
         // Find next game from schedule
-        const scheduleResponse = await fetch(`data/${currentSeason}-schedule.json`);
+        const scheduleResponse = await fetch(`../data/${currentSeason}-schedule.json`);
         if (!scheduleResponse.ok) throw new Error('Schedule not found');
         const games = await scheduleResponse.json();
         
@@ -286,19 +286,19 @@ async function loadStatsFromUpdateJson() {
 async function loadSeasonLeaders() {
     try {
         // Load player data for names
-        const playersResponse = await fetch('data/players.json');
+        const playersResponse = await fetch('../data/players.json');
         if (!playersResponse.ok) throw new Error('Player data not found');
         const playerData = await playersResponse.json();
         
         // Load game logs data
-        const gameLogsResponse = await fetch('data/gameLogs.json');
+        const gameLogsResponse = await fetch('../data/gameLogs.json');
         if (!gameLogsResponse.ok) throw new Error('Game logs not found');
         const gameLogsData = await gameLogsResponse.json();
         
         // Load schedule data for current season to identify exhibition games
         let scheduleData = [];
         try {
-            const scheduleResponse = await fetch(`data/${CURRENT_SEASON}-schedule.json`);
+            const scheduleResponse = await fetch(`../data/${CURRENT_SEASON}-schedule.json`);
             if (scheduleResponse.ok) {
                 scheduleData = await scheduleResponse.json();
             }
@@ -443,7 +443,7 @@ function displayLeader(elementId, player, statType) {
 
 async function loadRecentGames() {
     try {
-        const response = await fetch(`data/${CURRENT_SEASON}-schedule.json`);
+        const response = await fetch(`../data/${CURRENT_SEASON}-schedule.json`);
         if (!response.ok) throw new Error('Schedule not found');
         const games = await response.json();
         
@@ -528,7 +528,7 @@ function updateRecentGamesTable(games) {
 // Combined DOMContentLoaded handler
 document.addEventListener('DOMContentLoaded', () => {
     initLineBackground(); // Initialize background
-    loadStatsFromUpdateJson(); // Load all stats from update.json and next game
+    loadStatsFromUpdateJson(); // Load all stats from data/update.json and next game
     loadSeasonLeaders();
     loadRecentGames();
     

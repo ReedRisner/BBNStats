@@ -233,7 +233,7 @@ function generatePDF() {
 async function loadBoxScore() {
     try {
         // Load schedule data to get game info
-        const scheduleResponse = await fetch(`data/${season}-schedule.json`);
+        const scheduleResponse = await fetch(`../data/${season}-schedule.json`);
         if (!scheduleResponse.ok) throw new Error('Schedule data not found');
         const scheduleData = await scheduleResponse.json();
         
@@ -257,7 +257,7 @@ async function loadBoxScore() {
         
         
         // Load game logs for this season
-        const gameLogsResponse = await fetch('data/gameLogs.json');
+        const gameLogsResponse = await fetch('../data/gameLogs.json');
         if (!gameLogsResponse.ok) throw new Error('Game logs not found');
         const gameLogsData = await gameLogsResponse.json();
         
@@ -275,7 +275,7 @@ async function loadBoxScore() {
         }
         
         // Load players data for names
-        const playersResponse = await fetch('data/players.json');
+        const playersResponse = await fetch('../data/players.json');
         if (!playersResponse.ok) throw new Error('Players data not found');
         const playersData = await playersResponse.json();
         const seasonPlayers = playersData.seasons[season]?.players || [];
