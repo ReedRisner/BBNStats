@@ -91,7 +91,7 @@ async function loadSchedule(season) {
                     '<div class="game-non-conference">Non-Conference</div>';
             }
 
-            // Populate row - NOW INCLUDING OPPONENT RANKING
+            // Populate row - NOW INCLUDING TIME
             row.innerHTML = `
                 <td data-label="Date" class="game-date">
                     ${game.day ? game.day + ', ' : ''}${game.date}
@@ -101,6 +101,7 @@ async function loadSchedule(season) {
                     <strong>${game.opponentRank && game.opponentRank <= 25 ? `<span class="opponent-rank">#${game.opponentRank}</span> ` : ''}${game.opponent}</strong>
                 </td>
                 <td data-label="Location">${game.location}</td>
+                <td data-label="Time">${game.time ? game.time : '-'}</td>
                 <td data-label="Result">
                     <span class="badge ${game.result === 'TBD' ? 
                         'bg-secondary' : 
@@ -145,6 +146,7 @@ async function loadSchedule(season) {
                                     ${game.opponent}
                                 </div>
                                 <div class="game-location">${game.location}</div>
+                                ${game.time ? `<div class="game-time">${game.time}</div>` : ''}
                                 ${gameLabel}
                             </div>
                         </div>
@@ -179,7 +181,7 @@ async function loadSchedule(season) {
     } catch (error) {
         console.error('Error loading schedule:', error);
         document.getElementById('scheduleBody').innerHTML = `
-            <tr><td colspan="4" class="text-center text-danger">Error loading schedule data</td></tr>
+            <tr><td colspan="5" class="text-center text-danger">Error loading schedule data</td></tr>
         `;
         document.getElementById('scheduleList').innerHTML = `
             <div class="text-center text-danger">Error loading schedule data</div>
