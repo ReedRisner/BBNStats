@@ -2,6 +2,17 @@
 let searchData = {};
 let isSearchInitialized = false;
 
+// Determine the base path based on current location
+function getBasePath() {
+    const path = window.location.pathname;
+    // If we're in the pages folder, go up one level
+    if (path.includes('/pages/')) {
+        return '../';
+    }
+    // If we're at root
+    return '';
+}
+
 // Date parsing function (same as in boxscore.js and schedule.js)
 function parseGameDate(dateStr) {
     // If already in YYYY-MM-DD format, return as-is
@@ -49,6 +60,8 @@ async function initializeSearch() {
 }
 
 async function loadSearchData() {
+    const basePath = getBasePath();
+    
     searchData = {
         players: [],
         staff: [],
@@ -58,7 +71,7 @@ async function loadSearchData() {
 
     // Load players data from players.json (new structure)
     try {
-        const playersResponse = await fetch('../data/players.json');
+        const playersResponse = await fetch(`${basePath}data/players.json`);
         if (playersResponse.ok) {
             const playersData = await playersResponse.json();
             
@@ -68,7 +81,7 @@ async function loadSearchData() {
                     searchData.players.push({
                         title: player.name,
                         description: `${player.pos} • ${player.grade} • #${player.number}`,
-                        url: `players.html?player=${encodeURIComponent(player.name)}`,
+                        url: `${basePath}pages/players.html?player=${encodeURIComponent(player.name)}`,
                         category: 'players',
                         searchTerms: [player.name, player.pos, player.grade, player.number, 'player', 'basketball'].join(' ').toLowerCase()
                     });
@@ -81,7 +94,7 @@ async function loadSearchData() {
                     searchData.players.push({
                         title: player.name + ' (2024-25)',
                         description: `${player.pos} • ${player.grade} • #${player.number} (2024-25 Season)`,
-                        url: `players.html?player=${encodeURIComponent(player.name)}&season=2024`,
+                        url: `${basePath}pages/players.html?player=${encodeURIComponent(player.name)}&season=2024`,
                         category: 'players',
                         searchTerms: [player.name, player.pos, player.grade, player.number, 'player', 'basketball', '2024'].join(' ').toLowerCase()
                     });
@@ -92,13 +105,13 @@ async function loadSearchData() {
         console.error('Failed to load players:', error);
         // Fallback: try old format
         try {
-            const players2025Response = await fetch('../data/2025-players.json');
+            const players2025Response = await fetch(`${basePath}data/2025-players.json`);
             if (players2025Response.ok) {
                 const players = await players2025Response.json();
                 searchData.players = players.map(player => ({
                     title: player.name,
                     description: `${player.pos} • ${player.grade} • ${player.ppg || 0} PPG`,
-                    url: `players.html?player=${encodeURIComponent(player.name)}`,
+                    url: `${basePath}pages/players.html?player=${encodeURIComponent(player.name)}`,
                     category: 'players',
                     searchTerms: [player.name, player.pos, player.grade, 'player', 'basketball'].join(' ').toLowerCase()
                 }));
@@ -113,63 +126,63 @@ async function loadSearchData() {
         {
             title: 'Mark Pope',
             description: 'Head Coach',
-            url: 'staff.html',
+            url: `${basePath}pages/staff.html`,
             category: 'staff',
             searchTerms: 'mark pope head coach basketball staff'
         },
         {
             title: 'Alvin Brooks III',
             description: 'Associate Head Coach',
-            url: 'staff.html',
+            url: `${basePath}pages/staff.html`,
             category: 'staff',
             searchTerms: 'alvin brooks associate head coach basketball staff'
         },
         {
             title: 'Mark Fox',
             description: 'Associate Coach',
-            url: 'staff.html',
+            url: `${basePath}pages/staff.html`,
             category: 'staff',
             searchTerms: 'mark fox associate coach basketball staff'
         },
         {
             title: 'Cody Fueger',
             description: 'Assistant Coach',
-            url: 'staff.html',
+            url: `${basePath}pages/staff.html`,
             category: 'staff',
             searchTerms: 'cody fueger assistant coach basketball staff'
         },
         {
             title: 'Jason Hart',
             description: 'Assistant Coach',
-            url: 'staff.html',
+            url: `${basePath}pages/staff.html`,
             category: 'staff',
             searchTerms: 'jason hart assistant coach basketball staff'
         },
         {
             title: 'Mikhail McLean',
             description: 'Assistant Coach',
-            url: 'staff.html',
+            url: `${basePath}pages/staff.html`,
             category: 'staff',
             searchTerms: 'mikhail mclean assistant coach basketball staff'
         },
         {
             title: 'Nick Robinson',
             description: 'Director of Men\'s Basketball Operations',
-            url: 'staff.html',
+            url: `${basePath}pages/staff.html`,
             category: 'staff',
             searchTerms: 'nick robinson director operations basketball staff'
         },
         {
             title: 'Randy Towner',
             description: 'Head Strength Coach',
-            url: 'staff.html',
+            url: `${basePath}pages/staff.html`,
             category: 'staff',
             searchTerms: 'randy towner strength coach basketball staff'
         },
         {
             title: 'Brandon Wells',
             description: 'Head Athletic Trainer',
-            url: 'staff.html',
+            url: `${basePath}pages/staff.html`,
             category: 'staff',
             searchTerms: 'brandon wells athletic trainer basketball staff'
         }
@@ -177,13 +190,13 @@ async function loadSearchData() {
 
     // Load schedule data
     try {
-        const scheduleResponse = await fetch('../data/2025-schedule.json');
+        const scheduleResponse = await fetch(`${basePath}data/2025-schedule.json`);
         if (scheduleResponse.ok) {
             const schedule = await scheduleResponse.json();
             searchData.schedule = schedule.map(game => ({
                 title: ` ${game.opponent}`,
                 description: `${game.date} • ${game.location || 'TBD'} • ${game.result || 'Upcoming'}`,
-                url: game.result && game.result !== 'TBD' ? `boxscore.html?season=2025&date=${parseGameDate(game.date)}` : 'schedule.html',
+                url: game.result && game.result !== 'TBD' ? `${basePath}pages/boxscore.html?season=2025&date=${parseGameDate(game.date)}` : `${basePath}pages/schedule.html`,
                 category: 'schedule',
                 searchTerms: [game.opponent, game.date, game.location || '', 'game', 'schedule', 'basketball'].join(' ').toLowerCase()
             }));
@@ -194,14 +207,14 @@ async function loadSearchData() {
 
     // Try to load 2024 schedule as well
     try {
-        const schedule2024Response = await fetch('../data/2024-schedule.json');
+        const schedule2024Response = await fetch(`${basePath}data/2024-schedule.json`);
         if (schedule2024Response.ok) {
             const schedule2024 = await schedule2024Response.json();
             schedule2024.forEach(game => {
                 searchData.schedule.push({
                     title: ` ${game.opponent} (2024-25)`,
                     description: `${game.date} • ${game.location || 'TBD'} • ${game.result || 'Past Game'}`,
-                    url: game.result && game.result !== 'TBD' ? `boxscore.html?season=2024&date=${parseGameDate(game.date)}` : 'schedule.html',
+                    url: game.result && game.result !== 'TBD' ? `${basePath}pages/boxscore.html?season=2024&date=${parseGameDate(game.date)}` : `${basePath}pages/schedule.html`,
                     category: 'schedule',
                     searchTerms: [game.opponent, game.date, game.location || '', 'game', 'schedule', 'basketball', '2024'].join(' ').toLowerCase()
                 });
@@ -216,63 +229,63 @@ async function loadSearchData() {
         {
             title: 'Players',
             description: 'View all Kentucky basketball players and their stats',
-            url: 'players.html',
+            url: `${basePath}pages/players.html`,
             category: 'pages',
             searchTerms: 'players roster team stats basketball kentucky wildcats'
         },
         {
             title: 'Schedule',
             description: 'Kentucky basketball schedule and game results',
-            url: 'schedule.html',
+            url: `${basePath}pages/schedule.html`,
             category: 'pages',
             searchTerms: 'schedule games calendar fixtures results basketball kentucky'
         },
         {
             title: 'Rankings',
             description: 'Team rankings and polls (AP, KenPom, NET)',
-            url: 'rankings.html',
+            url: `${basePath}pages/rankings.html`,
             category: 'pages',
             searchTerms: 'rankings polls ap kenpom net bracketology basketball kentucky'
         },
         {
             title: 'Team Statistics',
             description: 'Kentucky team statistics and advanced metrics',
-            url: 'stats.html',
+            url: `${basePath}pages/stats.html`,
             category: 'pages',
             searchTerms: 'statistics stats metrics efficiency offensive defensive kentucky basketball'
         },
         {
             title: 'Player Comparison',
             description: 'Compare Kentucky basketball players side by side',
-            url: 'comparison.html',
+            url: `${basePath}pages/comparison.html`,
             category: 'pages',
             searchTerms: 'comparison compare players vs stats basketball kentucky'
         },
         {
             title: 'History',
             description: 'Kentucky basketball history, records, and championships',
-            url: 'history.html',
+            url: `${basePath}pages/history.html`,
             category: 'pages',
             searchTerms: 'history records championships tradition kentucky wildcats basketball'
         },
         {
             title: 'News',
             description: 'Kentucky basketball news sources and media',
-            url: 'news.html',
+            url: `${basePath}pages/news.html`,
             category: 'pages',
             searchTerms: 'news media ksr articles kentucky sports radio basketball'
         },
         {
             title: 'Coaching Staff',
             description: 'Kentucky basketball coaches and support staff',
-            url: 'staff.html',
+            url: `${basePath}pages/staff.html`,
             category: 'pages',
             searchTerms: 'coaches staff pope brooks fox basketball kentucky wildcats'
         },
         {
             title: 'About BBN Stats',
             description: 'Learn more about this Kentucky basketball statistics website',
-            url: 'about.html',
+            url: `${basePath}pages/about.html`,
             category: 'pages',
             searchTerms: 'about bbn stats kentucky basketball website information'
         }
