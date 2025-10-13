@@ -13,6 +13,7 @@
         ,"venue": "home"
         ,"title": "Exhibition"
         ,"time": "6:00 PM ET"
+        ,"opponentRank": 1
     },
     {
         "date": "October 30, 2025",
@@ -453,3 +454,4 @@
     
 
 ]
+
