@@ -9,7 +9,7 @@
         "quad": 1
         ,"conference": false,
         "exh": true,
-        "day": "Tuesday"
+        "day": "Friday"
         ,"venue": "home"
         ,"title": "Exhibition"
         ,"time": "6:00 PM ET"
@@ -454,4 +454,5 @@
     
 
 ]
+
 
