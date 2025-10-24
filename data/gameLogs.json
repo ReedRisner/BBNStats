@@ -6,7 +6,7 @@
         {
           "opponent": "Purdue",
           "date": "2025-10-24",
-          "video": "",
+          "video": "https://www.youtube.com/watch?v=kO1uUc4O0IA",
           "boxscore": [
             {
               "number": "00",
@@ -6609,4 +6609,5 @@
     
   }
 }
+
 
