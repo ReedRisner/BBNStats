@@ -542,9 +542,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const dateCell = row.cells[0];
             const gameDate = dateCell.textContent.trim();
             const parsedDate = parseGameDate(gameDate);
-            window.location.href = `boxscore.html?season=${CURRENT_SEASON}&date=${parsedDate}`;
+            window.location.href = `pages/boxscore.html?season=${CURRENT_SEASON}&date=${parsedDate}`;
         });
     }
 });
+
 
 
