@@ -502,7 +502,7 @@ function updateRecentGamesTable(games) {
         row.style.cursor = 'pointer';
         row.addEventListener('click', () => {
             const parsedDate = parseGameDate(game.date);
-            window.location.href = `boxscore.html?season=${CURRENT_SEASON}&date=${parsedDate}`;
+            window.location.href = `pages/boxscore.html?season=${CURRENT_SEASON}&date=${parsedDate}`;
         });
         
         // Extract result and score
@@ -546,4 +546,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
 
