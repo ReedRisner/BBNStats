@@ -169,6 +169,157 @@
               "fta": 2
             }
           ]
+        },
+        {
+          "opponent": "Georgetown",
+          "date": "2025-10-30",
+          "video": "",
+          "boxscore": [
+            {
+              "number": "00",
+              "min": 26,
+              "pts": 17,
+              "reb": 3,
+              "ast": 1,
+              "stl": 0,
+              "blk": 0,
+              "to": 2,
+              "fgm": 4,
+              "fga": 12,
+              "threeFgm": 1,
+              "threeFga": 4,
+              "ftm": 8,
+              "fta": 11
+            },
+            {
+              "number": "5",
+              "min": 28,
+              "pts": 11,
+              "reb": 7,
+              "ast": 3,
+              "stl": 0,
+              "blk": 0,
+              "to": 5,
+              "fgm": 2,
+              "fga": 9,
+              "threeFgm": 1,
+              "threeFga": 6,
+              "ftm": 6,
+              "fta": 8
+            },
+            {
+              "number": "9",
+              "min": 23,
+              "pts": 4,
+              "reb": 1,
+              "ast": 1,
+              "stl": 1,
+              "blk": 0,
+              "to": 0,
+              "fgm": 1,
+              "fga": 5,
+              "threeFgm": 1,
+              "threeFga": 4,
+              "ftm": 1,
+              "fta": 2
+            },
+            {
+              "number": "10",
+              "min": 20,
+              "pts": 8,
+              "reb": 4,
+              "ast": 3,
+              "stl": 1,
+              "blk": 0,
+              "to": 1,
+              "fgm": 2,
+              "fga": 6,
+              "threeFgm": 1,
+              "threeFga": 1,
+              "ftm": 3,
+              "fta": 4
+            },
+            {
+              "number": "23",
+              "min": 25,
+              "pts": 13,
+              "reb": 7,
+              "ast": 1,
+              "stl": 3,
+              "blk": 0,
+              "to": 2,
+              "fgm": 4,
+              "fga": 6,
+              "threeFgm": 1,
+              "threeFga": 2,
+              "ftm": 4,
+              "fta": 5
+            },
+            {
+              "number": "2",
+              "min": 18,
+              "pts": 7,
+              "reb": 0,
+              "ast": 1,
+              "stl": 0,
+              "blk": 0,
+              "to": 2,
+              "fgm": 3,
+              "fga": 10,
+              "threeFgm": 1,
+              "threeFga": 6,
+              "ftm": 0,
+              "fta": 0
+            },
+            {
+              "number": "3",
+              "min": 24,
+              "pts": 0,
+              "reb": 2,
+              "ast": 0,
+              "stl": 1,
+              "blk": 0,
+              "to": 0,
+              "fgm": 0,
+              "fga": 5,
+              "threeFgm": 0,
+              "threeFga": 5,
+              "ftm": 0,
+              "fta": 2
+            },
+            {
+              "number": "4",
+              "min": 15,
+              "pts": 4,
+              "reb": 4,
+              "ast": 1,
+              "stl": 0,
+              "blk": 0,
+              "to": 1,
+              "fgm": 2,
+              "fga": 3,
+              "threeFgm": 0,
+              "threeFga": 1,
+              "ftm": 0,
+              "fta": 1
+            },
+            {
+              "number": "24",
+              "min": 19,
+              "pts": 6,
+              "reb": 7,
+              "ast": 3,
+              "stl": 0,
+              "blk": 2,
+              "to": 2,
+              "fgm": 2,
+              "fga": 4,
+              "threeFgm": 1,
+              "threeFga": 1,
+              "ftm": 1,
+              "fta": 2
+            }
+          ]
         }
         
         
@@ -6593,5 +6744,6 @@
     
   }
 }
+
 
 
