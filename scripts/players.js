@@ -251,7 +251,8 @@ function addSortEventListeners() {
                 currentSortDirection = currentSortDirection === 'desc' ? 'asc' : 'desc';
             } else {
                 currentSortKey = sortKey;
-                currentSortDirection = 'desc';
+                // DRtg should default to ascending (lower is better)
+                currentSortDirection = (sortKey === 'drtg') ? 'asc' : 'desc';
             }
             updateSortArrows(currentSortKey, currentSortDirection);
             loadPlayerStats(document.getElementById('seasonSelect').value);
@@ -1179,4 +1180,5 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
         console.error('Initialization error:', e);
     }
+
 });
