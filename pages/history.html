@@ -179,7 +179,9 @@
                 const dukeRecord2025 = { wins: 0, losses: 0 };
 
                 schedule2025.forEach(game => {
-                    if (game.exh || !game.result || game.result === "TBD") return;
+                    // Skip exhibition games, games without results, or TBD games
+                    if (game.exh === true || !game.result || game.result === "TBD") return;
+                    
                     const isWin = game.result.trim().toUpperCase().startsWith('W');
                     const isLoss = game.result.trim().toUpperCase().startsWith('L');
                     
@@ -211,4 +213,5 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../scripts/search.js"></script>
 </body>
+
 </html>
