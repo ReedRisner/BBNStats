@@ -796,8 +796,14 @@ function calculateAdvancedStats(player) {
         
         const tsPct = player.pts / (2 * (player.fga + 0.44 * player.fta)) || 0;
         
-        const teamFga = 2000;
-        const usgRate = 100 * ((player.fga + 0.44 * player.fta) / teamFga) || 0;
+        // Calculate usage rate per game (approximation)
+        // USG% = 100 * [(FGA + 0.44 * FTA + TO) / (Min / 5)] / GP
+        // This estimates the player's possessions used per game relative to team possessions while on court
+        const gamesPlayed = player.gp || 1;
+        const avgMin = player.min / gamesPlayed;
+        const teamPossPerGame = avgMin > 0 ? (avgMin / 5) : 1; // Rough estimate: 5 team possessions per minute
+        const playerPossPerGame = (player.fga + 0.44 * player.fta + player.to) / gamesPlayed;
+        const usgRate = teamPossPerGame > 0 ? 100 * (playerPossPerGame / teamPossPerGame) : 0;
 
         const weight = {
             pts: 2.8,
@@ -1182,3 +1188,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
