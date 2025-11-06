@@ -788,102 +788,111 @@ function updateTableHeaders() {
     addSortEventListeners();
 }
 
-function calculateAdvancedStats(player) {
-    try {
-        const fgPct = player.fga > 0 ? player.fgm / player.fga : 0;
-        const threePct = player.threeFga > 0 ? player.threeFgm / player.threeFga : 0;
-        const ftPct = player.fta > 0 ? player.ftm / player.fta : 0;
-        
-        const tsPct = player.pts / (2 * (player.fga + 0.44 * player.fta)) || 0;
-        
-        // Calculate usage rate per game (approximation)
-        // USG% = 100 * [(FGA + 0.44 * FTA + TO) / (Min / 5)] / GP
-        // This estimates the player's possessions used per game relative to team possessions while on court
-        const gamesPlayed = player.gp || 1;
-        const avgMin = player.min / gamesPlayed;
-        const teamPossPerGame = avgMin > 0 ? (avgMin / 5) : 1; // Rough estimate: 5 team possessions per minute
-        const playerPossPerGame = (player.fga + 0.44 * player.fta + player.to) / gamesPlayed;
-        const usgRate = teamPossPerGame > 0 ? 100 * (playerPossPerGame / teamPossPerGame) : 0;
-
-        const weight = {
-            pts: 2.8,
-            reb: 1.8,
-            ast: 3.2,
-            stl: 6.0,
-            blk: 5.5,
-            to: -3.5,
-            fgMiss: -1.8,
-            ftMiss: -1.2
-        };
-
-        const rawBPM = 
-            (player.pts * weight.pts) +
-            (player.reb * weight.reb) +
-            (player.ast * weight.ast) +
-            (player.stl * weight.stl) +
-            (player.blk * weight.blk) +
-            (player.to * weight.to) +
-            ((player.fga - player.fgm) * weight.fgMiss) +
-            ((player.fta - player.ftm) * weight.ftMiss);
-
-        const bpm = (rawBPM / (player.gp || 1)) * 0.18;
-
-        const per = (
-            (player.pts * 1.2) + 
-            (player.reb * 1.0) + 
-            (player.ast * 1.5) + 
-            (player.stl * 2.5) + 
-            (player.blk * 2.5) - 
-            (player.to * 2.0) - 
-            ((player.fga - player.fgm) * 0.5) - 
-            ((player.fta - player.ftm) * 0.5)
-        ) / (player.gp || 1);
-
-        const eff = (
-            player.pts + 
-            (player.reb * 1.2) + 
-            (player.ast * 1.5) + 
-            (player.stl * 3) + 
-            (player.blk * 3) - 
-            (player.to * 2) - 
-            ((player.fga - player.fgm) * 0.7)
-        ) / (player.gp || 1);
-
-        const ortg = (player.fga + 0.44 * player.fta + player.to) > 0 ?
-            (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 : 0;
-        
-        const drtg = player.gp > 0 
-            ? 100 - ((player.stl + player.blk * 1.2) / player.gp * 3) 
-            : 0;
-
-        return {
-            fgPct: fgPct,
-            threePct: threePct,
-            ftPct: ftPct,
-            tsPct: tsPct,
-            usgRate: usgRate,
-            per: per,
-            eff: eff,
-            ortg: ortg,
-            drtg: drtg,
-            bpm: bpm
-        };
-    } catch (e) {
-        console.error('Error calculating advanced stats:', e);
-        return {
-            fgPct: 0,
-            threePct: 0,
-            ftPct: 0,
-            tsPct: 0,
-            usgRate: 0,
-            per: 0,
-            eff: 0,
-            ortg: 0,
-            drtg: 0,
-            bpm: 0
-        };
+    function calculateAdvancedStats(player) {
+        try {
+            const fgPct = player.fga > 0 ? player.fgm / player.fga : 0;
+            const threePct = player.threeFga > 0 ? player.threeFgm / player.threeFga : 0;
+            const ftPct = player.fta > 0 ? player.ftm / player.fta : 0;
+            
+            const tsPct = player.pts / (2 * (player.fga + 0.44 * player.fta)) || 0;
+            
+            // Calculate usage rate
+            // USG% = 100 * [(FGA + 0.44 * FTA + TO) * (Team MIN / 5)] / [MIN * (Team FGA + 0.44 * Team FTA + Team TO)]
+            // We need to estimate team totals from game logs
+            const gamesPlayed = player.gp || 1;
+            
+            // Calculate player's total possessions used
+            const playerPoss = player.fga + 0.44 * player.fta + player.to;
+            
+            // Estimate team possessions per game based on typical college basketball pace (~68-70 possessions per game)
+            // and scale by the player's time on court
+            const avgMinPerGame = player.min / gamesPlayed;
+            const minutesPct = avgMinPerGame / 40; // College games are 40 minutes (2x20 min halves)
+            
+            // Team possessions while player is on court
+            const teamPossWhileOn = 69 * minutesPct * gamesPlayed; // ~69 possessions per game average for college
+            
+            const usgRate = teamPossWhileOn > 0 ? 100 * (playerPoss / teamPossWhileOn) : 0;
+    
+            const weight = {
+                pts: 2.8,
+                reb: 1.8,
+                ast: 3.2,
+                stl: 6.0,
+                blk: 5.5,
+                to: -3.5,
+                fgMiss: -1.8,
+                ftMiss: -1.2
+            };
+    
+            const rawBPM = 
+                (player.pts * weight.pts) +
+                (player.reb * weight.reb) +
+                (player.ast * weight.ast) +
+                (player.stl * weight.stl) +
+                (player.blk * weight.blk) +
+                (player.to * weight.to) +
+                ((player.fga - player.fgm) * weight.fgMiss) +
+                ((player.fta - player.ftm) * weight.ftMiss);
+    
+            const bpm = (rawBPM / (player.gp || 1)) * 0.18;
+    
+            const per = (
+                (player.pts * 1.2) + 
+                (player.reb * 1.0) + 
+                (player.ast * 1.5) + 
+                (player.stl * 2.5) + 
+                (player.blk * 2.5) - 
+                (player.to * 2.0) - 
+                ((player.fga - player.fgm) * 0.5) - 
+                ((player.fta - player.ftm) * 0.5)
+            ) / (player.gp || 1);
+    
+            const eff = (
+                player.pts + 
+                (player.reb * 1.2) + 
+                (player.ast * 1.5) + 
+                (player.stl * 3) + 
+                (player.blk * 3) - 
+                (player.to * 2) - 
+                ((player.fga - player.fgm) * 0.7)
+            ) / (player.gp || 1);
+    
+            const ortg = (player.fga + 0.44 * player.fta + player.to) > 0 ?
+                (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 : 0;
+            
+            const drtg = player.gp > 0 
+                ? 100 - ((player.stl + player.blk * 1.2) / player.gp * 3) 
+                : 0;
+    
+            return {
+                fgPct: fgPct,
+                threePct: threePct,
+                ftPct: ftPct,
+                tsPct: tsPct,
+                usgRate: usgRate,
+                per: per,
+                eff: eff,
+                ortg: ortg,
+                drtg: drtg,
+                bpm: bpm
+            };
+        } catch (e) {
+            console.error('Error calculating advanced stats:', e);
+            return {
+                fgPct: 0,
+                threePct: 0,
+                ftPct: 0,
+                tsPct: 0,
+                usgRate: 0,
+                per: 0,
+                eff: 0,
+                ortg: 0,
+                drtg: 0,
+                bpm: 0
+            };
+        }
     }
-}
 
 // FIXED: Update sort arrows function
 function updateSortArrows(sortKey, direction) {
@@ -1188,4 +1197,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
 
