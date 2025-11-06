@@ -1597,44 +1597,14 @@ function calculateAdvancedStats(player, isPer30Mode = false) {
         // True shooting percentage (doesn't change)
         const tsPct = player.pts / (2 * (player.fga + 0.44 * player.fta)) || 0;
         
-        // For per-30 mode, normalize all counting stats
-        let pts, reb, ast, stl, blk, to, fgm, fga, threeFgm, threeFga, ftm, fta;
+        // Usage rate calculation (matches second function)
+        const playerPoss = player.fga + 0.44 * player.fta + player.to;
+        const avgMinPerGame = player.min / gp;
+        const minutesPct = avgMinPerGame / 40;
+        const teamPossWhileOn = 69 * minutesPct * gp;
+        const usgRate = teamPossWhileOn > 0 ? 100 * (playerPoss / teamPossWhileOn) : 0;
         
-        if (isPer30Mode && mpg > 0) {
-            const scaleFactor = 30 / mpg;
-            pts = player.pts / gp * scaleFactor;
-            reb = player.reb / gp * scaleFactor;
-            ast = player.ast / gp * scaleFactor;
-            stl = player.stl / gp * scaleFactor;
-            blk = player.blk / gp * scaleFactor;
-            to = player.to / gp * scaleFactor;
-            fgm = player.fgm / gp * scaleFactor;
-            fga = player.fga / gp * scaleFactor;
-            threeFgm = player.threeFgm / gp * scaleFactor;
-            threeFga = player.threeFga / gp * scaleFactor;
-            ftm = player.ftm / gp * scaleFactor;
-            fta = player.fta / gp * scaleFactor;
-        } else {
-            // Use per-game stats
-            pts = player.pts / gp;
-            reb = player.reb / gp;
-            ast = player.ast / gp;
-            stl = player.stl / gp;
-            blk = player.blk / gp;
-            to = player.to / gp;
-            fgm = player.fgm / gp;
-            fga = player.fga / gp;
-            threeFgm = player.threeFgm / gp;
-            threeFga = player.threeFga / gp;
-            ftm = player.ftm / gp;
-            fta = player.fta / gp;
-        }
-        
-        // Usage rate calculation (adjusted for per-30 if needed)
-        const teamFga = isPer30Mode ? 2000 * (30/40) : 2000; // Adjust team pace for per-30
-        const usgRate = 100 * ((player.fga + 0.44 * player.fta) / teamFga) || 0;
-        
-        // BPM Formula (normalized)
+        // BPM Formula (use totals, divide by GP at the end)
         const weight = {
             pts: 2.8,
             reb: 1.8,
@@ -1647,39 +1617,47 @@ function calculateAdvancedStats(player, isPer30Mode = false) {
         };
 
         const rawBPM = 
-            (pts * weight.pts) +
-            (reb * weight.reb) +
-            (ast * weight.ast) +
-            (stl * weight.stl) +
-            (blk * weight.blk) +
-            (to * weight.to) +
-            ((fga - fgm) * weight.fgMiss) +
-            ((fta - ftm) * weight.ftMiss);
+            (player.pts * weight.pts) +
+            (player.reb * weight.reb) +
+            (player.ast * weight.ast) +
+            (player.stl * weight.stl) +
+            (player.blk * weight.blk) +
+            (player.to * weight.to) +
+            ((player.fga - player.fgm) * weight.fgMiss) +
+            ((player.fta - player.ftm) * weight.ftMiss);
 
-        const bpm = rawBPM * 0.18;
+        const bpm = (rawBPM / gp) * 0.18;
 
-        // PER calculation (normalized)
+        // PER calculation (use totals, divide by GP at the end)
         const per = (
-            (pts * 1.2) + 
-            (reb * 1.0) + 
-            (ast * 1.5) + 
-            (stl * 2.5) + 
-            (blk * 2.5) - 
-            (to * 2.0) - 
-            ((fga - fgm) * 0.5) - 
-            ((fta - ftm) * 0.5)
-        );
+            (player.pts * 1.2) + 
+            (player.reb * 1.0) + 
+            (player.ast * 1.5) + 
+            (player.stl * 2.5) + 
+            (player.blk * 2.5) - 
+            (player.to * 2.0) - 
+            ((player.fga - player.fgm) * 0.5) - 
+            ((player.fta - player.ftm) * 0.5)
+        ) / gp;
 
-        // Efficiency Rating (EFF) (normalized)
-        const eff = pts + (reb * 1.2) + (ast * 1.5) + (stl * 3) + (blk * 3) - (to * 2) - ((fga - fgm) * 0.7);
+        // Efficiency Rating (EFF)
+        const eff = (
+            player.pts + 
+            (player.reb * 1.2) + 
+            (player.ast * 1.5) + 
+            (player.stl * 3) + 
+            (player.blk * 3) - 
+            (player.to * 2) - 
+            ((player.fga - player.fgm) * 0.7)
+        ) / gp;
 
-        // Offensive Rating (normalized)
-        const ortg = (fga + 0.44 * fta + to) > 0 ?
-            (pts / (fga + 0.44 * fta + to)) * 100 : 0;
+        // Offensive Rating (use totals)
+        const ortg = (player.fga + 0.44 * player.fta + player.to) > 0 ?
+            (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 : 0;
         
-        // Defensive Rating (normalized, lower is better)
-        const drtg = player.gp > 0 
-            ? 100 - ((player.stl + player.blk * 1.2) / player.gp * 3) 
+        // Defensive Rating (lower is better)
+        const drtg = gp > 0 
+            ? 100 - ((player.stl + player.blk * 1.2) / gp * 3) 
             : 0;
 
         return {
