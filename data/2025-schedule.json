@@ -63,11 +63,10 @@
         "opponent": "at Louisville",
         "logo": "louisville.png",
         "location": "KFC Yum! Center | Louisville, Ky.",
-        "result": "TBD",
+        "result": "L 88-96",
         "quad": 1
         ,"conference": false
         , "exh": false
-        ,"opponentRank": 0
         ,"day": "Tuesday"
         ,"venue": "away"
         ,"time": "8:00 PM ET"
@@ -466,6 +465,7 @@
     
 
 ]
+
 
 
 
