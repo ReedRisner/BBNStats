@@ -1,7 +1,7 @@
 {
 "2025": {
     "rankings": {
-        "Overall Record": "2-0",
+        "Overall Record": "2-1",
         "Conference Standings": "#0",
         "AP Poll": "#9",
         "KenPom": "#1",
@@ -9,7 +9,7 @@
         "Evan Miya": "#8",
         "Barttorvik": "#11",
         "Bracketology": "No. 2 Seed",
-        "AP Top 25 Record": "0-0"
+        "AP Top 25 Record": "0-1"
     },
     "stats": {
         "Offensive Rating": { "value": "120.2", "rank": "9" },
@@ -56,6 +56,7 @@
     }
 }
 }
+
 
 
 
