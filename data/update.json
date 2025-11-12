@@ -4,17 +4,17 @@
         "Overall Record": "2-1",
         "Conference Standings": "#0",
         "AP Poll": "#9",
-        "KenPom": "#4",
+        "KenPom": "#5",
         "NET Rankings": "#0",
-        "Evan Miya": "#8",
-        "Barttorvik": "#11",
+        "Evan Miya": "#13",
+        "Barttorvik": "#15",
         "Bracketology": "No. 2 Seed",
         "AP Top 25 Record": "0-1"
     },
     "stats": {
-        "Offensive Rating": { "value": "120.2", "rank": "9" },
-        "Defensive Rating": { "value": "90.8", "rank": "3" },
-        "Net Rating": { "value": "29.43", "rank": "2" },
+        "Offensive Rating": { "value": "121.7", "rank": "7" },
+        "Defensive Rating": { "value": "93.5", "rank": "9" },
+        "Net Rating": { "value": "28.19", "rank": "5" },
         "Pace": { "value": "72.9", "rank": "131" },
         "Offensive TOV%": { "value": "13.1", "rank": "50" },
         "Defensive TOV%": { "value": "14.5", "rank": "241" },
@@ -56,6 +56,7 @@
     }
 }
 }
+
 
 
 
