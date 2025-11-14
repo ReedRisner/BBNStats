@@ -4,7 +4,7 @@
         --uk-white: #FFFFFF;
         --uk-silver: #808080;
     }
-
+ 
     .players-header {
         background: var(--uk-blue);
         color: white;
@@ -939,3 +939,79 @@
             display: none;
         }
     }
+/* Add these styles to the existing players.css */
+
+/* Pie View Styles */
+.pie-view-container {
+    padding: 20px;
+}
+
+.pie-chart-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 340px;
+}
+
+.pie-chart-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.15);
+}
+
+.pie-chart-card canvas {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+#playersPieView {
+    display: none;
+}
+
+/* Mobile responsive for pie charts */
+@media (max-width: 768px) {
+    .pie-chart-card {
+        min-height: 280px;
+        padding: 15px;
+    }
+    
+    .pie-chart-card canvas {
+        width: 250px !important;
+        height: 250px !important;
+    }
+    
+    .pie-view-container {
+        padding: 10px;
+    }
+    
+    .pie-view-container .row {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .pie-chart-card canvas {
+        width: 220px !important;
+        height: 220px !important;
+    }
+    
+    .pie-chart-card {
+        min-height: 260px;
+        padding: 10px;
+    }
+}
+
+/* Ensure only one view is displayed at a time */
+.view-preference-pie #playerListSection,
+.view-preference-pie #playersGridView {
+    display: none !important;
+}
+
+.view-preference-pie #playersPieView {
+    display: block !important;
+}
