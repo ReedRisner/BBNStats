@@ -210,28 +210,35 @@ function setDefaultView() {
             if (isMobileDevice()) {
                 // Always default to grid view on mobile
                 gridToggle.checked = true;
-                toggleView(true);
+                toggleView('grid');
                 // Force grid view preference for mobile
                 sessionStorage.setItem('viewPreference', 'grid');
             } else if (!sessionStorage.getItem('viewPreference')) {
                 // Default behavior for desktop
                 gridToggle.checked = false;
-                toggleView(false);
+                toggleView('table');
             }
 }
 
-// Add this function to handle view toggling
-function toggleView(isGrid) {
+// Modified toggleView function to support pie view
+function toggleView(viewType) {
     const playerListSection = document.getElementById('playerListSection');
     const playersGridView = document.getElementById('playersGridView');
+    const playersPieView = document.getElementById('playersPieView');
     
-    if (isGrid) {
-        playerListSection.style.display = 'none';
+    // Hide all views first
+    playerListSection.style.display = 'none';
+    playersGridView.style.display = 'none';
+    playersPieView.style.display = 'none';
+    
+    if (viewType === 'grid') {
         playersGridView.style.display = 'grid';
         sessionStorage.setItem('viewPreference', 'grid');
+    } else if (viewType === 'pie') {
+        playersPieView.style.display = 'block';
+        sessionStorage.setItem('viewPreference', 'pie');
     } else {
         playerListSection.style.display = 'block';
-        playersGridView.style.display = 'none';
         sessionStorage.setItem('viewPreference', 'table');
     }
 }
@@ -324,6 +331,7 @@ function loadPlayerGrid(players, season) {
     `;
     
     card.addEventListener('click', () => {
+      const gameRatings = (player.nonExhGameLogs || []).map(calculateGameRating);
       showPlayerDetail(player, gameRatings, season);
     });
     
@@ -331,11 +339,148 @@ function loadPlayerGrid(players, season) {
   });
 }
 
-// Update grid toggle functionality
+// Add pie view toggle functionality
+document.getElementById('pieViewToggle').addEventListener('change', function() {
+    const isPieView = this.checked;
+    const gridToggle = document.getElementById('gridViewToggle');
+    
+    if (isPieView) {
+        // Uncheck grid view when pie view is enabled
+        gridToggle.checked = false;
+        toggleView('pie');
+        loadPieCharts(document.getElementById('seasonSelect').value);
+    } else {
+        // Return to table view when pie view is disabled
+        toggleView('table');
+        loadPlayerStats(document.getElementById('seasonSelect').value);
+    }
+});
+
+// Update the grid view toggle to uncheck pie view
 document.getElementById('gridViewToggle').addEventListener('change', function() {
-    toggleView(this.checked);
+    const pieToggle = document.getElementById('pieViewToggle');
+    if (this.checked && pieToggle.checked) {
+        pieToggle.checked = false;
+    }
+    toggleView(this.checked ? 'grid' : 'table');
     loadPlayerStats(document.getElementById('seasonSelect').value);
 });
+
+// Function to load pie charts
+function loadPieCharts(season) {
+    if (!allPlayersData || !allPlayersData.seasons?.[season]) {
+        console.error('Season data not available:', season);
+        return;
+    }
+    
+    const players = allPlayersData.seasons[season]?.players || [];
+    
+    // Calculate per-game averages for each player
+    const playerStats = players.map(player => {
+        const gp = player.gp || 1;
+        return {
+            name: player.name,
+            number: player.number,
+            mpg: (player.min / gp),
+            ppg: (player.pts / gp),
+            apg: (player.ast / gp),
+            rpg: (player.reb / gp),
+            spg: (player.stl / gp),
+            bpg: (player.blk / gp),
+            player: player
+        };
+    }).filter(p => p.mpg > 0); // Only include players who have played
+    
+    // Sort by minutes to show top contributors
+    playerStats.sort((a, b) => b.mpg - a.mpg);
+    
+    // Create pie charts
+    createPieChart('minutesPie', playerStats, 'mpg', 'Minutes Per Game', season);
+    createPieChart('pointsPie', playerStats, 'ppg', 'Points Per Game', season);
+    createPieChart('assistsPie', playerStats, 'apg', 'Assists Per Game', season);
+    createPieChart('reboundsPie', playerStats, 'rpg', 'Rebounds Per Game', season);
+    createPieChart('stealsPie', playerStats, 'spg', 'Steals Per Game', season);
+    createPieChart('blocksPie', playerStats, 'bpg', 'Blocks Per Game', season);
+}
+
+// Function to create individual pie chart
+function createPieChart(canvasId, playerStats, statKey, title, season) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Get total for percentage calculation
+    const total = playerStats.reduce((sum, p) => sum + p[statKey], 0);
+    
+    if (total === 0) {
+        // Draw "No Data" message
+        ctx.fillStyle = '#666';
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('No Data Available', canvas.width / 2, canvas.height / 2);
+        return;
+    }
+    
+    // Color palette
+    const colors = [
+        '#0033A0', '#1a47b8', '#335bce', '#4d6fe4', '#6683fa',
+        '#8097ff', '#99abff', '#b3bfff', '#ccd3ff', '#e6e8ff',
+        '#ff6b6b', '#ffa07a', '#ffd700', '#90ee90', '#87ceeb'
+    ];
+    
+    // Calculate angles
+    let currentAngle = -Math.PI / 2; // Start at top
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 40;
+    
+    // Store slice data for click detection
+    const slices = [];
+    
+    // Draw slices
+    playerStats.forEach((player, index) => {
+        const percentage = player[statKey] / total;
+        const sliceAngle = percentage * 2 * Math.PI;
+        
+        // Draw slice
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+        ctx.closePath();
+        ctx.fillStyle = colors[index % colors.length];
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Store slice data
+        slices.push({
+            startAngle: currentAngle,
+            endAngle: currentAngle + sliceAngle,
+            player: player,
+            color: colors[index % colors.length],
+            percentage: percentage
+        });
+        
+        currentAngle += sliceAngle;
+    });
+    
+    // Draw title
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(title, centerX, 25);
+    
+    // Store slices data for hover/click
+    canvas.slicesData = slices;
+    canvas.centerX = centerX;
+    canvas.centerY = centerY;
+    canvas.radius = radius;
+    canvas.season = season;
+    canvas.statKey = statKey;
+}
 
 function sortPlayers(players, sortKey, direction) {
     return players.slice().sort((a, b) => {
@@ -347,6 +492,11 @@ function sortPlayers(players, sortKey, direction) {
                 const bRatings = (b.nonExhGameLogs || []).map(calculateGameRating);
                 aValue = calculateAverageRating(aRatings);
                 bValue = calculateAverageRating(bRatings);
+                
+                // Handle NaN values - put them at the end regardless of sort direction
+                if (isNaN(aValue) && isNaN(bValue)) return 0;
+                if (isNaN(aValue)) return 1;  // a goes to end
+                if (isNaN(bValue)) return -1; // b goes to end
                 break;
 
             case 'pos':
@@ -730,6 +880,7 @@ function loadPlayerList(players, season) {
 
     row.addEventListener('click', () => {
         try {
+            const gameRatings = (player.nonExhGameLogs || []).map(calculateGameRating);
             showPlayerDetail(player, gameRatings, season);
         } catch (e) {
             console.error('Error showing player detail:', e);
@@ -788,111 +939,111 @@ function updateTableHeaders() {
     addSortEventListeners();
 }
 
-    function calculateAdvancedStats(player) {
-        try {
-            const fgPct = player.fga > 0 ? player.fgm / player.fga : 0;
-            const threePct = player.threeFga > 0 ? player.threeFgm / player.threeFga : 0;
-            const ftPct = player.fta > 0 ? player.ftm / player.fta : 0;
-            
-            const tsPct = player.pts / (2 * (player.fga + 0.44 * player.fta)) || 0;
-            
-            // Calculate usage rate
-            // USG% = 100 * [(FGA + 0.44 * FTA + TO) * (Team MIN / 5)] / [MIN * (Team FGA + 0.44 * Team FTA + Team TO)]
-            // We need to estimate team totals from game logs
-            const gamesPlayed = player.gp || 1;
-            
-            // Calculate player's total possessions used
-            const playerPoss = player.fga + 0.44 * player.fta + player.to;
-            
-            // Estimate team possessions per game based on typical college basketball pace (~68-70 possessions per game)
-            // and scale by the player's time on court
-            const avgMinPerGame = player.min / gamesPlayed;
-            const minutesPct = avgMinPerGame / 40; // College games are 40 minutes (2x20 min halves)
-            
-            // Team possessions while player is on court
-            const teamPossWhileOn = 69 * minutesPct * gamesPlayed; // ~69 possessions per game average for college
-            
-            const usgRate = teamPossWhileOn > 0 ? 100 * (playerPoss / teamPossWhileOn) : 0;
-    
-            const weight = {
-                pts: 2.8,
-                reb: 1.8,
-                ast: 3.2,
-                stl: 6.0,
-                blk: 5.5,
-                to: -3.5,
-                fgMiss: -1.8,
-                ftMiss: -1.2
-            };
-    
-            const rawBPM = 
-                (player.pts * weight.pts) +
-                (player.reb * weight.reb) +
-                (player.ast * weight.ast) +
-                (player.stl * weight.stl) +
-                (player.blk * weight.blk) +
-                (player.to * weight.to) +
-                ((player.fga - player.fgm) * weight.fgMiss) +
-                ((player.fta - player.ftm) * weight.ftMiss);
-    
-            const bpm = (rawBPM / (player.gp || 1)) * 0.18;
-    
-            const per = (
-                (player.pts * 1.2) + 
-                (player.reb * 1.0) + 
-                (player.ast * 1.5) + 
-                (player.stl * 2.5) + 
-                (player.blk * 2.5) - 
-                (player.to * 2.0) - 
-                ((player.fga - player.fgm) * 0.5) - 
-                ((player.fta - player.ftm) * 0.5)
-            ) / (player.gp || 1);
-    
-            const eff = (
-                player.pts + 
-                (player.reb * 1.2) + 
-                (player.ast * 1.5) + 
-                (player.stl * 3) + 
-                (player.blk * 3) - 
-                (player.to * 2) - 
-                ((player.fga - player.fgm) * 0.7)
-            ) / (player.gp || 1);
-    
-            const ortg = (player.fga + 0.44 * player.fta + player.to) > 0 ?
-                (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 : 0;
-            
-            const drtg = player.gp > 0 
-                ? 100 - ((player.stl + player.blk * 1.2) / player.gp * 3) 
-                : 0;
-    
-            return {
-                fgPct: fgPct,
-                threePct: threePct,
-                ftPct: ftPct,
-                tsPct: tsPct,
-                usgRate: usgRate,
-                per: per,
-                eff: eff,
-                ortg: ortg,
-                drtg: drtg,
-                bpm: bpm
-            };
-        } catch (e) {
-            console.error('Error calculating advanced stats:', e);
-            return {
-                fgPct: 0,
-                threePct: 0,
-                ftPct: 0,
-                tsPct: 0,
-                usgRate: 0,
-                per: 0,
-                eff: 0,
-                ortg: 0,
-                drtg: 0,
-                bpm: 0
-            };
-        }
+function calculateAdvancedStats(player) {
+    try {
+        const fgPct = player.fga > 0 ? player.fgm / player.fga : 0;
+        const threePct = player.threeFga > 0 ? player.threeFgm / player.threeFga : 0;
+        const ftPct = player.fta > 0 ? player.ftm / player.fta : 0;
+        
+        const tsPct = player.pts / (2 * (player.fga + 0.44 * player.fta)) || 0;
+        
+        // Calculate usage rate
+        // USG% = 100 * [(FGA + 0.44 * FTA + TO) * (Team MIN / 5)] / [MIN * (Team FGA + 0.44 * Team FTA + Team TO)]
+        // We need to estimate team totals from game logs
+        const gamesPlayed = player.gp || 1;
+        
+        // Calculate player's total possessions used
+        const playerPoss = player.fga + 0.44 * player.fta + player.to;
+        
+        // Estimate team possessions per game based on typical college basketball pace (~68-70 possessions per game)
+        // and scale by the player's time on court
+        const avgMinPerGame = player.min / gamesPlayed;
+        const minutesPct = avgMinPerGame / 40; // College games are 40 minutes (2x20 min halves)
+        
+        // Team possessions while player is on court
+        const teamPossWhileOn = 69 * minutesPct * gamesPlayed; // ~69 possessions per game average for college
+        
+        const usgRate = teamPossWhileOn > 0 ? 100 * (playerPoss / teamPossWhileOn) : 0;
+
+        const weight = {
+            pts: 2.8,
+            reb: 1.8,
+            ast: 3.2,
+            stl: 6.0,
+            blk: 5.5,
+            to: -3.5,
+            fgMiss: -1.8,
+            ftMiss: -1.2
+        };
+
+        const rawBPM = 
+            (player.pts * weight.pts) +
+            (player.reb * weight.reb) +
+            (player.ast * weight.ast) +
+            (player.stl * weight.stl) +
+            (player.blk * weight.blk) +
+            (player.to * weight.to) +
+            ((player.fga - player.fgm) * weight.fgMiss) +
+            ((player.fta - player.ftm) * weight.ftMiss);
+
+        const bpm = (rawBPM / (player.gp || 1)) * 0.18;
+
+        const per = (
+            (player.pts * 1.2) + 
+            (player.reb * 1.0) + 
+            (player.ast * 1.5) + 
+            (player.stl * 2.5) + 
+            (player.blk * 2.5) - 
+            (player.to * 2.0) - 
+            ((player.fga - player.fgm) * 0.5) - 
+            ((player.fta - player.ftm) * 0.5)
+        ) / (player.gp || 1);
+
+        const eff = (
+            player.pts + 
+            (player.reb * 1.2) + 
+            (player.ast * 1.5) + 
+            (player.stl * 3) + 
+            (player.blk * 3) - 
+            (player.to * 2) - 
+            ((player.fga - player.fgm) * 0.7)
+        ) / (player.gp || 1);
+
+        const ortg = (player.fga + 0.44 * player.fta + player.to) > 0 ?
+            (player.pts / (player.fga + 0.44 * player.fta + player.to)) * 100 : 0;
+        
+        const drtg = player.gp > 0 
+            ? 100 - ((player.stl + player.blk * 1.2) / player.gp * 3) 
+            : 0;
+
+        return {
+            fgPct: fgPct,
+            threePct: threePct,
+            ftPct: ftPct,
+            tsPct: tsPct,
+            usgRate: usgRate,
+            per: per,
+            eff: eff,
+            ortg: ortg,
+            drtg: drtg,
+            bpm: bpm
+        };
+    } catch (e) {
+        console.error('Error calculating advanced stats:', e);
+        return {
+            fgPct: 0,
+            threePct: 0,
+            ftPct: 0,
+            tsPct: 0,
+            usgRate: 0,
+            per: 0,
+            eff: 0,
+            ortg: 0,
+            drtg: 0,
+            bpm: 0
+        };
     }
+}
 
 // FIXED: Update sort arrows function
 function updateSortArrows(sortKey, direction) {
@@ -1124,6 +1275,7 @@ function showPlayerDetail(player, gameRatings = [], season) {
 
         document.getElementById('playerListSection').style.display = 'none';
         document.getElementById('playersGridView').style.display = 'none';
+        document.getElementById('playersPieView').style.display = 'none';
         document.getElementById('playerDetailSection').style.display = 'block';
         setTimeout(() => {
             document.getElementById('playerDetailSection').style.opacity = 1;
@@ -1154,7 +1306,12 @@ function showPlayerDetail(player, gameRatings = [], season) {
 
 document.getElementById('seasonSelect').addEventListener('change', function() {
     try {
-        loadPlayerStats(this.value);
+        const pieToggle = document.getElementById('pieViewToggle');
+        if (pieToggle.checked) {
+            loadPieCharts(this.value);
+        } else {
+            loadPlayerStats(this.value);
+        }
     } catch (e) {
         console.error('Season change error:', e);
     }
@@ -1165,7 +1322,11 @@ document.getElementById('backButton').addEventListener('click', () => {
          document.getElementById('playersPageHeader').style.display = 'block';
         
         document.getElementById('playerDetailSection').style.display = 'none';
-        if (document.getElementById('gridViewToggle').checked) {
+        
+        const pieToggle = document.getElementById('pieViewToggle');
+        if (pieToggle.checked) {
+            document.getElementById('playersPieView').style.display = 'block';
+        } else if (document.getElementById('gridViewToggle').checked) {
             document.getElementById('playersGridView').style.display = 'grid';
         } else {
             document.getElementById('playerListSection').style.display = 'block';
@@ -1175,11 +1336,142 @@ document.getElementById('backButton').addEventListener('click', () => {
     }
 });
 
+// Add event listeners to pie charts for interactivity
+function setupPieChartListeners() {
+    const pieCharts = ['minutesPie', 'pointsPie', 'assistsPie', 'reboundsPie', 'stealsPie', 'blocksPie'];
+    
+    pieCharts.forEach(chartId => {
+        const canvas = document.getElementById(chartId);
+        
+        // Mousemove for hover effect
+        canvas.addEventListener('mousemove', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if (!this.slicesData) return;
+            
+            const dx = x - this.centerX;
+            const dy = y - this.centerY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance <= this.radius) {
+                let angle = Math.atan2(dy, dx);
+                if (angle < -Math.PI / 2) angle += 2 * Math.PI;
+                
+                // Find which slice was hovered
+                const hoveredSlice = this.slicesData.find(slice => 
+                    angle >= slice.startAngle && angle <= slice.endAngle
+                );
+                
+                if (hoveredSlice) {
+                    canvas.style.cursor = 'pointer';
+                    
+                    // Redraw chart with highlight
+                    const ctx = this.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Redraw all slices
+                    this.slicesData.forEach(slice => {
+                        ctx.beginPath();
+                        ctx.moveTo(this.centerX, this.centerY);
+                        
+                        const isHovered = slice === hoveredSlice;
+                        const sliceRadius = isHovered ? this.radius + 10 : this.radius;
+                        
+                        ctx.arc(this.centerX, this.centerY, sliceRadius, slice.startAngle, slice.endAngle);
+                        ctx.closePath();
+                        ctx.fillStyle = slice.color;
+                        ctx.fill();
+                        ctx.strokeStyle = '#fff';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                    });
+                    
+                    // Draw title
+                    ctx.fillStyle = '#333';
+                    ctx.font = 'bold 16px Arial';
+                    ctx.textAlign = 'center';
+                    const titles = {
+                        'minutesPie': 'Minutes Per Game',
+                        'pointsPie': 'Points Per Game',
+                        'assistsPie': 'Assists Per Game',
+                        'reboundsPie': 'Rebounds Per Game',
+                        'stealsPie': 'Steals Per Game',
+                        'blocksPie': 'Blocks Per Game'
+                    };
+                    ctx.fillText(titles[chartId], this.centerX, 25);
+                    
+                    // Draw tooltip
+                    const statValue = hoveredSlice.player[this.statKey].toFixed(1);
+                    const tooltipText = `#${hoveredSlice.player.number} ${hoveredSlice.player.name}: ${statValue}`;
+                    
+                    ctx.font = '14px Arial';
+                    const textWidth = ctx.measureText(tooltipText).width;
+                    const tooltipX = x + 10;
+                    const tooltipY = y - 10;
+                    
+                    // Draw tooltip background
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                    ctx.fillRect(tooltipX - 5, tooltipY - 20, textWidth + 10, 25);
+                    
+                    // Draw tooltip text
+                    ctx.fillStyle = '#fff';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(tooltipText, tooltipX, tooltipY);
+                    
+                    return;
+                }
+            }
+            
+            canvas.style.cursor = 'default';
+            // Redraw without highlight
+            loadPieCharts(this.season || document.getElementById('seasonSelect').value);
+        });
+        
+        // Click to show player detail
+        canvas.addEventListener('click', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if (!this.slicesData) return;
+            
+            const dx = x - this.centerX;
+            const dy = y - this.centerY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance <= this.radius) {
+                let angle = Math.atan2(dy, dx);
+                if (angle < -Math.PI / 2) angle += 2 * Math.PI;
+                
+                const clickedSlice = this.slicesData.find(slice => 
+                    angle >= slice.startAngle && angle <= slice.endAngle
+                );
+                
+                if (clickedSlice) {
+                    const season = this.season || document.getElementById('seasonSelect').value;
+                    const gameRatings = (clickedSlice.player.player.nonExhGameLogs || []).map(calculateGameRating);
+                    showPlayerDetail(clickedSlice.player.player, gameRatings, season);
+                }
+            }
+        });
+        
+        // Mouse leave - redraw without highlight
+        canvas.addEventListener('mouseleave', function() {
+            loadPieCharts(this.season || document.getElementById('seasonSelect').value);
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     try {
         loadPlayerData().then(() => {
             // Handle URL parameters after data is loaded
             handleURLParameters();
+            
+            // Setup pie chart listeners
+            setupPieChartListeners();
         });
         
         new bootstrap.Dropdown(document.querySelector('.dropdown-toggle'));
@@ -1195,7 +1487,4 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
         console.error('Initialization error:', e);
     }
-
 });
-
-
