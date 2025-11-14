@@ -411,8 +411,11 @@ function createPieChart(canvasId, playerStats, statKey, title, season) {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    // Sort players by the specified stat in descending order (largest to smallest)
+    const sortedStats = [...playerStats].sort((a, b) => b[statKey] - a[statKey]);
+    
     // Get total for percentage calculation
-    const total = playerStats.reduce((sum, p) => sum + p[statKey], 0);
+    const total = sortedStats.reduce((sum, p) => sum + p[statKey], 0);
     
     if (total === 0) {
         // Draw "No Data" message
@@ -439,8 +442,8 @@ function createPieChart(canvasId, playerStats, statKey, title, season) {
     // Store slice data for click detection
     const slices = [];
     
-    // Draw slices
-    playerStats.forEach((player, index) => {
+    // Draw slices (already sorted by statKey in descending order)
+    sortedStats.forEach((player, index) => {
         const percentage = player[statKey] / total;
         const sliceAngle = percentage * 2 * Math.PI;
         
@@ -1488,3 +1491,4 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Initialization error:', e);
     }
 });
+
