@@ -80,6 +80,10 @@
                     <input class="form-check-input" type="checkbox" id="gridViewToggle">
                     <label class="form-check-label text-white" for="gridViewToggle">Grid View</label>
                 </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="pieViewToggle">
+                    <label class="form-check-label text-white" for="pieViewToggle">Pie View</label>
+                </div>
             </div>
             <p class="text-white-50 mt-2 mb-0">Click on any player to view detailed profile</p>
         </div>
@@ -121,6 +125,41 @@
         </section>
         
         <section id="playersGridView" class="grid-container"></section>
+
+        <section id="playersPieView" class="pie-view-container" style="display: none;">
+            <div class="row g-4">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="pie-chart-card">
+                        <canvas id="minutesPie" width="300" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="pie-chart-card">
+                        <canvas id="pointsPie" width="300" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="pie-chart-card">
+                        <canvas id="assistsPie" width="300" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="pie-chart-card">
+                        <canvas id="reboundsPie" width="300" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="pie-chart-card">
+                        <canvas id="stealsPie" width="300" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="pie-chart-card">
+                        <canvas id="blocksPie" width="300" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
 
         <section id="playerDetailSection">
             <div class="player-detail-header text-center">
