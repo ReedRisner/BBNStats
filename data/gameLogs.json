@@ -853,7 +853,174 @@
         "fta": 0
       }
     ]
-  }
+  },
+        {
+        "opponent": "Eastern Illinois",
+        "date": "2025-11-14",
+        "video": "https://www.youtube.com/watch?v=rCDHuEKZW_o",
+        "boxscore": [
+          {
+            "number": "00",
+            "min": 18,
+            "pts": 12,
+            "reb": 2,
+            "ast": 3,
+            "stl": 0,
+            "blk": 0,
+            "to": 0,
+            "fgm": 4,
+            "fga": 7,
+            "threeFgm": 0,
+            "threeFga": 1,
+            "ftm": 4,
+            "fta": 4
+          },
+          {
+            "number": "1",
+            "min": 23,
+            "pts": 13,
+            "reb": 3,
+            "ast": 1,
+            "stl": 2,
+            "blk": 0,
+            "to": 1,
+            "fgm": 6,
+            "fga": 9,
+            "threeFgm": 1,
+            "threeFga": 3,
+            "ftm": 0,
+            "fta": 0
+          },
+          {
+            "number": "5",
+            "min": 20,
+            "pts": 4,
+            "reb": 2,
+            "ast": 4,
+            "stl": 0,
+            "blk": 1,
+            "to": 0,
+            "fgm": 1,
+            "fga": 2,
+            "threeFgm": 1,
+            "threeFga": 2,
+            "ftm": 1,
+            "fta": 2
+          },
+          {
+            "number": "10",
+            "min": 19,
+            "pts": 6,
+            "reb": 5,
+            "ast": 1,
+            "stl": 0,
+            "blk": 1,
+            "to": 4,
+            "fgm": 3,
+            "fga": 3,
+            "threeFgm": 0,
+            "threeFga": 0,
+            "ftm": 0,
+            "fta": 0
+          },
+          {
+            "number": "23",
+            "min": 22,
+            "pts": 20,
+            "reb": 11,
+            "ast": 1,
+            "stl": 2,
+            "blk": 2,
+            "to": 2,
+            "fgm": 8,
+            "fga": 9,
+            "threeFgm": 0,
+            "threeFga": 1,
+            "ftm": 4,
+            "fta": 5
+          },
+          {
+            "number": "2",
+            "min": 19,
+            "pts": 8,
+            "reb": 5,
+            "ast": 7,
+            "stl": 0,
+            "blk": 0,
+            "to": 2,
+            "fgm": 3,
+            "fga": 7,
+            "threeFgm": 2,
+            "threeFga": 4,
+            "ftm": 0,
+            "fta": 0
+          },
+          {
+            "number": "3",
+            "min": 21,
+            "pts": 6,
+            "reb": 2,
+            "ast": 2,
+            "stl": 1,
+            "blk": 0,
+            "to": 0,
+            "fgm": 2,
+            "fga": 4,
+            "threeFgm": 2,
+            "threeFga": 4,
+            "ftm": 0,
+            "fta": 0
+          },
+          {
+            "number": "4",
+            "min": 15,
+            "pts": 11,
+            "reb": 7,
+            "ast": 0,
+            "stl": 1,
+            "blk": 0,
+            "to": 3,
+            "fgm": 5,
+            "fga": 9,
+            "threeFgm": 1,
+            "threeFga": 4,
+            "ftm": 0,
+            "fta": 0
+          },
+          {
+            "number": "9",
+            "min": 22,
+            "pts": 8,
+            "reb": 3,
+            "ast": 0,
+            "stl": 2,
+            "blk": 1,
+            "to": 0,
+            "fgm": 3,
+            "fga": 6,
+            "threeFgm": 2,
+            "threeFga": 5,
+            "ftm": 0,
+            "fta": 0
+          },
+          {
+            "number": "24",
+            "min": 20,
+            "pts": 11,
+            "reb": 6,
+            "ast": 2,
+            "stl": 0,
+            "blk": 0,
+            "to": 1,
+            "fgm": 4,
+            "fga": 7,
+            "threeFgm": 0,
+            "threeFga": 0,
+            "ftm": 3,
+            "fta": 5
+          }
+        ]
+      }
         
         
         
@@ -7277,6 +7444,7 @@
     
   }
 }
+
 
 
 
