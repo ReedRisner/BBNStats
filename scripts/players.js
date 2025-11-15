@@ -741,16 +741,21 @@ function calculateAverageRating(gameRatings) {
     const validRatings = gameRatings.filter(r => !isNaN(r));
     if (validRatings.length === 0) return NaN;
     
-    if (validRatings.length <= 3) {
-        const sum = validRatings.reduce((a, b) => a + b, 0);
-        return parseFloat((sum / validRatings.length).toFixed(1));
+    // Calculate how many lowest scores to drop: 1 per every 10 games
+    const gamesToDrop = Math.floor(validRatings.length / 10);
+    
+    // If we have games to drop, remove the lowest ones
+    if (gamesToDrop > 0) {
+        const sortedRatings = [...validRatings].sort((a, b) => b - a);
+        const ratingsToAverage = sortedRatings.slice(0, -gamesToDrop);
+        
+        const sum = ratingsToAverage.reduce((a, b) => a + b, 0);
+        return parseFloat((sum / ratingsToAverage.length).toFixed(1));
     }
     
-    const sortedRatings = [...validRatings].sort((a, b) => b - a);
-    const ratingsToAverage = sortedRatings.slice(0, -3);
-    
-    const sum = ratingsToAverage.reduce((a, b) => a + b, 0);
-    return parseFloat((sum / ratingsToAverage.length).toFixed(1));
+    // Otherwise, use all ratings
+    const sum = validRatings.reduce((a, b) => a + b, 0);
+    return parseFloat((sum / validRatings.length).toFixed(1));
 }
 
 function loadPlayerStats(season) {
@@ -1405,20 +1410,37 @@ function setupPieChartListeners() {
                     };
                     ctx.fillText(titles[chartId], this.centerX, 25);
                     
-                    // Draw tooltip
+                    // Draw tooltip (centered to avoid clipping)
                     const statValue = hoveredSlice.player[this.statKey].toFixed(1);
                     const tooltipText = `#${hoveredSlice.player.number} ${hoveredSlice.player.name}: ${statValue}`;
                     
                     ctx.font = '14px Arial';
                     const textWidth = ctx.measureText(tooltipText).width;
-                    const tooltipX = x + 10;
-                    const tooltipY = y - 10;
+                    const tooltipPadding = 10;
+                    const tooltipHeight = 25;
+                    
+                    // Center the tooltip and keep it within canvas bounds
+                    let tooltipX = x - textWidth / 2;
+                    let tooltipY = y - 30;
+                    
+                    // Adjust if tooltip would go off left edge
+                    if (tooltipX < 5) {
+                        tooltipX = 5;
+                    }
+                    // Adjust if tooltip would go off right edge
+                    if (tooltipX + textWidth + tooltipPadding > canvas.width - 5) {
+                        tooltipX = canvas.width - textWidth - tooltipPadding - 5;
+                    }
+                    // Adjust if tooltip would go off top edge
+                    if (tooltipY < 30) {
+                        tooltipY = y + 20; // Show below cursor instead
+                    }
                     
                     // Draw tooltip background
                     ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-                    ctx.fillRect(tooltipX - 5, tooltipY - 20, textWidth + 10, 25);
+                    ctx.fillRect(tooltipX - 5, tooltipY - 20, textWidth + tooltipPadding, tooltipHeight);
                     
-                    // Draw tooltip text
+                    // Draw tooltip text (centered)
                     ctx.fillStyle = '#fff';
                     ctx.textAlign = 'left';
                     ctx.fillText(tooltipText, tooltipX, tooltipY);
@@ -1491,4 +1513,3 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Initialization error:', e);
     }
 });
-
