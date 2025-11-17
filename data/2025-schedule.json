@@ -155,7 +155,7 @@
         ,"day": "Friday"
         ,"venue": "away"
         ,"time": "7:00 PM ET"
-        ,"opponentRank": 19
+        ,"opponentRank": 13
     },
     {
         "date": "December 9, 2025",
@@ -197,7 +197,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "12:30 PM ET"
-        ,"opponentRank": 13
+        ,"opponentRank": 14
     },
     {
         "date": "December 23, 2025",
@@ -225,7 +225,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "1:00 PM ET"
-        ,"opponentRank": 8
+        ,"opponentRank": 11
     },
     {
         "date": "January 6, 2025",
@@ -465,6 +465,7 @@
     
 
 ]
+
 
 
 
