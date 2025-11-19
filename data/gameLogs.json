@@ -1020,7 +1020,174 @@
             "fta": 5
           }
         ]
-      }
+      },
+        {
+          "opponent": "Michigan State",
+          "date": "2025-11-18",
+          "video": "https://www.youtube.com/watch?v=Fgohq5UnHe0",
+          "boxscore": [
+            {
+              "number": "10",
+              "min": 20,
+              "pts": 2,
+              "reb": 4,
+              "ast": 2,
+              "stl": 0,
+              "blk": 0,
+              "to": 0,
+              "fgm": 1,
+              "fga": 2,
+              "threeFgm": 0,
+              "threeFga": 0,
+              "ftm": 0,
+              "fta": 0
+            },
+            {
+              "number": "23",
+              "min": 21,
+              "pts": 10,
+              "reb": 2,
+              "ast": 0,
+              "stl": 1,
+              "blk": 1,
+              "to": 1,
+              "fgm": 4,
+              "fga": 9,
+              "threeFgm": 0,
+              "threeFga": 4,
+              "ftm": 2,
+              "fta": 2
+            },
+            {
+              "number": "00",
+              "min": 31,
+              "pts": 12,
+              "reb": 4,
+              "ast": 3,
+              "stl": 0,
+              "blk": 1,
+              "to": 1,
+              "fgm": 4,
+              "fga": 12,
+              "threeFgm": 2,
+              "threeFga": 5,
+              "ftm": 2,
+              "fta": 2
+            },
+            {
+              "number": "1",
+              "min": 31,
+              "pts": 10,
+              "reb": 1,
+              "ast": 2,
+              "stl": 3,
+              "blk": 0,
+              "to": 3,
+              "fgm": 1,
+              "fga": 8,
+              "threeFgm": 1,
+              "threeFga": 5,
+              "ftm": 7,
+              "fta": 8
+            },
+            {
+              "number": "5",
+              "min": 26,
+              "pts": 10,
+              "reb": 4,
+              "ast": 1,
+              "stl": 1,
+              "blk": 2,
+              "to": 0,
+              "fgm": 4,
+              "fga": 9,
+              "threeFgm": 2,
+              "threeFga": 6,
+              "ftm": 0,
+              "fta": 0
+            },
+            {
+              "number": "24",
+              "min": 20,
+              "pts": 9,
+              "reb": 4,
+              "ast": 3,
+              "stl": 0,
+              "blk": 1,
+              "to": 2,
+              "fgm": 1,
+              "fga": 2,
+              "threeFgm": 0,
+              "threeFga": 0,
+              "ftm": 7,
+              "fta": 8
+            },
+            {
+              "number": "2",
+              "min": 14,
+              "pts": 8,
+              "reb": 2,
+              "ast": 0,
+              "stl": 0,
+              "blk": 0,
+              "to": 0,
+              "fgm": 3,
+              "fga": 7,
+              "threeFgm": 1,
+              "threeFga": 4,
+              "ftm": 1,
+              "fta": 1
+            },
+            {
+              "number": "4",
+              "min": 10,
+              "pts": 0,
+              "reb": 0,
+              "ast": 0,
+              "stl": 0,
+              "blk": 1,
+              "to": 0,
+              "fgm": 0,
+              "fga": 2,
+              "threeFgm": 0,
+              "threeFga": 1,
+              "ftm": 0,
+              "fta": 0
+            },
+            {
+              "number": "3",
+              "min": 17,
+              "pts": 5,
+              "reb": 1,
+              "ast": 1,
+              "stl": 1,
+              "blk": 0,
+              "to": 0,
+              "fgm": 2,
+              "fga": 6,
+              "threeFgm": 1,
+              "threeFga": 5,
+              "ftm": 0,
+              "fta": 0
+            },
+            {
+              "number": "9",
+              "min": 10,
+              "pts": 0,
+              "reb": 2,
+              "ast": 1,
+              "stl": 1,
+              "blk": 0,
+              "to": 2,
+              "fgm": 0,
+              "fga": 0,
+              "threeFgm": 0,
+              "threeFga": 0,
+              "ftm": 0,
+              "fta": 1
+            }
+          ]
+        }
         
         
         
@@ -7444,6 +7611,7 @@
     
   }
 }
+
 
 
 
