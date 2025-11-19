@@ -1,29 +1,29 @@
 {
 "2025": {
     "rankings": {
-        "Overall Record": "3-1",
+        "Overall Record": "3-2",
         "Conference Standings": "#0",
         "AP Poll": "#12",
-        "KenPom": "#4",
+        "KenPom": "#11",
         "NET Rankings": "#0",
-        "Evan Miya": "#9",
-        "Barttorvik": "#11",
+        "Evan Miya": "#11",
+        "Barttorvik": "#16",
         "Bracketology": "No. 2 Seed",
-        "AP Top 25 Record": "0-1"
+        "AP Top 25 Record": "0-2"
     },
     "stats": {
-        "Offensive Rating": { "value": "122.4", "rank": "7" },
-        "Defensive Rating": { "value": "93.6", "rank": "9" },
-        "Net Rating": { "value": "28.79", "rank": "4" },
-        "Pace": { "value": "72.8", "rank": "101" },
-        "Offensive TOV%": { "value": "15.9", "rank": "114" },
-        "Defensive TOV%": { "value": "13.1", "rank": "320" },
-        "O3P%": { "value": "34.2", "rank": "143" },
-        "O2P%": { "value": "66.2", "rank": "7" },
-        "OFT%": { "value": "72.5", "rank": "161" },
-        "D3P%": { "value": "26.7", "rank": "66" },
-        "D2P%": { "value": "41.6", "rank": "24" },
-        "DFT%": { "value": "67.4", "rank": "99" }
+        "Offensive Rating": { "value": "121.3", "rank": "12" },
+        "Defensive Rating": { "value": "95.9", "rank": "13" },
+        "Net Rating": { "value": "25.37", "rank": "11" },
+        "Pace": { "value": "58.2", "rank": "294" },
+        "Offensive TOV%": { "value": "15.3", "rank": "81" },
+        "Defensive TOV%": { "value": "14.1", "rank": "314" },
+        "O3P%": { "value": "31.9", "rank": "203" },
+        "O2P%": { "value": "63.4", "rank": "18" },
+        "OFT%": { "value": "75.5", "rank": "85" },
+        "D3P%": { "value": "30.4", "rank": "115" },
+        "D2P%": { "value": "43.7", "rank": "42" },
+        "DFT%": { "value": "68.6", "rank": "115" }
 
     }
 },
@@ -56,6 +56,7 @@
     }
 }
 }
+
 
 
 
