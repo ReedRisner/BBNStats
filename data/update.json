@@ -12,18 +12,18 @@
         "AP Top 25 Record": "0-2"
     },
     "stats": {
-        "Offensive Rating": { "value": "121.3", "rank": "12" },
-        "Defensive Rating": { "value": "95.9", "rank": "13" },
-        "Net Rating": { "value": "25.37", "rank": "11" },
-        "Pace": { "value": "58.2", "rank": "294" },
-        "Offensive TOV%": { "value": "15.3", "rank": "81" },
-        "Defensive TOV%": { "value": "14.1", "rank": "314" },
-        "O3P%": { "value": "31.9", "rank": "203" },
-        "O2P%": { "value": "63.4", "rank": "18" },
-        "OFT%": { "value": "75.5", "rank": "85" },
-        "D3P%": { "value": "30.4", "rank": "115" },
-        "D2P%": { "value": "43.7", "rank": "42" },
-        "DFT%": { "value": "68.6", "rank": "115" }
+        "Offensive Rating": { "value": "121.2", "rank": "12" },
+        "Defensive Rating": { "value": "95.0", "rank": "11" },
+        "Net Rating": { "value": "26.17", "rank": "12" },
+        "Pace": { "value": "72.1", "rank": "123" },
+        "Offensive TOV%": { "value": "14.8", "rank": "65" },
+        "Defensive TOV%": { "value": "15.5", "rank": "278" },
+        "O3P%": { "value": "32.7", "rank": "194" },
+        "O2P%": { "value": "61.6", "rank": "30" },
+        "OFT%": { "value": "73.0", "rank": "140" },
+        "D3P%": { "value": "28.7", "rank": "70" },
+        "D2P%": { "value": "42.9", "rank": "30" },
+        "DFT%": { "value": "66.4", "rank": "71" }
 
     }
 },
@@ -56,6 +56,7 @@
     }
 }
 }
+
 
 
 
