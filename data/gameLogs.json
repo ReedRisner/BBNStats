@@ -1640,6 +1640,173 @@
               "fta": 2
             }
           ]
+        },
+        {
+          "opponent": "Gonzaga",
+          "date": "2025-12-05",
+          "video": "https://www.youtube.com/watch?v=iJamqxTnl8M&pp=ygUTa2VudHVja3kgdnMgZ29uemFnYQ%3D%3D",
+          "boxscore": [
+            {
+              "number": "24",
+              "min": 24,
+              "pts": 5,
+              "reb": 2,
+              "ast": 1,
+              "stl": 1,
+              "blk": 0,
+              "to": 1,
+              "fgm": 2,
+              "fga": 6,
+              "threeFgm": 0,
+              "threeFga": 1,
+              "ftm": 1,
+              "fta": 1
+            },
+            {
+              "number": "00",
+              "min": 29,
+              "pts": 16,
+              "reb": 5,
+              "ast": 5,
+              "stl": 2,
+              "blk": 0,
+              "to": 1,
+              "fgm": 3,
+              "fga": 7,
+              "threeFgm": 1,
+              "threeFga": 3,
+              "ftm": 9,
+              "fta": 10
+            },
+            {
+              "number": "1",
+              "min": 25,
+              "pts": 8,
+              "reb": 2,
+              "ast": 2,
+              "stl": 0,
+              "blk": 0,
+              "to": 1,
+              "fgm": 3,
+              "fga": 12,
+              "threeFgm": 1,
+              "threeFga": 4,
+              "ftm": 1,
+              "fta": 3
+            },
+            {
+              "number": "3",
+              "min": 15,
+              "pts": 0,
+              "reb": 2,
+              "ast": 0,
+              "stl": 0,
+              "blk": 0,
+              "to": 2,
+              "fgm": 0,
+              "fga": 3,
+              "threeFgm": 0,
+              "threeFga": 3,
+              "ftm": 0,
+              "fta": 0
+            },
+            {
+              "number": "5",
+              "min": 29,
+              "pts": 11,
+              "reb": 2,
+              "ast": 1,
+              "stl": 3,
+              "blk": 0,
+              "to": 1,
+              "fgm": 3,
+              "fga": 8,
+              "threeFgm": 2,
+              "threeFga": 7,
+              "ftm": 3,
+              "fta": 4
+            },
+            {
+              "number": "4",
+              "min": 15,
+              "pts": 0,
+              "reb": 4,
+              "ast": 0,
+              "stl": 0,
+              "blk": 0,
+              "to": 3,
+              "fgm": 0,
+              "fga": 6,
+              "threeFgm": 0,
+              "threeFga": 6,
+              "ftm": 0,
+              "fta": 0
+            },
+            {
+              "number": "10",
+              "min": 16,
+              "pts": 5,
+              "reb": 2,
+              "ast": 0,
+              "stl": 0,
+              "blk": 0,
+              "to": 1,
+              "fgm": 2,
+              "fga": 3,
+              "threeFgm": 1,
+              "threeFga": 1,
+              "ftm": 0,
+              "fta": 0
+            },
+            {
+              "number": "15",
+              "min": 14,
+              "pts": 1,
+              "reb": 1,
+              "ast": 1,
+              "stl": 0,
+              "blk": 0,
+              "to": 1,
+              "fgm": 0,
+              "fga": 5,
+              "threeFgm": 0,
+              "threeFga": 2,
+              "ftm": 1,
+              "fta": 2
+            },
+            {
+              "number": "2",
+              "min": 18,
+              "pts": 8,
+              "reb": 3,
+              "ast": 1,
+              "stl": 0,
+              "blk": 0,
+              "to": 0,
+              "fgm": 2,
+              "fga": 7,
+              "threeFgm": 1,
+              "threeFga": 4,
+              "ftm": 3,
+              "fta": 4
+            },
+            {
+              "number": "9",
+              "min": 14,
+              "pts": 5,
+              "reb": 4,
+              "ast": 1,
+              "stl": 0,
+              "blk": 0,
+              "to": 0,
+              "fgm": 1,
+              "fga": 3,
+              "threeFgm": 1,
+              "threeFga": 3,
+              "ftm": 2,
+              "fta": 2
+            }
+          ]
         }
         
         
@@ -8064,6 +8231,7 @@
     
   }
 }
+
 
 
 
