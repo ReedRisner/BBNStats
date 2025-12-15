@@ -220,7 +220,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "1:00 PM ET"
-        ,"opponentRank": 12
+        ,"opponentRank": 16
     },
     {
         "date": "January 6, 2025",
@@ -314,7 +314,7 @@
         ,"day": "Tuesday"
         ,"venue": "away"
         ,"time": "9:00 PM ET"
-        ,"opponentRank": 15
+        ,"opponentRank": 13
     },
     {
         "date": "January 31, 2025",
@@ -329,7 +329,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "6:30 PM ET"
-        ,"opponentRank": 17
+        ,"opponentRank": 14
     },
     {
         "date": "February 3, 2025",
@@ -372,7 +372,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "3:00 PM ET"
-        ,"opponentRank": 18
+        ,"opponentRank": 23
 
     },
     {
@@ -387,6 +387,7 @@
         ,"day": "Tuesday"
         ,"venue": "home"
         ,"time": "9:00 PM ET"
+        ,"opponentRank": 25
     },
     {
         "date": "February 21, 2025",
@@ -428,7 +429,7 @@
         ,"day": "Saturday"
         ,"venue": "home"
         ,"time": "2:00 PM ET"
-        ,"opponentRank": 15
+        ,"opponentRank": 13
     },
     {
         "date": "March 3, 2025",
@@ -456,11 +457,12 @@
         ,"day": "Saturday"
         ,"venue": "home"
         ,"time": "4:00 PM ET"
-        ,"opponentRank": 18
+        ,"opponentRank": 23
     }
     
 
 ]
+
 
 
 
