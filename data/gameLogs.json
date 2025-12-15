@@ -1974,6 +1974,173 @@
       "fta": 0
     }
   ]
+},
+        {
+  "opponent": "Indiana",
+  "date": "2025-12-13",
+  "video": "https://www.youtube.com/watch?v=CFWMcYcWqeo",
+  "boxscore": [
+    {
+      "number": "9",
+      "min": 11,
+      "pts": 4,
+      "reb": 0,
+      "ast": 2,
+      "stl": 0,
+      "blk": 0,
+      "to": 0,
+      "fgm": 1,
+      "fga": 3,
+      "threeFgm": 0,
+      "threeFga": 2,
+      "ftm": 2,
+      "fta": 2
+    },
+    {
+      "number": "24",
+      "min": 21,
+      "pts": 3,
+      "reb": 2,
+      "ast": 3,
+      "stl": 4,
+      "blk": 2,
+      "to": 0,
+      "fgm": 0,
+      "fga": 0,
+      "threeFgm": 0,
+      "threeFga": 0,
+      "ftm": 3,
+      "fta": 4
+    },
+    {
+      "number": "00",
+      "min": 33,
+      "pts": 10,
+      "reb": 4,
+      "ast": 1,
+      "stl": 2,
+      "blk": 0,
+      "to": 0,
+      "fgm": 2,
+      "fga": 8,
+      "threeFgm": 1,
+      "threeFga": 2,
+      "ftm": 5,
+      "fta": 8
+    },
+    {
+      "number": "1",
+      "min": 25,
+      "pts": 9,
+      "reb": 1,
+      "ast": 0,
+      "stl": 0,
+      "blk": 0,
+      "to": 1,
+      "fgm": 3,
+      "fga": 7,
+      "threeFgm": 1,
+      "threeFga": 1,
+      "ftm": 2,
+      "fta": 4
+    },
+    {
+      "number": "5",
+      "min": 16,
+      "pts": 4,
+      "reb": 2,
+      "ast": 0,
+      "stl": 0,
+      "blk": 0,
+      "to": 0,
+      "fgm": 1,
+      "fga": 7,
+      "threeFgm": 0,
+      "threeFga": 2,
+      "ftm": 2,
+      "fta": 2
+    },
+    {
+      "number": "3",
+      "min": 24,
+      "pts": 9,
+      "reb": 2,
+      "ast": 0,
+      "stl": 0,
+      "blk": 1,
+      "to": 0,
+      "fgm": 3,
+      "fga": 5,
+      "threeFgm": 1,
+      "threeFga": 2,
+      "ftm": 2,
+      "fta": 2
+    },
+    {
+      "number": "10",
+      "min": 20,
+      "pts": 6,
+      "reb": 5,
+      "ast": 2,
+      "stl": 1,
+      "blk": 1,
+      "to": 2,
+      "fgm": 3,
+      "fga": 6,
+      "threeFgm": 0,
+      "threeFga": 2,
+      "ftm": 0,
+      "fta": 0
+    },
+    {
+      "number": "15",
+      "min": 24,
+      "pts": 13,
+      "reb": 5,
+      "ast": 2,
+      "stl": 1,
+      "blk": 0,
+      "to": 0,
+      "fgm": 5,
+      "fga": 13,
+      "threeFgm": 0,
+      "threeFga": 3,
+      "ftm": 3,
+      "fta": 6
+    },
+    {
+      "number": "2",
+      "min": 3,
+      "pts": 0,
+      "reb": 0,
+      "ast": 0,
+      "stl": 0,
+      "blk": 0,
+      "to": 0,
+      "fgm": 0,
+      "fga": 2,
+      "threeFgm": 0,
+      "threeFga": 1,
+      "ftm": 0,
+      "fta": 0
+    },
+    {
+      "number": "23",
+      "min": 22,
+      "pts": 14,
+      "reb": 12,
+      "ast": 0,
+      "stl": 5,
+      "blk": 0,
+      "to": 0,
+      "fgm": 4,
+      "fga": 7,
+      "threeFgm": 0,
+      "threeFga": 0,
+      "ftm": 6,
+      "fta": 10
+    }
+  ]
 }
         
         
@@ -8398,6 +8565,7 @@
     
   }
 }
+
 
 
 
