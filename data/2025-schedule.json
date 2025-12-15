@@ -173,11 +173,10 @@
         "opponent": "vs Indiana",
         "logo": "indiana.png",
         "location": "Rupp Arena | Lexington, Ky.",
-        "result": "TBD",
+        "result": "W 72-60",
         "quad": 1
         ,"conference": false
         , "exh": false
-        ,"opponentRank": 22
         ,"day": "Saturday"
         ,"venue": "home"
         ,"time": "7:30 PM ET"
@@ -194,7 +193,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "12:30 PM ET"
-        ,"opponentRank": 23
+        ,"opponentRank": 22
     },
     {
         "date": "December 23, 2025",
@@ -275,7 +274,7 @@
         ,"day": "Saturday"
         ,"time": "12:00 PM ET"
         ,"venue": "away"
-        ,"opponentRank": 13
+        ,"opponentRank": 20
     },
     {
         "date": "January 20, 2025",
@@ -315,7 +314,7 @@
         ,"day": "Tuesday"
         ,"venue": "away"
         ,"time": "9:00 PM ET"
-        ,"opponentRank": 17
+        ,"opponentRank": 15
     },
     {
         "date": "January 31, 2025",
@@ -330,7 +329,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "6:30 PM ET"
-        ,"opponentRank": 25
+        ,"opponentRank": 17
     },
     {
         "date": "February 3, 2025",
@@ -358,7 +357,7 @@
         ,"day": "Saturday"
         ,"venue": "home"
         ,"time": "8:30 PM ET"
-        ,"opponentRank": 13
+        ,"opponentRank": 20
     },
     {
         "date": "February 14, 2025",
@@ -373,7 +372,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "3:00 PM ET"
-        ,"opponentRank": 15
+        ,"opponentRank": 18
 
     },
     {
@@ -402,7 +401,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "8:30 PM ET"
-        ,"opponentRank": 20
+        ,"opponentRank": 21
     },
     {
         "date": "February 24, 2025",
@@ -429,7 +428,7 @@
         ,"day": "Saturday"
         ,"venue": "home"
         ,"time": "2:00 PM ET"
-        ,"opponentRank": 17
+        ,"opponentRank": 15
     },
     {
         "date": "March 3, 2025",
@@ -457,11 +456,12 @@
         ,"day": "Saturday"
         ,"venue": "home"
         ,"time": "4:00 PM ET"
-        ,"opponentRank": 15
+        ,"opponentRank": 18
     }
     
 
 ]
+
 
 
 
