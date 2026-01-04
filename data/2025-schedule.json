@@ -209,7 +209,7 @@
         ,"time": "1:00 PM ET"
     },
     {
-        "date": "January 3, 2025",
+        "date": "January 3, 2026",
         "opponent": "at Alabama",
         "logo": "alabama.png",
         "location": "Coleman Coliseum | Tuscaloosa, Al.",
@@ -223,7 +223,7 @@
         ,"opponentRank": 14
     },
     {
-        "date": "January 6, 2025",
+        "date": "January 6, 2026",
         "opponent": "vs Mizzou",
         "logo": "missouri.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -237,7 +237,7 @@
         ,"time": "7:00 PM ET"
     },
     {
-        "date": "January 10, 2025",
+        "date": "January 10, 2026",
         "opponent": "vs Mississippi State",
         "logo": "mississippi-state.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -250,7 +250,7 @@
         ,"time": "8:30 PM ET"
     },
     {
-        "date": "January 13, 2025",
+        "date": "January 13, 2026",
         "opponent": "at LSU",
         "logo": "lsu.png",
         "location": "Pete Maravich Assembly Center | Baton Rouge, La.",
@@ -263,7 +263,7 @@
         ,"time": "7:00 PM ET"
     },
     {
-        "date": "January 17, 2025",
+        "date": "January 17, 2026",
         "opponent": "at Tennessee",
         "logo": "tennessee.png",
         "location": "Thompson-Boling Arena at Food City Center | Knoxville, Tn.",
@@ -277,7 +277,7 @@
         ,"opponentRank": 20
     },
     {
-        "date": "January 20, 2025",
+        "date": "January 20, 2026",
         "opponent": "vs Texas",
         "logo": "texas.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -290,7 +290,7 @@
         ,"time": "7:00 PM ET"
     },
     {
-        "date": "January 24, 2025",
+        "date": "January 24, 2026",
         "opponent": "vs Ole Miss",
         "logo": "ole-miss.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -303,7 +303,7 @@
         ,"time": "12:00 PM ET"
     },
     {
-        "date": "January 27, 2025",
+        "date": "January 27, 2026",
         "opponent": "at Vanderbilt",
         "logo": "vanderbilt.png",
         "location": "Memorial Gymnasium | Nashville, Tn.",
@@ -317,7 +317,7 @@
         ,"opponentRank": 13
     },
     {
-        "date": "January 31, 2025",
+        "date": "January 31, 2026",
         "opponent": "at Arkansas",
         "logo": "arkansas.png",
         "location": "Bud Walton Arena | Fayetteville, Ar.",
@@ -332,7 +332,7 @@
         ,"opponentRank": 14
     },
     {
-        "date": "February 3, 2025",
+        "date": "February 3, 2026",
         "opponent": "vs Oklahoma",
         "logo": "oklahoma.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -345,7 +345,7 @@
         ,"time": "7:00 PM ET"
     },
     {
-        "date": "February 7, 2025",
+        "date": "February 7, 2026",
         "opponent": "vs Tennessee",
         "logo": "tennessee.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -360,7 +360,7 @@
         ,"opponentRank": 20
     },
     {
-        "date": "February 14, 2025",
+        "date": "February 14, 2026",
         "opponent": "at Florida",
         "logo": "florida.png",
         "location": "Exactech Arena at Stephen C. O'Connell Center | Gainesville, Fl.",
@@ -376,7 +376,7 @@
 
     },
     {
-        "date": "February 17, 2025",
+        "date": "February 17, 2026",
         "opponent": "vs Georgia",
         "logo": "georgia.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -390,7 +390,7 @@
         ,"opponentRank": 25
     },
     {
-        "date": "February 21, 2025",
+        "date": "February 21, 2026",
         "opponent": "at Auburn",
         "logo": "auburn.png",
         "location": "Neville Arena | Auburn, Al.",
@@ -405,7 +405,7 @@
         ,"opponentRank": 21
     },
     {
-        "date": "February 24, 2025",
+        "date": "February 24, 2026",
         "opponent": "at South Carolina",
         "logo": "south-carolina.png",
         "location": "Colonial Life Arena | Columbia, S.C.",
@@ -418,7 +418,7 @@
         ,"time": "7:00 PM ET"
     },
     {
-        "date": "February 28, 2025",
+        "date": "February 28, 2026",
         "opponent": "vs Vanderbilt",
         "logo": "vanderbilt.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -432,7 +432,7 @@
         ,"opponentRank": 13
     },
     {
-        "date": "March 3, 2025",
+        "date": "March 3, 2026",
         "opponent": "at Texas A&M",
         "logo": "texas-am.png",
         "location": "Reed Arena | Bryan-College Station, Tx.",
@@ -445,7 +445,7 @@
         ,"time": "7:00 PM ET"
     },
     {
-        "date": "March 7, 2025",
+        "date": "March 7, 2026",
         "opponent": "vs Florida",
         "logo": "florida.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -462,6 +462,7 @@
     
 
 ]
+
 
 
 
