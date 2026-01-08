@@ -209,7 +209,7 @@
         ,"time": "1:00 PM ET"
     },
     {
-        "date": "January 3, 2026",
+        "date": "January 4, 2026",
         "opponent": "at Alabama",
         "logo": "alabama.png",
         "location": "Coleman Coliseum | Tuscaloosa, Al.",
@@ -223,16 +223,16 @@
         ,"opponentRank": 14
     },
     {
-        "date": "January 6, 2026",
+        "date": "January 7, 2026",
         "opponent": "vs Mizzou",
         "logo": "missouri.png",
         "location": "Rupp Arena | Lexington, Ky.",
-        "result": "TBD",
-        "quad": 1
+        "result": "L 68-73",
+        "quad": 3
         ,"conference": true
         , "exh": false
         ,"opponentRank": 0
-        ,"day": "Tuesday"
+        ,"day": "Wednesday"
         ,"venue": "home"
         ,"time": "7:00 PM ET"
     },
