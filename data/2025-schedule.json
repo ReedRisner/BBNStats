@@ -274,7 +274,7 @@
         ,"day": "Saturday"
         ,"time": "12:00 PM ET"
         ,"venue": "away"
-        ,"opponentRank": 20
+        ,"opponentRank": 24
     },
     {
         "date": "January 20, 2026",
@@ -314,7 +314,7 @@
         ,"day": "Tuesday"
         ,"venue": "away"
         ,"time": "9:00 PM ET"
-        ,"opponentRank": 13
+        ,"opponentRank": 10
     },
     {
         "date": "January 31, 2026",
@@ -329,7 +329,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "6:30 PM ET"
-        ,"opponentRank": 14
+        ,"opponentRank": 17
     },
     {
         "date": "February 3, 2026",
@@ -357,7 +357,7 @@
         ,"day": "Saturday"
         ,"venue": "home"
         ,"time": "8:30 PM ET"
-        ,"opponentRank": 20
+        ,"opponentRank": 24
     },
     {
         "date": "February 14, 2026",
@@ -372,7 +372,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "3:00 PM ET"
-        ,"opponentRank": 23
+        ,"opponentRank": 19
 
     },
     {
@@ -387,7 +387,7 @@
         ,"day": "Tuesday"
         ,"venue": "home"
         ,"time": "9:00 PM ET"
-        ,"opponentRank": 25
+        ,"opponentRank": 21
     },
     {
         "date": "February 21, 2026",
@@ -402,7 +402,6 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "8:30 PM ET"
-        ,"opponentRank": 21
     },
     {
         "date": "February 24, 2026",
@@ -429,7 +428,7 @@
         ,"day": "Saturday"
         ,"venue": "home"
         ,"time": "2:00 PM ET"
-        ,"opponentRank": 13
+        ,"opponentRank": 10
     },
     {
         "date": "March 3, 2026",
@@ -457,11 +456,12 @@
         ,"day": "Saturday"
         ,"venue": "home"
         ,"time": "4:00 PM ET"
-        ,"opponentRank": 23
+        ,"opponentRank": 19
     }
     
 
 ]
+
 
 
 
