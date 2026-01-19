@@ -277,7 +277,7 @@
         ,"opponentRank": 24
     },
     {
-        "date": "January 20, 2026",
+        "date": "January 21, 2026",
         "opponent": "vs Texas",
         "logo": "texas.png",
         "location": "Rupp Arena | Lexington, Ky.",
@@ -285,7 +285,7 @@
         "quad": 1
         ,"conference": true
         , "exh": false
-        ,"day": "Tuesday"
+        ,"day": "Wednesday"
         ,"venue": "home"
         ,"time": "7:00 PM ET"
     },
@@ -461,6 +461,7 @@
     
 
 ]
+
 
 
 
