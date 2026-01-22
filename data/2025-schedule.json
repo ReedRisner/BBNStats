@@ -281,8 +281,8 @@
         "opponent": "vs Texas",
         "logo": "texas.png",
         "location": "Rupp Arena | Lexington, Ky.",
-        "result": "TBD",
-        "quad": 1
+        "result": "W 85-80",
+        "quad": 2
         ,"conference": true
         , "exh": false
         ,"day": "Wednesday"
@@ -461,6 +461,7 @@
     
 
 ]
+
 
 
 
