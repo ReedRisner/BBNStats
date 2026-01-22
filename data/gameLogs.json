@@ -3310,6 +3310,173 @@
       "fta": 0
     }
   ]
+},
+        {
+  "opponent": "Texas",
+  "date": "2026-01-21",
+  "video": "https://www.youtube.com/watch?v=9dDiFQ3uhnI",
+  "boxscore": [
+    {
+      "number": "4",
+      "min": 18,
+      "pts": 4,
+      "reb": 7,
+      "ast": 1,
+      "stl": 2,
+      "blk": 0,
+      "to": 1,
+      "fgm": 2,
+      "fga": 2,
+      "threeFgm": 0,
+      "threeFga": 0,
+      "ftm": 0,
+      "fta": 0
+    },
+    {
+      "number": "24",
+      "min": 26,
+      "pts": 8,
+      "reb": 4,
+      "ast": 6,
+      "stl": 0,
+      "blk": 5,
+      "to": 2,
+      "fgm": 2,
+      "fga": 6,
+      "threeFgm": 0,
+      "threeFga": 1,
+      "ftm": 4,
+      "fta": 5
+    },
+    {
+      "number": "00",
+      "min": 36,
+      "pts": 18,
+      "reb": 3,
+      "ast": 0,
+      "stl": 1,
+      "blk": 0,
+      "to": 0,
+      "fgm": 8,
+      "fga": 20,
+      "threeFgm": 0,
+      "threeFga": 4,
+      "ftm": 2,
+      "fta": 2
+    },
+    {
+      "number": "1",
+      "min": 32,
+      "pts": 19,
+      "reb": 1,
+      "ast": 1,
+      "stl": 1,
+      "blk": 0,
+      "to": 2,
+      "fgm": 4,
+      "fga": 10,
+      "threeFgm": 2,
+      "threeFga": 5,
+      "ftm": 9,
+      "fta": 12
+    },
+    {
+      "number": "3",
+      "min": 16,
+      "pts": 9,
+      "reb": 1,
+      "ast": 1,
+      "stl": 0,
+      "blk": 0,
+      "to": 1,
+      "fgm": 2,
+      "fga": 3,
+      "threeFgm": 1,
+      "threeFga": 2,
+      "ftm": 4,
+      "fta": 4
+    },
+    {
+      "number": "9",
+      "min": 2,
+      "pts": 0,
+      "reb": 2,
+      "ast": 0,
+      "stl": 0,
+      "blk": 0,
+      "to": 1,
+      "fgm": 0,
+      "fga": 0,
+      "threeFgm": 0,
+      "threeFga": 0,
+      "ftm": 0,
+      "fta": 0
+    },
+    {
+      "number": "23",
+      "min": 16,
+      "pts": 9,
+      "reb": 6,
+      "ast": 1,
+      "stl": 1,
+      "blk": 0,
+      "to": 0,
+      "fgm": 2,
+      "fga": 3,
+      "threeFgm": 0,
+      "threeFga": 0,
+      "ftm": 5,
+      "fta": 6
+    },
+    {
+      "number": "10",
+      "min": 14,
+      "pts": 0,
+      "reb": 3,
+      "ast": 1,
+      "stl": 0,
+      "blk": 2,
+      "to": 0,
+      "fgm": 0,
+      "fga": 3,
+      "threeFgm": 0,
+      "threeFga": 1,
+      "ftm": 0,
+      "fta": 0
+    },
+    {
+      "number": "5",
+      "min": 32,
+      "pts": 18,
+      "reb": 7,
+      "ast": 1,
+      "stl": 2,
+      "blk": 0,
+      "to": 0,
+      "fgm": 5,
+      "fga": 9,
+      "threeFgm": 2,
+      "threeFga": 4,
+      "ftm": 6,
+      "fta": 6
+    },
+    {
+      "number": "2",
+      "min": 8,
+      "pts": 0,
+      "reb": 0,
+      "ast": 0,
+      "stl": 1,
+      "blk": 0,
+      "to": 1,
+      "fgm": 0,
+      "fga": 2,
+      "threeFgm": 0,
+      "threeFga": 1,
+      "ftm": 0,
+      "fta": 0
+    }
+  ]
 }
         
         
@@ -9734,6 +9901,7 @@
     
   }
 }
+
 
 
 
