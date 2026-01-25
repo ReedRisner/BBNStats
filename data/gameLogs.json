@@ -3477,7 +3477,159 @@
       "fta": 0
     }
   ]
+}, 
+{
+  "opponent": "Ole Miss",
+  "date": "2026-01-24",
+  "video": "https://www.youtube.com/watch?v=kHRRkiJLhUY",
+  "boxscore": [
+    {
+      "number": "4",
+      "min": 22,
+      "pts": 6,
+      "reb": 7,
+      "ast": 3,
+      "stl": 1,
+      "blk": 1,
+      "to": 2,
+      "fgm": 2,
+      "fga": 5,
+      "threeFgm": 1,
+      "threeFga": 3,
+      "ftm": 1,
+      "fta": 3
+    },
+    {
+      "number": "24",
+      "min": 25,
+      "pts": 5,
+      "reb": 9,
+      "ast": 1,
+      "stl": 1,
+      "blk": 2,
+      "to": 1,
+      "fgm": 0,
+      "fga": 3,
+      "threeFgm": 0,
+      "threeFga": 0,
+      "ftm": 5,
+      "fta": 8
+    },
+    {
+      "number": "5",
+      "min": 34,
+      "pts": 12,
+      "reb": 7,
+      "ast": 1,
+      "stl": 1,
+      "blk": 0,
+      "to": 1,
+      "fgm": 2,
+      "fga": 10,
+      "threeFgm": 2,
+      "threeFga": 7,
+      "ftm": 6,
+      "fta": 6
+    },
+    {
+      "number": "00",
+      "min": 29,
+      "pts": 23,
+      "reb": 1,
+      "ast": 0,
+      "stl": 0,
+      "blk": 0,
+      "to": 2,
+      "fgm": 6,
+      "fga": 12,
+      "threeFgm": 1,
+      "threeFga": 5,
+      "ftm": 10,
+      "fta": 13
+    },
+    {
+      "number": "1",
+      "min": 29,
+      "pts": 6,
+      "reb": 3,
+      "ast": 5,
+      "stl": 1,
+      "blk": 0,
+      "to": 2,
+      "fgm": 1,
+      "fga": 7,
+      "threeFgm": 0,
+      "threeFga": 4,
+      "ftm": 4,
+      "fta": 4
+    },
+    {
+      "number": "9",
+      "min": 11,
+      "pts": 3,
+      "reb": 2,
+      "ast": 0,
+      "stl": 3,
+      "blk": 1,
+      "to": 0,
+      "fgm": 1,
+      "fga": 2,
+      "threeFgm": 1,
+      "threeFga": 2,
+      "ftm": 0,
+      "fta": 0
+    },
+    {
+      "number": "23",
+      "min": 20,
+      "pts": 6,
+      "reb": 3,
+      "ast": 0,
+      "stl": 0,
+      "blk": 2,
+      "to": 0,
+      "fgm": 2,
+      "fga": 3,
+      "threeFgm": 0,
+      "threeFga": 0,
+      "ftm": 2,
+      "fta": 3
+    },
+    {
+      "number": "10",
+      "min": 13,
+      "pts": 0,
+      "reb": 5,
+      "ast": 0,
+      "stl": 0,
+      "blk": 1,
+      "to": 1,
+      "fgm": 0,
+      "fga": 0,
+      "threeFgm": 0,
+      "threeFga": 0,
+      "ftm": 0,
+      "fta": 1
+    },
+    {
+      "number": "2",
+      "min": 17,
+      "pts": 11,
+      "reb": 2,
+      "ast": 2,
+      "stl": 0,
+      "blk": 0,
+      "to": 3,
+      "fgm": 4,
+      "fga": 8,
+      "threeFgm": 3,
+      "threeFga": 6,
+      "ftm": 0,
+      "fta": 0
+    }
+  ]
 }
+
         
         
         
@@ -9901,6 +10053,7 @@
     
   }
 }
+
 
 
 
