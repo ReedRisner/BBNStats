@@ -294,8 +294,8 @@
         "opponent": "vs Ole Miss",
         "logo": "ole-miss.png",
         "location": "Rupp Arena | Lexington, Ky.",
-        "result": "TBD",
-        "quad": 1
+        "result": "W 72-63",
+        "quad": 3
         ,"conference": true
         , "exh": false
         ,"day": "Saturday"
@@ -461,6 +461,7 @@
     
 
 ]
+
 
 
 
