@@ -307,14 +307,14 @@
         "opponent": "at Vanderbilt",
         "logo": "vanderbilt.png",
         "location": "Memorial Gymnasium | Nashville, Tn.",
-        "result": "TBD",
+        "result": "L 55-80",
         "quad": 1
         ,"conference": true
         , "exh": false
         ,"day": "Tuesday"
         ,"venue": "away"
         ,"time": "9:00 PM ET"
-        ,"opponentRank": 10
+        ,"opponentRank": 18
     },
     {
         "date": "January 31, 2026",
@@ -329,7 +329,7 @@
         ,"day": "Saturday"
         ,"venue": "away"
         ,"time": "6:30 PM ET"
-        ,"opponentRank": 17
+        ,"opponentRank": 15
     },
     {
         "date": "February 3, 2026",
@@ -357,7 +357,7 @@
         ,"day": "Saturday"
         ,"venue": "home"
         ,"time": "8:30 PM ET"
-        ,"opponentRank": 24
+        
     },
     {
         "date": "February 14, 2026",
@@ -461,6 +461,7 @@
     
 
 ]
+
 
 
 
