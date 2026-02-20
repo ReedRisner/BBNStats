@@ -3,12 +3,110 @@ let allPlayersData = null;
 let allGameLogsData = null;
 let currentSortKey = 'rating'; // Default to rating
 let currentSortDirection = 'desc'; // Default to descending
+const DEFAULT_SEASON = '2025';
+const ESPN_KENTUCKY_ROSTER_API = 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/96/roster';
+
+function normalizeName(name = '') {
+    return name.toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function getLatestSeason() {
+    const seasonKeys = Object.keys(allPlayersData?.seasons || {});
+    if (!seasonKeys.length) return DEFAULT_SEASON;
+    return seasonKeys.sort((a, b) => Number(b) - Number(a))[0];
+}
+
+function getPlayerImageSrc(player, season) {
+    if (player.photo) {
+        return player.photo;
+    }
+    return `../images/${season}/players/${player.number}.jpg`;
+}
+
+async function fetchLatestRosterFromAPI() {
+    try {
+        const response = await fetch(ESPN_KENTUCKY_ROSTER_API, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error(`Roster API request failed with ${response.status}`);
+        }
+
+        const data = await response.json();
+        const athletes = data?.athletes || [];
+        if (!athletes.length) {
+            return [];
+        }
+
+        return athletes.map((athlete) => ({
+            number: athlete.jersey || athlete.displayJersey || '',
+            name: athlete.displayName,
+            grade: athlete.experience?.displayValue || 'N/A',
+            pos: athlete.position?.abbreviation || 'N/A',
+            ht: athlete.displayHeight || 'N/A',
+            wt: athlete.displayWeight || 'N/A',
+            photo: athlete.headshot?.href || athlete.headshot || '',
+            bio: athlete.shortName ? `${athlete.shortName} is on the current Kentucky roster.` : 'Current Kentucky roster player.',
+            pastSeasons: []
+        }));
+    } catch (error) {
+        console.warn('Unable to load live roster API, using local roster data:', error);
+        return [];
+    }
+}
+
+async function mergeLatestSeasonWithAPI() {
+    const latestSeason = getLatestSeason();
+    const apiRoster = await fetchLatestRosterFromAPI();
+
+    if (!apiRoster.length || !allPlayersData?.seasons?.[latestSeason]?.players) {
+        return;
+    }
+
+    const existingPlayers = allPlayersData.seasons[latestSeason].players;
+    const existingMap = new Map(existingPlayers.map((player) => [normalizeName(player.name), player]));
+
+    const mergedPlayers = apiRoster.map((apiPlayer) => {
+        const existing = existingMap.get(normalizeName(apiPlayer.name));
+        if (!existing) return apiPlayer;
+
+        return {
+            ...existing,
+            number: apiPlayer.number || existing.number,
+            pos: apiPlayer.pos !== 'N/A' ? apiPlayer.pos : existing.pos,
+            ht: apiPlayer.ht !== 'N/A' ? apiPlayer.ht : existing.ht,
+            wt: apiPlayer.wt !== 'N/A' ? apiPlayer.wt : existing.wt,
+            grade: apiPlayer.grade !== 'N/A' ? apiPlayer.grade : existing.grade,
+            photo: apiPlayer.photo || existing.photo
+        };
+    });
+
+    const mergedMap = new Set(mergedPlayers.map((player) => normalizeName(player.name)));
+    existingPlayers.forEach((player) => {
+        if (!mergedMap.has(normalizeName(player.name))) {
+            mergedPlayers.push(player);
+        }
+    });
+
+    allPlayersData.seasons[latestSeason].players = mergedPlayers;
+}
 
 // Add this function to handle URL parameters
+
+function populateSeasonSelector() {
+    const seasonSelect = document.getElementById('seasonSelect');
+    if (!seasonSelect || !allPlayersData?.seasons) return;
+
+    const seasons = Object.keys(allPlayersData.seasons).sort((a, b) => Number(b) - Number(a));
+    seasonSelect.innerHTML = seasons
+        .map((season) => `<option value="${season}">${season}-${Number(season) + 1}</option>`)
+        .join('');
+
+    seasonSelect.value = getLatestSeason();
+}
+
 function handleURLParameters() {
     const urlParams = new URLSearchParams(window.location.search);
     const playerName = urlParams.get('player');
-    const season = urlParams.get('season') || '2025';
+    const season = urlParams.get('season') || getLatestSeason();
     
     if (playerName) {
         // Wait for data to be loaded, then find and show the player
@@ -46,7 +144,7 @@ function handleURLParameters() {
         checkDataAndShowPlayer();
     } else {
         // No player specified, load default season
-        loadPlayerStats('2025');
+        loadPlayerStats(getLatestSeason());
     }
 }
 
@@ -56,6 +154,7 @@ async function loadPlayerData() {
         const playersResponse = await fetch('../data/players.json');
         if (!playersResponse.ok) throw new Error(`HTTP error! status: ${playersResponse.status}`);
         allPlayersData = await playersResponse.json();
+        await mergeLatestSeasonWithAPI();
         
         // Load game logs data
         const gameLogsResponse = await fetch('../data/gameLogs.json');
@@ -298,7 +397,7 @@ function loadPlayerGrid(players, season) {
     card.innerHTML = `
       <div class="player-card-header">
         <div class="player-card-backdrop"></div>
-        <img src="../images/${season}/players/${player.number}.jpg" 
+        <img src="${getPlayerImageSrc(player, season)}" 
              class="player-card-img" alt="${player.name}"
              onerror="this.src='../images/players/default.jpg'">
       </div>
@@ -819,7 +918,7 @@ function loadPlayerList(players, season) {
     row.innerHTML = `
         <td class="mobile-player-cell">
             <div class="d-flex align-items-center">
-                <img src="../images/${season}/players/${player.number}.jpg" 
+                <img src="${getPlayerImageSrc(player, season)}" 
                     class="player-photo me-2" alt="${player.name}"
                     onerror="this.src='../images/players/default.jpg'">
                 <div class="flex-grow-1 mobile-player-name">
@@ -851,7 +950,7 @@ function loadPlayerList(players, season) {
     const advancedStats = calculateAdvancedStats(player);
     row.innerHTML = `
         <td>
-            <img src="../images/${season}/players/${player.number}.jpg" 
+            <img src="${getPlayerImageSrc(player, season)}" 
                 class="player-photo" alt="${player.name}"
                 onerror="this.src='../images/players/default.jpg'">
             <strong>#${player.number} ${player.name}</strong>
@@ -1075,7 +1174,7 @@ function showPlayerDetail(player, gameRatings = [], season) {
         const avgRating = calculateAverageRating(nonExhRatings);
 
         const playerImg = document.getElementById('detailPlayerPhoto');
-        playerImg.src = `../images/${season}/players/${player.number}.jpg`;
+        playerImg.src = getPlayerImageSrc(player, season);
         playerImg.onerror = () => playerImg.src = '../images/players/default.jpg';
         
         const validNonExhRatings = nonExhRatings.filter(r => !isNaN(r));
@@ -1492,6 +1591,8 @@ function setupPieChartListeners() {
 document.addEventListener('DOMContentLoaded', () => {
     try {
         loadPlayerData().then(() => {
+            populateSeasonSelector();
+
             // Handle URL parameters after data is loaded
             handleURLParameters();
             

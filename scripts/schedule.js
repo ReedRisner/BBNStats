@@ -1,3 +1,50 @@
+const DEFAULT_SEASON = '2025';
+const ESPN_KENTUCKY_SCHEDULE_API = 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/96/schedule';
+
+function getSeasonOptions() {
+    const seasonSelect = document.getElementById('seasonSelect');
+    if (!seasonSelect) return [DEFAULT_SEASON];
+    return [...seasonSelect.options].map((option) => option.value).sort((a, b) => Number(b) - Number(a));
+}
+
+function getLatestSeason() {
+    return getSeasonOptions()[0] || DEFAULT_SEASON;
+}
+
+async function fetchScheduleFromAPI(season) {
+    try {
+        const response = await fetch(`${ESPN_KENTUCKY_SCHEDULE_API}?season=${season}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Schedule API request failed with ${response.status}`);
+
+        const data = await response.json();
+        const events = data?.events || [];
+        if (!events.length) return [];
+
+        return events.map((event) => {
+            const competition = event?.competitions?.[0] || {};
+            const competitors = competition?.competitors || [];
+            const opponent = competitors.find((team) => team?.team?.id !== '96') || competitors[0] || {};
+            const status = competition?.status?.type?.description || 'TBD';
+            const winner = competition?.status?.type?.completed ? (opponent?.winner ? 'L' : 'W') : '';
+            const ourScore = competitors.find((team) => team?.team?.id === '96')?.score;
+            const oppScore = opponent?.score;
+
+            return {
+                day: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short' }),
+                date: new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                opponent: opponent?.team?.displayName || 'TBD',
+                logo: '',
+                location: competition?.venue?.fullName || (competition?.neutralSite ? 'Neutral Site' : 'TBD'),
+                time: new Date(event.date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+                result: competition?.status?.type?.completed ? `${winner} ${ourScore}-${oppScore}` : status
+            };
+        });
+    } catch (error) {
+        console.warn('Unable to load live schedule API, using local schedule data:', error);
+        return [];
+    }
+}
+
 function parseGameDate(dateStr) {
     const months = {
         'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
@@ -23,9 +70,14 @@ function parseGameDate(dateStr) {
 
 async function loadSchedule(season) {
     try {
-        const response = await fetch(`../data/${season}-schedule.json`);
-        if (!response.ok) throw new Error('Schedule not found');
-        const games = await response.json();
+        const liveGames = await fetchScheduleFromAPI(season);
+        let games = liveGames;
+
+        if (!games.length) {
+            const response = await fetch(`../data/${season}-schedule.json`);
+            if (!response.ok) throw new Error('Schedule not found');
+            games = await response.json();
+        }
 
         const tbody = document.getElementById('scheduleBody');
         const list = document.getElementById('scheduleList');
@@ -97,7 +149,7 @@ async function loadSchedule(season) {
                     ${game.day ? game.day + ', ' : ''}${game.date}
                 </td>
                 <td data-label="Matchup">
-                    <img src="../images/opponents/${game.logo}" class="team-logo" alt="${game.opponent} Logo">
+                    ${game.logo ? `<img src="../images/opponents/${game.logo}" class="team-logo" alt="${game.opponent} Logo">` : ''}
                     <strong>${game.opponentRank && game.opponentRank <= 25 ? `<span class="opponent-rank">#${game.opponentRank}</span> ` : ''}${game.opponent}</strong>
                 </td>
                 <td data-label="Location">${game.location}</td>
@@ -139,7 +191,7 @@ async function loadSchedule(season) {
                     <div class="game-details">
                         <h5 class="game-date">${game.day ? game.day + ', ' : ''}${game.date}</h5>
                         <div class="game-matchup">
-                            <img src="../images/opponents/${game.logo}" class="team-logo" alt="${game.opponent} Logo">
+                            ${game.logo ? `<img src="../images/opponents/${game.logo}" class="team-logo" alt="${game.opponent} Logo">` : ''}
                             <div>
                                 <div class="opponent-name">
                                     ${game.opponentRank && game.opponentRank <= 25 ? `<span class="opponent-rank">#${game.opponentRank}</span>` : ''}
@@ -192,7 +244,7 @@ async function loadSchedule(season) {
 // Initial load - default to 2025-2026 season
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const season = urlParams.get('season') || '2025'; // Default to 2025 if no parameter
+    const season = urlParams.get('season') || getLatestSeason();
     document.getElementById('seasonSelect').value = season;
     loadSchedule(season);
 });
