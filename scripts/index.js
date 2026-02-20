@@ -1,4 +1,58 @@
-const CURRENT_SEASON = '2025'; // Define current season
+let CURRENT_SEASON = '2025'; // Dynamically updated to newest available season
+const ESPN_KENTUCKY_SCHEDULE_API = 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/96/schedule';
+
+
+async function initializeCurrentSeason() {
+    try {
+        const response = await fetch('data/players.json');
+        if (!response.ok) return;
+
+        const playersData = await response.json();
+        const seasons = Object.keys(playersData?.seasons || {}).sort((a, b) => Number(b) - Number(a));
+        if (seasons.length) {
+            CURRENT_SEASON = seasons[0];
+        }
+    } catch (error) {
+        console.warn('Failed to detect latest season, using default season:', error);
+    }
+}
+
+async function loadScheduleDataForSeason(season) {
+    try {
+        const response = await fetch(`${ESPN_KENTUCKY_SCHEDULE_API}?season=${season}`, { cache: 'no-store' });
+        if (response.ok) {
+            const data = await response.json();
+            const events = data?.events || [];
+
+            if (events.length) {
+                return events.map((event) => {
+                    const competition = event?.competitions?.[0] || {};
+                    const competitors = competition?.competitors || [];
+                    const opponent = competitors.find((team) => team?.team?.id !== '96') || competitors[0] || {};
+                    const status = competition?.status?.type || {};
+                    const isComplete = !!status.completed;
+                    const ukScore = competitors.find((team) => team?.team?.id === '96')?.score;
+                    const oppScore = opponent?.score;
+                    const winPrefix = opponent?.winner ? 'L' : 'W';
+
+                    return {
+                        date: new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                        opponent: opponent?.team?.displayName || 'TBD',
+                        opponentRank: opponent?.curatedRank?.current || null,
+                        result: isComplete ? `${winPrefix} ${ukScore}-${oppScore}` : 'TBD',
+                        time: new Date(event.date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
+                    };
+                });
+            }
+        }
+    } catch (error) {
+        console.warn('Live schedule unavailable, using local schedule:', error);
+    }
+
+    const localResponse = await fetch(`data/${season}-schedule.json`);
+    if (!localResponse.ok) throw new Error('Schedule not found');
+    return localResponse.json();
+}
 
 // ==================== Line Background System ====================
 class LinePoint {
@@ -224,11 +278,11 @@ function initLineBackground() {
 // ==================== Existing Functions ====================
 async function loadStatsFromUpdateJson() {
     try {
-        const response = await fetch('../data/update.json');
+        const response = await fetch('data/update.json');
         if (!response.ok) throw new Error('Update data not found');
         const data = await response.json();
         
-        const currentSeason = '2025';
+        const currentSeason = CURRENT_SEASON;
         const rankings = data[currentSeason].rankings;
         
         if (rankings) {
@@ -252,9 +306,7 @@ async function loadStatsFromUpdateJson() {
         }
         
         // Find next game from schedule
-        const scheduleResponse = await fetch(`../data/${currentSeason}-schedule.json`);
-        if (!scheduleResponse.ok) throw new Error('Schedule not found');
-        const games = await scheduleResponse.json();
+        const games = await loadScheduleDataForSeason(currentSeason);
         
         // Find next game (first TBD game)
         const nextGame = games.find(game => 
@@ -286,19 +338,19 @@ async function loadStatsFromUpdateJson() {
 async function loadSeasonLeaders() {
     try {
         // Load player data for names
-        const playersResponse = await fetch('../data/players.json');
+        const playersResponse = await fetch('data/players.json');
         if (!playersResponse.ok) throw new Error('Player data not found');
         const playerData = await playersResponse.json();
         
         // Load game logs data
-        const gameLogsResponse = await fetch('../data/gameLogs.json');
+        const gameLogsResponse = await fetch('data/gameLogs.json');
         if (!gameLogsResponse.ok) throw new Error('Game logs not found');
         const gameLogsData = await gameLogsResponse.json();
         
         // Load schedule data for current season to identify exhibition games
         let scheduleData = [];
         try {
-            const scheduleResponse = await fetch(`../data/${CURRENT_SEASON}-schedule.json`);
+            const scheduleResponse = await fetch(`data/${CURRENT_SEASON}-schedule.json`);
             if (scheduleResponse.ok) {
                 scheduleData = await scheduleResponse.json();
             }
@@ -443,9 +495,7 @@ function displayLeader(elementId, player, statType) {
 
 async function loadRecentGames() {
     try {
-        const response = await fetch(`../data/${CURRENT_SEASON}-schedule.json`);
-        if (!response.ok) throw new Error('Schedule not found');
-        const games = await response.json();
+        const games = await loadScheduleDataForSeason(CURRENT_SEASON);
         
         // Filter completed games and sort by date (newest first)
         const completedGames = games.filter(game => 
@@ -526,7 +576,8 @@ function updateRecentGamesTable(games) {
 }
 
 // Combined DOMContentLoaded handler
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    await initializeCurrentSeason();
     initLineBackground(); // Initialize background
     loadStatsFromUpdateJson(); // Load all stats from data/update.json and next game
     loadSeasonLeaders();

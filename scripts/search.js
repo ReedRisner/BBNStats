@@ -75,28 +75,23 @@ async function loadSearchData() {
         if (playersResponse.ok) {
             const playersData = await playersResponse.json();
             
-            // Load 2025 players
-            if (playersData.seasons && playersData.seasons["2025"] && playersData.seasons["2025"].players) {
-                playersData.seasons["2025"].players.forEach(player => {
-                    searchData.players.push({
-                        title: player.name,
-                        description: `${player.pos} • ${player.grade} • #${player.number}`,
-                        url: `${basePath}pages/players.html?player=${encodeURIComponent(player.name)}`,
-                        category: 'players',
-                        searchTerms: [player.name, player.pos, player.grade, player.number, 'player', 'basketball'].join(' ').toLowerCase()
-                    });
-                });
-            }
-            
-            // Load 2024 players with season indicator
-            if (playersData.seasons && playersData.seasons["2024"] && playersData.seasons["2024"].players) {
-                playersData.seasons["2024"].players.forEach(player => {
-                    searchData.players.push({
-                        title: player.name + ' (2024-25)',
-                        description: `${player.pos} • ${player.grade} • #${player.number} (2024-25 Season)`,
-                        url: `${basePath}pages/players.html?player=${encodeURIComponent(player.name)}&season=2024`,
-                        category: 'players',
-                        searchTerms: [player.name, player.pos, player.grade, player.number, 'player', 'basketball', '2024'].join(' ').toLowerCase()
+            if (playersData.seasons) {
+                const seasons = Object.keys(playersData.seasons).sort((a, b) => Number(b) - Number(a));
+                const latestSeason = seasons[0];
+
+                seasons.forEach(season => {
+                    const isLatest = season === latestSeason;
+                    const seasonLabel = `${season}-${Number(season) + 1}`;
+                    const seasonPlayers = playersData.seasons[season]?.players || [];
+
+                    seasonPlayers.forEach(player => {
+                        searchData.players.push({
+                            title: isLatest ? player.name : `${player.name} (${seasonLabel})`,
+                            description: `${player.pos} • ${player.grade} • #${player.number}${isLatest ? '' : ` (${seasonLabel} Season)`}`,
+                            url: `${basePath}pages/players.html?player=${encodeURIComponent(player.name)}${isLatest ? '' : `&season=${season}`}`,
+                            category: 'players',
+                            searchTerms: [player.name, player.pos, player.grade, player.number, 'player', 'basketball', season].join(' ').toLowerCase()
+                        });
                     });
                 });
             }
