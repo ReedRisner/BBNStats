@@ -1,495 +1,464 @@
 [
-
-    {
-        "date": "October 24, 2025",
-        "opponent": "vs Purdue",
-        "logo": "purdue.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 78-65",
-        "quad": 1
-        ,"conference": false,
-        "exh": true,
-        "day": "Friday"
-        ,"venue": "home"
-        ,"title": "Exhibition"
-        ,"time": "6:00 PM ET"
-        ,"opponentRank": 1
-    },
-    {
-        "date": "October 30, 2025",
-        "opponent": "vs Georgetown",
-        "logo": "georgetown.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "L 70-84",
-        "quad": 1
-        ,"conference": false
-        , "exh": true
-        ,"day": "Thursday"
-        ,"venue": "home"
-        ,"title": "Exhibition"
-        ,"time": "7:00 PM ET"
-
-    },
-    {
-        "date": "November 4, 2025",
-        "opponent": "vs Nicholls ",
-        "logo": "nicholls.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 77-51",
-        "quad": 4
-        ,"conference": false
-        , "exh": false
-        ,"day": "Tuesday"
-        ,"venue": "home"
-        ,"time": "7:00 PM ET"
-
-    },
-    {
-        "date": "November 7, 2025",
-        "opponent": "vs Valparaiso",
-        "logo": "valparaiso.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 107-59",
-        "quad": 4
-        ,"conference": false
-        , "exh": false
-        ,"day": "Friday"
-        ,"venue": "home"
-        ,"time": "7:00 PM ET"
-
-    },
-    {
-        "date": "November 11, 2025",
-        "opponent": "at Louisville",
-        "logo": "louisville.png",
-        "location": "KFC Yum! Center | Louisville, Ky.",
-        "result": "L 88-96",
-        "quad": 1
-        ,"conference": false
-        , "exh": false
-        ,"day": "Tuesday"
-        ,"venue": "away"
-        ,"time": "8:00 PM ET"
-        ,"opponentRank": 12
-    },
-    {
-        "date": "November 14, 2025",
-        "opponent": "vs Eastern Illinois",
-        "logo": "eastern-illinois.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 99-53",
-        "quad": 4
-        ,"conference": false
-        , "exh": false
-        ,"day": "Friday"
-        ,"venue": "home"
-        ,"time": "7:00 PM ET"
-
-    },
-    {
-        "date": "November 18, 2025",
-        "opponent": "vs Michigan State",
-        "logo": "michigan-state.png",
-        "location": "Madison Square Garden | New York, NY.",
-        "result": "L 66-83",
-        "quad": 1
-        ,"conference": false
-        , "exh": false
-        ,"opponentRank": 0
-        ,"day": "Tuesday"
-        ,"venue": "away"
-        ,"time": "6:30 PM ET"
-        ,"opponentRank": 17
-    },
-    {
-        "date": "November 21, 2025",
-        "opponent": "vs Loyola (Maryland)",
-        "logo": "loyola.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 88-46",
-        "quad": 4
-        ,"conference": false
-        , "exh": false
-        ,"day": "Friday"
-        ,"venue": "home"
-        ,"time": "7:00 PM ET"
-    },
-    {
-        "date": "November 26, 2025",
-        "opponent": "vs Tennessee Tech",
-        "logo": "tt.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 104-54",
-        "quad": 4
-        ,"conference": false
-        , "exh": false
-        ,"day": "Wednesday"
-        ,"venue": "home"
-        ,"time": "7:00 PM ET"
-    },
-    {
-        "date": "December 2, 2025",
-        "opponent": "vs North Carolina",
-        "logo": "unc.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "L 64-67",
-        "quad": 1
-        ,"conference": false
-        , "exh": false
-        ,"day": "Tuesday"
-        ,"venue": "home"
-        ,"time": "9:30 PM ET"
-        ,"opponentRank": 16
-    },
-    {
-        "date": "December 5, 2025",
-        "opponent": "vs Gonzaga",
-        "logo": "gonzaga.png",
-        "location": "Bridgestone Arena | Nashville, TN.",
-        "result": "L 59-94",
-        "quad": 1
-        ,"conference": false
-        , "exh": false
-        ,"day": "Friday"
-        ,"venue": "away"
-        ,"time": "7:00 PM ET"
-        ,"opponentRank": 11
-    },
-    {
-        "date": "December 9, 2025",
-        "opponent": "vs North Carolina Central",
-        "logo": "ncc.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 103-67",
-        "quad": 4
-        ,"conference": false
-        , "exh": false
-        ,"day": "Tuesday"
-        ,"venue": "home"
-        ,"time": "7:00 PM ET"
-    },
-    {
-        "date": "December 13, 2025",
-        "opponent": "vs Indiana",
-        "logo": "indiana.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 72-60",
-        "quad": 1
-        ,"conference": false
-        , "exh": false
-        ,"day": "Saturday"
-        ,"venue": "home"
-        ,"time": "7:30 PM ET"
-    },
-    {
-        "date": "December 20, 2025",
-        "opponent": "vs St. Johns",
-        "logo": "st-johns.png",
-        "location": "State Farm Arena | Atlanta, GA.",
-        "result": "W 78-66",
-        "quad": 1
-        ,"conference": false
-        , "exh": false
-        ,"day": "Saturday"
-        ,"venue": "away"
-        ,"time": "12:30 PM ET"
-        ,"opponentRank": 22
-    },
-    {
-        "date": "December 23, 2025",
-        "opponent": "vs Bellarmine",
-        "logo": "bellermine.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 99-85",
-        "quad": 4
-        ,"conference": false
-        , "exh": false
-        ,"day": "Tuesday"
-        ,"venue": "home"
-        ,"time": "1:00 PM ET"
-    },
-    {
-        "date": "January 4, 2026",
-        "opponent": "at Alabama",
-        "logo": "alabama.png",
-        "location": "Coleman Coliseum | Tuscaloosa, Al.",
-        "result": "L 74-89",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"day": "Saturday"
-        ,"venue": "away"
-        ,"time": "1:00 PM ET"
-        ,"opponentRank": 14
-    },
-    {
-        "date": "January 7, 2026",
-        "opponent": "vs Mizzou",
-        "logo": "missouri.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "L 68-73",
-        "quad": 3
-        ,"conference": true
-        , "exh": false
-        ,"opponentRank": 0
-        ,"day": "Wednesday"
-        ,"venue": "home"
-        ,"time": "7:00 PM ET"
-    },
-    {
-        "date": "January 10, 2026",
-        "opponent": "vs Mississippi State",
-        "logo": "mississippi-state.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 92-68",
-        "quad": 3
-        ,"conference": true
-        , "exh": false
-        ,"day": "Saturday"
-        ,"venue": "home"
-        ,"time": "8:30 PM ET"
-    },
-    {
-        "date": "January 14, 2026",
-        "opponent": "at LSU",
-        "logo": "lsu.png",
-        "location": "Pete Maravich Assembly Center | Baton Rouge, La.",
-        "result": "W 75-74",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"day": "Tuesday"
-        ,"venue": "away"
-        ,"time": "7:00 PM ET"
-    },
-    {
-        "date": "January 17, 2026",
-        "opponent": "at Tennessee",
-        "logo": "tennessee.png",
-        "location": "Thompson-Boling Arena at Food City Center | Knoxville, Tn.",
-        "result": "W 80-78",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"day": "Saturday"
-        ,"time": "12:00 PM ET"
-        ,"venue": "away"
-        ,"opponentRank": 24
-    },
-    {
-        "date": "January 21, 2026",
-        "opponent": "vs Texas",
-        "logo": "texas.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 85-80",
-        "quad": 2
-        ,"conference": true
-        , "exh": false
-        ,"day": "Wednesday"
-        ,"venue": "home"
-        ,"time": "7:00 PM ET"
-    },
-    {
-        "date": "January 24, 2026",
-        "opponent": "vs Ole Miss",
-        "logo": "ole-miss.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "W 72-63",
-        "quad": 3
-        ,"conference": true
-        , "exh": false
-        ,"day": "Saturday"
-        ,"venue": "home"
-        ,"time": "11:00 AM ET"
-    },
-    {
-        "date": "January 27, 2026",
-        "opponent": "at Vanderbilt",
-        "logo": "vanderbilt.png",
-        "location": "Memorial Gymnasium | Nashville, Tn.",
-        "result": "L 55-80",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"day": "Tuesday"
-        ,"venue": "away"
-        ,"time": "9:00 PM ET"
-        ,"opponentRank": 18
-    },
-    {
-        "date": "January 31, 2026",
-        "opponent": "at Arkansas",
-        "logo": "arkansas.png",
-        "location": "Bud Walton Arena | Fayetteville, Ar.",
-        "result": "TBD",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"opponentRank": 0
-        ,"day": "Saturday"
-        ,"venue": "away"
-        ,"time": "6:30 PM ET"
-        ,"opponentRank": 15
-    },
-    {
-        "date": "February 3, 2026",
-        "opponent": "vs Oklahoma",
-        "logo": "oklahoma.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "TBD",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"day": "Tuesday"
-        ,"venue": "home"
-        ,"time": "7:00 PM ET"
-    },
-    {
-        "date": "February 7, 2026",
-        "opponent": "vs Tennessee",
-        "logo": "tennessee.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "TBD",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"opponentRank": 0
-        ,"day": "Saturday"
-        ,"venue": "home"
-        ,"time": "8:30 PM ET"
-        
-    },
-    {
-        "date": "February 14, 2026",
-        "opponent": "at Florida",
-        "logo": "florida.png",
-        "location": "Exactech Arena at Stephen C. O'Connell Center | Gainesville, Fl.",
-        "result": "TBD",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"opponentRank": 0
-        ,"day": "Saturday"
-        ,"venue": "away"
-        ,"time": "3:00 PM ET"
-        ,"opponentRank": 19
-
-    },
-    {
-        "date": "February 17, 2026",
-        "opponent": "vs Georgia",
-        "logo": "georgia.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "TBD",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"day": "Tuesday"
-        ,"venue": "home"
-        ,"time": "9:00 PM ET"
-        ,"opponentRank": 21
-    },
-    {
-        "date": "February 21, 2026",
-        "opponent": "at Auburn",
-        "logo": "auburn.png",
-        "location": "Neville Arena | Auburn, Al.",
-        "result": "TBD",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"opponentRank": 0
-        ,"day": "Saturday"
-        ,"venue": "away"
-        ,"time": "8:30 PM ET"
-    },
-    {
-        "date": "February 24, 2026",
-        "opponent": "at South Carolina",
-        "logo": "south-carolina.png",
-        "location": "Colonial Life Arena | Columbia, S.C.",
-        "result": "TBD",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"day": "Tuesday"
-        ,"venue": "away"
-        ,"time": "7:00 PM ET"
-    },
-    {
-        "date": "February 28, 2026",
-        "opponent": "vs Vanderbilt",
-        "logo": "vanderbilt.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "TBD",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"day": "Saturday"
-        ,"venue": "home"
-        ,"time": "2:00 PM ET"
-        ,"opponentRank": 10
-    },
-    {
-        "date": "March 3, 2026",
-        "opponent": "at Texas A&M",
-        "logo": "texas-am.png",
-        "location": "Reed Arena | Bryan-College Station, Tx.",
-        "result": "TBD",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"day": "Tuesday"
-        ,"venue": "away"
-        ,"time": "7:00 PM ET"
-    },
-    {
-        "date": "March 7, 2026",
-        "opponent": "vs Florida",
-        "logo": "florida.png",
-        "location": "Rupp Arena | Lexington, Ky.",
-        "result": "TBD",
-        "quad": 1
-        ,"conference": true
-        , "exh": false
-        ,"opponentRank": 0
-        ,"day": "Saturday"
-        ,"venue": "home"
-        ,"time": "4:00 PM ET"
-        ,"opponentRank": 19
-    }
-    
-
+  {
+    "date": "November 5, 2024",
+    "day": "Tuesday",
+    "opponent": "vs Wright State Raiders",
+    "location": "Rupp Arena",
+    "time": "12:00 AM",
+    "result": "W 103-62",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401714908",
+    "rawDate": "2024-11-05T00:00Z"
+  },
+  {
+    "date": "November 9, 2024",
+    "day": "Saturday",
+    "opponent": "vs Bucknell Bison",
+    "location": "Rupp Arena",
+    "time": "9:00 PM",
+    "result": "W 100-72",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401714909",
+    "rawDate": "2024-11-09T21:00Z"
+  },
+  {
+    "date": "November 13, 2024",
+    "day": "Wednesday",
+    "opponent": "vs Duke Blue Devils",
+    "location": "State Farm Arena",
+    "time": "2:00 AM",
+    "result": "W 77-72",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 6,
+    "eventId": "401706883",
+    "rawDate": "2024-11-13T02:00Z"
+  },
+  {
+    "date": "November 20, 2024",
+    "day": "Wednesday",
+    "opponent": "vs Lipscomb Bisons",
+    "location": "Rupp Arena",
+    "time": "12:00 AM",
+    "result": "W 97-68",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401711685",
+    "rawDate": "2024-11-20T00:00Z"
+  },
+  {
+    "date": "November 23, 2024",
+    "day": "Saturday",
+    "opponent": "vs Jackson State Tigers",
+    "location": "Rupp Arena",
+    "time": "12:00 AM",
+    "result": "W 108-59",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401714910",
+    "rawDate": "2024-11-23T00:00Z"
+  },
+  {
+    "date": "November 26, 2024",
+    "day": "Tuesday",
+    "opponent": "vs Western Kentucky Hilltoppers",
+    "location": "Rupp Arena",
+    "time": "11:30 PM",
+    "result": "W 87-68",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401714911",
+    "rawDate": "2024-11-26T23:30Z"
+  },
+  {
+    "date": "November 30, 2024",
+    "day": "Saturday",
+    "opponent": "vs Georgia State Panthers",
+    "location": "Rupp Arena",
+    "time": "12:00 AM",
+    "result": "W 105-76",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401714912",
+    "rawDate": "2024-11-30T00:00Z"
+  },
+  {
+    "date": "December 4, 2024",
+    "day": "Wednesday",
+    "opponent": "at Clemson Tigers",
+    "location": "Littlejohn Coliseum",
+    "time": "2:30 AM",
+    "result": "L 66-70",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401700423",
+    "rawDate": "2024-12-04T02:30Z"
+  },
+  {
+    "date": "December 8, 2024",
+    "day": "Sunday",
+    "opponent": "at Gonzaga Bulldogs",
+    "location": "Climate Pledge Arena",
+    "time": "3:00 AM",
+    "result": "W 90-89",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 7,
+    "eventId": "401714913",
+    "rawDate": "2024-12-08T03:00Z"
+  },
+  {
+    "date": "December 12, 2024",
+    "day": "Thursday",
+    "opponent": "vs Colgate Raiders",
+    "location": "Rupp Arena",
+    "time": "1:00 AM",
+    "result": "W 78-67",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401714914",
+    "rawDate": "2024-12-12T01:00Z"
+  },
+  {
+    "date": "December 14, 2024",
+    "day": "Saturday",
+    "opponent": "vs Louisville Cardinals",
+    "location": "Rupp Arena",
+    "time": "10:15 PM",
+    "result": "W 93-85",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401700432",
+    "rawDate": "2024-12-14T22:15Z"
+  },
+  {
+    "date": "December 21, 2024",
+    "day": "Saturday",
+    "opponent": "at Ohio State Buckeyes",
+    "location": "Madison Square Garden",
+    "time": "10:30 PM",
+    "result": "L 65-85",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401714915",
+    "rawDate": "2024-12-21T22:30Z"
+  },
+  {
+    "date": "December 31, 2024",
+    "day": "Tuesday",
+    "opponent": "vs Brown Bears",
+    "location": "Rupp Arena",
+    "time": "7:00 PM",
+    "result": "W 88-54",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401714916",
+    "rawDate": "2024-12-31T19:00Z"
+  },
+  {
+    "date": "January 4, 2025",
+    "day": "Saturday",
+    "opponent": "vs Florida Gators",
+    "location": "Rupp Arena",
+    "time": "4:00 PM",
+    "result": "W 106-100",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 6,
+    "eventId": "401708302",
+    "rawDate": "2025-01-04T16:00Z"
+  },
+  {
+    "date": "January 8, 2025",
+    "day": "Wednesday",
+    "opponent": "at Georgia Bulldogs",
+    "location": "Stegeman Coliseum",
+    "time": "12:00 AM",
+    "result": "L 69-82",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401708311",
+    "rawDate": "2025-01-08T00:00Z"
+  },
+  {
+    "date": "January 12, 2025",
+    "day": "Sunday",
+    "opponent": "at Mississippi State Bulldogs",
+    "location": "Humphrey Coliseum",
+    "time": "1:30 AM",
+    "result": "W 95-90",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 14,
+    "eventId": "401708319",
+    "rawDate": "2025-01-12T01:30Z"
+  },
+  {
+    "date": "January 15, 2025",
+    "day": "Wednesday",
+    "opponent": "vs Texas A&M Aggies",
+    "location": "Rupp Arena",
+    "time": "12:00 AM",
+    "result": "W 81-69",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 11,
+    "eventId": "401708327",
+    "rawDate": "2025-01-15T00:00Z"
+  },
+  {
+    "date": "January 18, 2025",
+    "day": "Saturday",
+    "opponent": "vs Alabama Crimson Tide",
+    "location": "Rupp Arena",
+    "time": "5:00 PM",
+    "result": "L 97-102",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 4,
+    "eventId": "401708334",
+    "rawDate": "2025-01-18T17:00Z"
+  },
+  {
+    "date": "January 25, 2025",
+    "day": "Saturday",
+    "opponent": "at Vanderbilt Commodores",
+    "location": "Memorial Gymnasium (TN)",
+    "time": "7:30 PM",
+    "result": "L 69-74",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401708352",
+    "rawDate": "2025-01-25T19:30Z"
+  },
+  {
+    "date": "January 29, 2025",
+    "day": "Wednesday",
+    "opponent": "at Tennessee Volunteers",
+    "location": "Food City Center",
+    "time": "12:00 AM",
+    "result": "W 78-73",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 8,
+    "eventId": "401708354",
+    "rawDate": "2025-01-29T00:00Z"
+  },
+  {
+    "date": "February 2, 2025",
+    "day": "Sunday",
+    "opponent": "vs Arkansas Razorbacks",
+    "location": "Rupp Arena",
+    "time": "2:00 AM",
+    "result": "L 79-89",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401708361",
+    "rawDate": "2025-02-02T02:00Z"
+  },
+  {
+    "date": "February 5, 2025",
+    "day": "Wednesday",
+    "opponent": "at Ole Miss Rebels",
+    "location": "The Sandy and John Black Pavilion at Ole Miss",
+    "time": "12:00 AM",
+    "result": "L 84-98",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 25,
+    "eventId": "401708371",
+    "rawDate": "2025-02-05T00:00Z"
+  },
+  {
+    "date": "February 8, 2025",
+    "day": "Saturday",
+    "opponent": "vs South Carolina Gamecocks",
+    "location": "Rupp Arena",
+    "time": "5:00 PM",
+    "result": "W 80-57",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401708377",
+    "rawDate": "2025-02-08T17:00Z"
+  },
+  {
+    "date": "February 12, 2025",
+    "day": "Wednesday",
+    "opponent": "vs Tennessee Volunteers",
+    "location": "Rupp Arena",
+    "time": "12:00 AM",
+    "result": "W 75-64",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 5,
+    "eventId": "401708383",
+    "rawDate": "2025-02-12T00:00Z"
+  },
+  {
+    "date": "February 16, 2025",
+    "day": "Sunday",
+    "opponent": "at Texas Longhorns",
+    "location": "Moody Center",
+    "time": "1:00 AM",
+    "result": "L 78-82",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401708396",
+    "rawDate": "2025-02-16T01:00Z"
+  },
+  {
+    "date": "February 20, 2025",
+    "day": "Thursday",
+    "opponent": "vs Vanderbilt Commodores",
+    "location": "Rupp Arena",
+    "time": "12:00 AM",
+    "result": "W 82-61",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401708400",
+    "rawDate": "2025-02-20T00:00Z"
+  },
+  {
+    "date": "February 22, 2025",
+    "day": "Saturday",
+    "opponent": "at Alabama Crimson Tide",
+    "location": "Coleman Coliseum",
+    "time": "11:10 PM",
+    "result": "L 83-96",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 4,
+    "eventId": "401708404",
+    "rawDate": "2025-02-22T23:10Z"
+  },
+  {
+    "date": "February 27, 2025",
+    "day": "Thursday",
+    "opponent": "at Oklahoma Sooners",
+    "location": "Lloyd Noble Center",
+    "time": "2:00 AM",
+    "result": "W 83-82",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401708419",
+    "rawDate": "2025-02-27T02:00Z"
+  },
+  {
+    "date": "March 1, 2025",
+    "day": "Saturday",
+    "opponent": "vs Auburn Tigers",
+    "location": "Rupp Arena",
+    "time": "6:00 PM",
+    "result": "L 78-94",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 1,
+    "eventId": "401708421",
+    "rawDate": "2025-03-01T18:00Z"
+  },
+  {
+    "date": "March 5, 2025",
+    "day": "Wednesday",
+    "opponent": "vs LSU Tigers",
+    "location": "Rupp Arena",
+    "time": "12:00 AM",
+    "result": "W 95-64",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401708429",
+    "rawDate": "2025-03-05T00:00Z"
+  },
+  {
+    "date": "March 8, 2025",
+    "day": "Saturday",
+    "opponent": "at Missouri Tigers",
+    "location": "Mizzou Arena",
+    "time": "5:00 PM",
+    "result": "W 91-83",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 15,
+    "eventId": "401708441",
+    "rawDate": "2025-03-08T17:00Z"
+  },
+  {
+    "date": "March 14, 2025",
+    "day": "Friday",
+    "opponent": "vs Oklahoma Sooners",
+    "location": "Bridgestone Arena",
+    "time": "2:45 AM",
+    "result": "W 85-84",
+    "venue": "home",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 99,
+    "eventId": "401744164",
+    "rawDate": "2025-03-14T02:45Z"
+  },
+  {
+    "date": "March 15, 2025",
+    "day": "Saturday",
+    "opponent": "at Alabama Crimson Tide",
+    "location": "Bridgestone Arena",
+    "time": "1:52 AM",
+    "result": "L 70-99",
+    "venue": "away",
+    "conference": true,
+    "exh": false,
+    "opponentRank": 5,
+    "eventId": "401744171",
+    "rawDate": "2025-03-15T01:52Z"
+  }
 ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
