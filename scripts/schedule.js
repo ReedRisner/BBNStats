@@ -1,6 +1,13 @@
 const DEFAULT_SEASON = '2025';
 const ESPN_KENTUCKY_SCHEDULE_API = 'https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/96/schedule';
 
+function normalizeScore(score) {
+    if (typeof score === 'object' && score !== null) {
+        return score.displayValue || score.value || '0';
+    }
+    return score ?? '0';
+}
+
 function getSeasonOptions() {
     const seasonSelect = document.getElementById('seasonSelect');
     if (!seasonSelect) return [DEFAULT_SEASON];
@@ -25,9 +32,10 @@ async function fetchScheduleFromAPI(season) {
             const competitors = competition?.competitors || [];
             const opponent = competitors.find((team) => team?.team?.id !== '96') || competitors[0] || {};
             const status = competition?.status?.type?.description || 'TBD';
-            const winner = competition?.status?.type?.completed ? (opponent?.winner ? 'L' : 'W') : '';
-            const ourScore = competitors.find((team) => team?.team?.id === '96')?.score;
-            const oppScore = opponent?.score;
+            const ourTeam = competitors.find((team) => team?.team?.id === '96') || {};
+            const winner = competition?.status?.type?.completed ? (ourTeam?.winner ? 'W' : 'L') : '';
+            const ourScore = normalizeScore(ourTeam?.score);
+            const oppScore = normalizeScore(opponent?.score);
 
             return {
                 day: new Date(event.date).toLocaleDateString('en-US', { weekday: 'short' }),
