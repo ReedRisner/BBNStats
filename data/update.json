@@ -1,0 +1,156 @@
+{
+  "2025": {
+    "stats": {
+      "Offensive Rating": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Defensive Rating": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Net Rating": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Tempo": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "eFG%": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "TS%": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "3P%": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "2P%": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "FT%": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Offensive Rebound %": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Defensive Rebound %": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Assist %": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Turnover %": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Steal %": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Block %": {
+        "value": "0.0",
+        "rank": "-"
+      }
+    },
+    "rankings": {
+      "Overall Record": "0-0",
+      "Conference Standings": "0-0",
+      "AP Poll": "-",
+      "KenPom": "-",
+      "NET Rankings": "-",
+      "Evan Miya": "-",
+      "Barttorvik": "-",
+      "Bracketology": "-",
+      "AP Top 25 Record": "0-0",
+      "Win Percentage": "-"
+    },
+    "updatedAt": "2026-02-24T23:38:39Z"
+  },
+  "2024": {
+    "stats": {
+      "Offensive Rating": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Defensive Rating": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Net Rating": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Tempo": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "eFG%": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "TS%": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "3P%": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "2P%": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "FT%": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Offensive Rebound %": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Defensive Rebound %": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Assist %": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Turnover %": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Steal %": {
+        "value": "0.0",
+        "rank": "-"
+      },
+      "Block %": {
+        "value": "0.0",
+        "rank": "-"
+      }
+    },
+    "rankings": {
+      "Overall Record": "0-0",
+      "Conference Standings": "0-0",
+      "AP Poll": "-",
+      "KenPom": "-",
+      "NET Rankings": "-",
+      "Evan Miya": "-",
+      "Barttorvik": "-",
+      "Bracketology": "-",
+      "AP Top 25 Record": "0-0",
+      "Win Percentage": "-"
+    },
+    "updatedAt": "2026-02-24T23:38:39Z"
+  }
+}

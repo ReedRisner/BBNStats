@@ -1,80 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BBN Stats | Kentucky Basketball Intelligence</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles/index.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BBN Stats</title>
+  <link rel="icon" type="image/x-icon" href="images/uk-logo/favicon.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body{background:#f6f9ff}.hero{background:#0033a0;color:#fff;border-radius:16px}.nav-card{border:1px solid #e5e7eb;border-radius:14px;transition:.2s}.nav-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+  </style>
 </head>
 <body>
-  <div class="bg-glow bg-glow-1"></div>
-  <div class="bg-glow bg-glow-2"></div>
-
-  <header class="site-header">
-    <div>
-      <p class="eyebrow">Kentucky Wildcats Analytics</p>
-      <h1>BBN Stats Reimagined</h1>
-      <p class="subhead">
-        Live, API-driven basketball intelligence powered by CollegeBasketballData across as many historical seasons as available.
-      </p>
-    </div>
-    <div class="controls">
-      <label for="seasonSelect">Season</label>
-      <select id="seasonSelect" aria-label="Select season"></select>
-    </div>
-  </header>
-
-  <main>
-    <section class="kpi-grid" id="kpiGrid">
-      <article class="kpi-card"><h2>Record</h2><p id="recordKpi">--</p></article>
-      <article class="kpi-card"><h2>Games</h2><p id="gamesKpi">--</p></article>
-      <article class="kpi-card"><h2>Avg PPG</h2><p id="ppgKpi">--</p></article>
-      <article class="kpi-card"><h2>Avg Margin</h2><p id="marginKpi">--</p></article>
+  <main class="container py-5">
+    <section class="hero p-5 mb-4 text-center">
+      <img src="images/uk-logo/bbn-stats.png" alt="BBN Stats" style="max-width:120px" class="mb-3">
+      <h1 class="fw-bold">BBN Stats</h1>
+      <p class="mb-0">Your original pages are back, now powered by live API data for automatic updates.</p>
     </section>
 
-    <section class="panel two-col">
-      <article>
-        <h3>Season Snapshot</h3>
-        <p id="snapshotText">Loading season context...</p>
-        <ul id="snapshotFacts" class="fact-list"></ul>
-      </article>
-      <article>
-        <h3>Data Status</h3>
-        <ul id="statusList" class="fact-list"></ul>
-      </article>
-    </section>
-
-    <section class="panel">
-      <h3>Game Results</h3>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th>Date</th><th>Opponent</th><th>Location</th><th>Result</th><th>Score</th></tr>
-          </thead>
-          <tbody id="gamesTableBody"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="panel two-col">
-      <article>
-        <h3>Top Producers</h3>
-        <div id="leadersList" class="leaders"></div>
-      </article>
-      <article>
-        <h3>Roster</h3>
-        <div id="rosterList" class="roster-grid"></div>
-      </article>
+    <section class="row g-3">
+      <div class="col-md-4"><a class="text-decoration-none" href="pages/players.html"><div class="p-4 bg-white nav-card"><h5><i class="fa-solid fa-users me-2"></i>Players</h5></div></a></div>
+      <div class="col-md-4"><a class="text-decoration-none" href="pages/schedule.html"><div class="p-4 bg-white nav-card"><h5><i class="fa-solid fa-calendar me-2"></i>Schedule</h5></div></a></div>
+      <div class="col-md-4"><a class="text-decoration-none" href="pages/stats.html"><div class="p-4 bg-white nav-card"><h5><i class="fa-solid fa-chart-column me-2"></i>Statistics</h5></div></a></div>
+      <div class="col-md-4"><a class="text-decoration-none" href="pages/rankings.html"><div class="p-4 bg-white nav-card"><h5><i class="fa-solid fa-ranking-star me-2"></i>Rankings</h5></div></a></div>
+      <div class="col-md-4"><a class="text-decoration-none" href="pages/comparison.html"><div class="p-4 bg-white nav-card"><h5><i class="fa-solid fa-scale-balanced me-2"></i>Comparison</h5></div></a></div>
+      <div class="col-md-4"><a class="text-decoration-none" href="pages/news.html"><div class="p-4 bg-white nav-card"><h5><i class="fa-solid fa-newspaper me-2"></i>News</h5></div></a></div>
     </section>
   </main>
-
-  <template id="statusItemTemplate">
-    <li><strong></strong><span></span></li>
-  </template>
-
-  <script src="scripts/index.js" type="module"></script>
 </body>
 </html>
