@@ -20,7 +20,9 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Refresh BBN stats data from ESPN APIs
+      - name: Refresh BBN stats data from CollegeBasketballData APIs
+        env:
+          COLLEGE_BASKETBALL_DATA_API_KEY: ${{ secrets.COLLEGE_BASKETBALL_DATA_API_KEY }}
         run: node scripts/espn-data-sync.mjs
 
       - name: Commit changes

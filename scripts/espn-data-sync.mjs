@@ -3,17 +3,28 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 const TEAM_ID = '96';
-const SPORT = 'basketball';
-const LEAGUE = 'mens-college-basketball';
-const API_BASE = `https://site.api.espn.com/apis/site/v2/sports/${SPORT}/${LEAGUE}`;
+const TEAM_NAME = 'Kentucky';
+const API_BASE = 'https://api.collegebasketballdata.com';
+const API_KEY = process.env.COLLEGE_BASKETBALL_DATA_API_KEY;
 const REPO_ROOT = process.cwd();
 const DATA_DIR = path.join(REPO_ROOT, 'data');
 
-const fetchJson = async (url) => {
+if (!API_KEY) {
+  throw new Error('Missing COLLEGE_BASKETBALL_DATA_API_KEY environment variable.');
+}
+
+const fetchJson = async (pathName, params = {}) => {
+  const url = new URL(`${API_BASE}${pathName}`);
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null && value !== '') url.searchParams.set(key, value);
+  }
+
   const response = await fetch(url, {
     headers: {
-      'User-Agent': 'BBNStatsDataSync/1.0',
-      Accept: 'application/json'
+      'User-Agent': 'BBNStatsDataSync/2.0',
+      Accept: 'application/json',
+      Authorization: `Bearer ${API_KEY}`,
+      'x-api-key': API_KEY
     }
   });
 
@@ -24,81 +35,88 @@ const fetchJson = async (url) => {
   return response.json();
 };
 
-const scoreValue = (team) => {
-  const raw = team?.score;
-  if (typeof raw === 'object' && raw !== null) return String(raw.value ?? raw.displayValue ?? '0');
-  return String(raw ?? '0');
+const firstSuccessful = async (calls) => {
+  const errors = [];
+  for (const call of calls) {
+    try {
+      return await call();
+    } catch (error) {
+      errors.push(error.message);
+    }
+  }
+  throw new Error(errors.join(' | '));
 };
+
+const normalizeArray = (value) => (Array.isArray(value) ? value : (value?.data || value?.results || []));
 
 const seasonLabel = (season) => `${season}-${Number(season) + 1}`;
 
-const mapScheduleGame = (event) => {
-  const competition = event?.competitions?.[0] ?? {};
-  const competitors = competition?.competitors ?? [];
-  const uk = competitors.find((item) => item?.team?.id === TEAM_ID) ?? {};
-  const opponent = competitors.find((item) => item?.team?.id !== TEAM_ID) ?? {};
-  const statusType = competition?.status?.type ?? {};
-  const completed = Boolean(statusType.completed);
-  const ukWon = completed ? Boolean(uk?.winner) : null;
+const normalize = (name = '') => name.toLowerCase().replace(/[^a-z0-9]/g, '');
 
-  const eventDate = new Date(event?.date ?? Date.now());
-  const isAway = uk?.homeAway === 'away';
+const parseDate = (value) => {
+  const date = value ? new Date(value) : new Date();
+  return Number.isNaN(date.getTime()) ? new Date() : date;
+};
+
+const formatScheduleGame = (game) => {
+  const date = parseDate(game.date || game.startDate || game.gameDate);
+  const homeAway = String(game.homeAway || game.venue || '').toLowerCase();
+  const isAway = homeAway.includes('away');
   const venue = isAway ? 'away' : 'home';
-  const matchupPrefix = isAway ? 'at' : 'vs';
+  const opponentName = game.opponentName || game.opponent || game.awayTeam || game.homeTeam || 'TBD';
+  const prefixedOpponent = /^vs\s|^at\s/i.test(opponentName)
+    ? opponentName
+    : `${isAway ? 'at' : 'vs'} ${opponentName}`;
+
+  const teamScore = Number(game.teamScore ?? game.teamPoints ?? game.pointsFor ?? game.homeScore ?? 0);
+  const oppScore = Number(game.opponentScore ?? game.opponentPoints ?? game.pointsAgainst ?? game.awayScore ?? 0);
+  const completed = Number.isFinite(teamScore) && Number.isFinite(oppScore) && (teamScore > 0 || oppScore > 0);
 
   return {
-    date: eventDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
-    day: eventDate.toLocaleDateString('en-US', { weekday: 'long' }),
-    opponent: `${matchupPrefix} ${opponent?.team?.displayName ?? 'TBD'}`,
-    location: competition?.venue?.fullName ?? (competition?.neutralSite ? 'Neutral Site' : 'TBD'),
-    time: eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
-    result: completed ? `${ukWon ? 'W' : 'L'} ${scoreValue(uk)}-${scoreValue(opponent)}` : (statusType.shortDetail || statusType.description || 'TBD'),
+    date: date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+    day: date.toLocaleDateString('en-US', { weekday: 'long' }),
+    opponent: prefixedOpponent,
+    location: game.location || game.venueName || game.venue || 'TBD',
+    time: date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+    result: completed
+      ? `${teamScore > oppScore ? 'W' : 'L'} ${teamScore}-${oppScore}`
+      : (game.status || game.result || game.outcome || 'TBD'),
     venue,
-    conference: Boolean(event?.seasonType?.type === 2),
-    exh: false,
-    opponentRank: opponent?.curatedRank?.current || undefined,
-    eventId: event?.id,
-    rawDate: event?.date
+    conference: Boolean(game.conferenceGame ?? game.isConferenceGame ?? false),
+    exh: Boolean(game.exhibition ?? false),
+    opponentRank: game.opponentRank || game.rank || undefined,
+    eventId: String(game.id || game.eventId || game.gameId || ''),
+    rawDate: date.toISOString()
   };
 };
 
 const mapRosterPlayer = (athlete, fallback = {}) => ({
   ...fallback,
-  number: athlete?.jersey || athlete?.displayJersey || fallback.number || '',
-  name: athlete?.displayName || fallback.name || 'Unknown Player',
-  grade: athlete?.experience?.displayValue || fallback.grade || 'N/A',
-  pos: athlete?.position?.abbreviation || fallback.pos || 'N/A',
-  ht: athlete?.displayHeight || fallback.ht || 'N/A',
-  wt: athlete?.displayWeight || fallback.wt || 'N/A',
-  photo: athlete?.headshot?.href || athlete?.headshot || fallback.photo || ''
+  number: String(athlete?.jersey || athlete?.number || fallback.number || ''),
+  name: athlete?.name || athlete?.fullName || `${athlete?.firstName || ''} ${athlete?.lastName || ''}`.trim() || fallback.name || 'Unknown Player',
+  grade: athlete?.class || athlete?.year || athlete?.experience || fallback.grade || 'N/A',
+  pos: athlete?.position || athlete?.pos || fallback.pos || 'N/A',
+  ht: athlete?.height || athlete?.displayHeight || fallback.ht || 'N/A',
+  wt: athlete?.weight || athlete?.displayWeight || fallback.wt || 'N/A',
+  photo: athlete?.photo || athlete?.headshot || fallback.photo || ''
 });
 
-const getStatValue = (stats = [], names = []) => {
-  const hit = stats.find((item) => names.includes(item?.name));
-  return hit?.displayValue || hit?.value || null;
-};
-
-const toBoxscoreRow = (athlete) => {
-  const stats = athlete?.statistics ?? [];
-  return {
-    number: athlete?.athlete?.jersey || '',
-    min: Number(getStatValue(stats, ['minutes']) ?? 0),
-    pts: Number(getStatValue(stats, ['points']) ?? 0),
-    reb: Number(getStatValue(stats, ['rebounds']) ?? 0),
-    ast: Number(getStatValue(stats, ['assists']) ?? 0),
-    stl: Number(getStatValue(stats, ['steals']) ?? 0),
-    blk: Number(getStatValue(stats, ['blocks']) ?? 0),
-    to: Number(getStatValue(stats, ['turnovers']) ?? 0),
-    fgm: Number(getStatValue(stats, ['fieldGoalsMade']) ?? 0),
-    fga: Number(getStatValue(stats, ['fieldGoalAttempts']) ?? 0),
-    threeFgm: Number(getStatValue(stats, ['threePointFieldGoalsMade']) ?? 0),
-    threeFga: Number(getStatValue(stats, ['threePointFieldGoalAttempts']) ?? 0),
-    ftm: Number(getStatValue(stats, ['freeThrowsMade']) ?? 0),
-    fta: Number(getStatValue(stats, ['freeThrowAttempts']) ?? 0)
-  };
-};
-
-const normalize = (name = '') => name.toLowerCase().replace(/[^a-z0-9]/g, '');
+const toBoxscoreRow = (playerStats) => ({
+  number: String(playerStats?.number || playerStats?.jersey || ''),
+  min: Number(playerStats?.min ?? playerStats?.minutes ?? 0),
+  pts: Number(playerStats?.pts ?? playerStats?.points ?? 0),
+  reb: Number(playerStats?.reb ?? playerStats?.rebounds ?? 0),
+  ast: Number(playerStats?.ast ?? playerStats?.assists ?? 0),
+  stl: Number(playerStats?.stl ?? playerStats?.steals ?? 0),
+  blk: Number(playerStats?.blk ?? playerStats?.blocks ?? 0),
+  to: Number(playerStats?.to ?? playerStats?.turnovers ?? 0),
+  fgm: Number(playerStats?.fgm ?? playerStats?.fieldGoalsMade ?? 0),
+  fga: Number(playerStats?.fga ?? playerStats?.fieldGoalAttempts ?? 0),
+  threeFgm: Number(playerStats?.threeFgm ?? playerStats?.threePointFieldGoalsMade ?? 0),
+  threeFga: Number(playerStats?.threeFga ?? playerStats?.threePointFieldGoalAttempts ?? 0),
+  ftm: Number(playerStats?.ftm ?? playerStats?.freeThrowsMade ?? 0),
+  fta: Number(playerStats?.fta ?? playerStats?.freeThrowAttempts ?? 0)
+});
 
 async function main() {
   const playersPath = path.join(DATA_DIR, 'players.json');
@@ -112,48 +130,54 @@ async function main() {
   const season = seasons[0];
   if (!season) throw new Error('No seasons found in players.json');
 
-  const [scheduleResponse, rosterResponse] = await Promise.all([
-    fetchJson(`${API_BASE}/teams/${TEAM_ID}/schedule?season=${season}`),
-    fetchJson(`${API_BASE}/teams/${TEAM_ID}/roster`)
+  const [gamesPayload, rosterPayload] = await Promise.all([
+    firstSuccessful([
+      () => fetchJson('/games', { season, team: TEAM_ID }),
+      () => fetchJson('/games', { season, team: TEAM_NAME }),
+      () => fetchJson('/team/games', { season, teamId: TEAM_ID })
+    ]),
+    firstSuccessful([
+      () => fetchJson('/roster', { season, team: TEAM_ID }),
+      () => fetchJson('/roster', { season, team: TEAM_NAME }),
+      () => fetchJson('/team/roster', { season, teamId: TEAM_ID })
+    ])
   ]);
 
-  const events = scheduleResponse?.events || [];
-  const schedule = events.map(mapScheduleGame);
+  const gamesRaw = normalizeArray(gamesPayload);
+  const schedule = gamesRaw.map(formatScheduleGame);
   await fs.writeFile(path.join(DATA_DIR, `${season}-schedule.json`), `${JSON.stringify(schedule, null, 2)}\n`);
 
   const oldPlayers = existingPlayers.seasons[season]?.players || [];
   const oldByName = new Map(oldPlayers.map((p) => [normalize(p.name), p]));
-  const rosterPlayers = (rosterResponse?.athletes || []).map((athlete) => {
-    const old = oldByName.get(normalize(athlete?.displayName));
-    return mapRosterPlayer(athlete, old);
+  const rosterPlayers = normalizeArray(rosterPayload).map((athlete) => {
+    const name = athlete?.name || athlete?.fullName || `${athlete?.firstName || ''} ${athlete?.lastName || ''}`.trim();
+    return mapRosterPlayer(athlete, oldByName.get(normalize(name)));
   });
+
   existingPlayers.seasons[season].players = rosterPlayers;
   await fs.writeFile(playersPath, `${JSON.stringify(existingPlayers, null, 2)}\n`);
 
   const completed = schedule.filter((game) => game.result.startsWith('W ') || game.result.startsWith('L '));
+
+  const previousSeasonGames = existingGameLogs?.seasons?.[season]?.games || [];
+  const byKey = new Map(previousSeasonGames.map((g) => [`${g.opponent}-${g.date}`, g]));
   const games = [];
 
   for (const game of completed) {
-    if (!game.eventId) continue;
+    const key = `${game.opponent.replace(/^at\s+|^vs\s+/i, '')}-${(game.rawDate || '').slice(0, 10)}`;
+    const existing = byKey.get(key);
 
-    try {
-      const summary = await fetchJson(`${API_BASE}/summary?event=${game.eventId}`);
-      const playersBlocks = summary?.boxscore?.players || [];
-      const ukBlock = playersBlocks.find((block) => String(block?.team?.id) === TEAM_ID);
-      const athleteRows = (ukBlock?.statistics || []).flatMap((section) => section?.athletes || []);
-      const boxscore = athleteRows.map(toBoxscoreRow).filter((row) => row.number !== '');
+    const embeddedBox = normalizeArray(
+      gamesRaw.find((g) => String(g.id || g.eventId || g.gameId || '') === String(game.eventId || ''))?.boxscore
+      || gamesRaw.find((g) => String(g.id || g.eventId || g.gameId || '') === String(game.eventId || ''))?.playerStats
+    ).map(toBoxscoreRow).filter((row) => row.number !== '');
 
-      if (boxscore.length) {
-        games.push({
-          opponent: game.opponent.replace(/^at\s+|^vs\s+/i, ''),
-          date: (game.rawDate || '').slice(0, 10),
-          boxscore,
-          result: game.result
-        });
-      }
-    } catch (error) {
-      console.warn(`Unable to fetch boxscore for event ${game.eventId}:`, error.message);
-    }
+    games.push({
+      opponent: game.opponent.replace(/^at\s+|^vs\s+/i, ''),
+      date: (game.rawDate || '').slice(0, 10),
+      boxscore: embeddedBox.length ? embeddedBox : (existing?.boxscore || []),
+      result: game.result
+    });
   }
 
   existingGameLogs.seasons[season] = { games };
@@ -170,14 +194,15 @@ async function main() {
       'Overall Record': `${wins}-${losses}`
     },
     metadata: {
+      ...(previousUpdate[season]?.metadata || {}),
       season: seasonLabel(season),
       generatedAt: new Date().toISOString(),
-      source: 'ESPN Team APIs'
+      source: 'CollegeBasketballData APIs'
     }
   };
 
   await fs.writeFile(updatePath, `${JSON.stringify(previousUpdate, null, 2)}\n`);
-  console.log(`Updated season ${season}: ${schedule.length} games, ${rosterPlayers.length} players, ${games.length} boxscores`);
+  console.log(`Updated season ${season}: ${schedule.length} games, ${rosterPlayers.length} players, ${games.length} game logs`);
 }
 
 main().catch((error) => {
