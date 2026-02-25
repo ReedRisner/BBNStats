@@ -1,0 +1,24 @@
+:root {
+  --uk-blue: #0033a0;
+  --uk-blue-dark: #002570;
+  --uk-white: #ffffff;
+  --uk-gray: #eef3ff;
+  --text-dark: #14213d;
+}
+body { background: linear-gradient(180deg, #f5f8ff 0%, #eef3ff 100%); color: var(--text-dark); }
+.site-nav { background: var(--uk-white); border-bottom: 1px solid #d8e2ff; }
+.brand-pill { background: var(--uk-blue); color: #fff; border-radius: 999px; padding: .3rem .75rem; font-weight: 700; }
+.page-hero { background: linear-gradient(120deg, var(--uk-blue), #2453c2); color: #fff; border-radius: 1rem; }
+.page-hero p { opacity: .92; }
+.card-soft { border: 1px solid #d8e2ff; border-radius: 14px; box-shadow: 0 8px 24px rgba(0, 33, 99, .07); }
+.kpi { font-size: 1.85rem; font-weight: 800; color: var(--uk-blue); }
+.table thead th { background: #f1f5ff; }
+.table tbody tr:hover { background: #f8faff; }
+.badge-win { background: #0f9d58; }
+.badge-loss { background: #c62828; }
+.badge-pending { background: #6c757d; }
+.tab-links .nav-link { color: var(--uk-blue); font-weight: 600; }
+.tab-links .nav-link.active { background: var(--uk-blue); color: #fff; }
+.compare-value { font-size: 1.15rem; font-weight: 700; color: var(--uk-blue-dark); }
+.progress { height: 10px; }
+.footer { color: #5c6b8a; }

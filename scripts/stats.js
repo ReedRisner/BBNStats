@@ -1,81 +1,48 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const seasonSelect = document.getElementById('seasonSelect');
-    const TEAM_ID = '96';
-    const TEAM_STATS_API = `https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams/${TEAM_ID}/statistics`;
+import { loadSeasonBundle, seasonOptions } from './api.js';
 
-    const statMap = {
-        'Offensive Rating': { key: 'avgPoints', fallback: '0.0' },
-        'Defensive Rating': { key: 'avgPointsAgainst', fallback: '0.0' },
-        'Net Rating': { compute: (s) => (num(s.avgPoints) - num(s.avgPointsAgainst)).toFixed(1), fallback: '0.0' },
-        'Tempo': { key: 'possessionsPerGame', fallback: '0.0' },
-        'eFG%': { key: 'effectiveFieldGoalPct', pct: true, fallback: '0.0' },
-        'TS%': { key: 'trueShootingPct', pct: true, fallback: '0.0' },
-        '3P%': { key: 'threePointFieldGoalPct', pct: true, fallback: '0.0' },
-        '2P%': { key: 'twoPointFieldGoalPct', pct: true, fallback: '0.0' },
-        'FT%': { key: 'freeThrowPct', pct: true, fallback: '0.0' },
-        'Offensive Rebound %': { key: 'offensiveReboundsPerGame', fallback: '0.0' },
-        'Defensive Rebound %': { key: 'defensiveReboundsPerGame', fallback: '0.0' },
-        'Assist %': { key: 'assistsPerGame', fallback: '0.0' },
-        'Turnover %': { key: 'turnoversPerGame', fallback: '0.0' },
-        'Steal %': { key: 'stealsPerGame', fallback: '0.0' },
-        'Block %': { key: 'blocksPerGame', fallback: '0.0' }
-    };
+const state = { season: new Date().getFullYear() };
 
-    function num(v) {
-        const n = Number(v);
-        return Number.isFinite(n) ? n : 0;
-    }
+const setupSeason = () => {
+  const select = document.getElementById('seasonSelect');
+  select.innerHTML = seasonOptions(2018).map((y) => `<option value="${y}">${y}-${y + 1}</option>`).join('');
+  select.value = String(state.season);
+  select.addEventListener('change', async (e) => {
+    state.season = Number(e.target.value);
+    await loadAndRender();
+  });
+};
 
-    function toMap(splits) {
-        const out = {};
-        (splits || []).forEach((g) => {
-            (g.stats || []).forEach((s) => {
-                out[s.name] = s.displayValue || s.value;
-            });
-        });
-        return out;
-    }
+const calcAverages = (games) => {
+  const completed = games.filter((g) => g.teamScore || g.oppScore);
+  if (!completed.length) return { ppg: 0, oppg: 0, margin: 0 };
+  const ppg = completed.reduce((acc, g) => acc + g.teamScore, 0) / completed.length;
+  const oppg = completed.reduce((acc, g) => acc + g.oppScore, 0) / completed.length;
+  return { ppg, oppg, margin: ppg - oppg };
+};
 
-    async function fetchTeamStats(season) {
-        const response = await fetch(`${TEAM_STATS_API}?season=${season}`, { cache: 'no-store' });
-        if (!response.ok) throw new Error(`Stats API failed (${response.status})`);
-        const data = await response.json();
-        return toMap(data?.results?.stats?.splits);
-    }
+const render = (bundle) => {
+  const avg = calcAverages(bundle.games);
+  const top = [...bundle.playerStats].sort((a, b) => (b.ppg || 0) - (a.ppg || 0)).slice(0, 8);
+  document.getElementById('sourceBadge').textContent = bundle.source === 'live-api' ? 'Live API' : 'Fallback data';
+  document.getElementById('ppg').textContent = avg.ppg.toFixed(1);
+  document.getElementById('oppg').textContent = avg.oppg.toFixed(1);
+  document.getElementById('margin').textContent = `${avg.margin >= 0 ? '+' : ''}${avg.margin.toFixed(1)}`;
+  document.getElementById('leaders').innerHTML = top.map((p) => `
+    <tr>
+      <td>${p.name}</td>
+      <td>${(p.ppg || 0).toFixed(1)}</td>
+      <td>${(p.rpg || 0).toFixed(1)}</td>
+      <td>${(p.apg || 0).toFixed(1)}</td>
+      <td>${(p.mpg || 0).toFixed(1)}</td>
+    </tr>
+  `).join('');
+};
 
-    async function updateStats(season) {
-        try {
-            const seasonStats = await fetchTeamStats(season);
-            document.querySelectorAll('.stat-card').forEach((card) => {
-                const title = card.querySelector('h3').textContent.trim();
-                const valueElement = card.querySelector('.stat-value');
-                const rankElement = card.querySelector('.stat-ranking');
-                const config = statMap[title];
+const loadAndRender = async () => {
+  document.getElementById('leaders').innerHTML = '<tr><td colspan="5">Loading team stats...</td></tr>';
+  const bundle = await loadSeasonBundle(state.season);
+  render(bundle);
+};
 
-                if (!config) {
-                    valueElement.textContent = '-';
-                    rankElement.textContent = '(#-)';
-                    return;
-                }
-
-                let value = config.compute ? config.compute(seasonStats) : (seasonStats[config.key] ?? config.fallback);
-                if (config.pct) {
-                    value = String(value).replace('%', '');
-                    valueElement.classList.add('percent-value');
-                } else {
-                    valueElement.classList.remove('percent-value');
-                }
-
-                valueElement.textContent = value;
-                rankElement.textContent = '(live)';
-            });
-        } catch (error) {
-            console.error('Error loading live stats:', error);
-        }
-    }
-
-    updateStats(seasonSelect.value);
-    seasonSelect.addEventListener('change', function () {
-        updateStats(this.value);
-    });
-});
+setupSeason();
+loadAndRender();
