@@ -1,163 +1,123 @@
 #!/usr/bin/env python3
-"""Generate data/update.json from ESPN APIs for BBN Stats.
+"""Generate data/update.json from CollegeBasketballData API.
 
-This script is safe to run locally or in GitHub Actions.
+This creates cache payloads used by the static site when browser-side live API calls fail
+(e.g., CORS/network issues).
 """
 
 from __future__ import annotations
 
-import json
 import datetime as dt
+import json
 from pathlib import Path
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
-from urllib.error import URLError, HTTPError
 
-TEAM_ID = "96"
-BASE = "https://site.api.espn.com/apis/site/v2/sports/basketball/mens-college-basketball/teams"
-
-# Keep two recent seasons updated by default.
-DEFAULT_SEASONS = 2
+API_BASE = "https://api.collegebasketballdata.com"
+API_KEY = "0/5PdgRvOqvcUo9VqUAcXFUEYqXxU3T26cGqt9c6FFArBcyqE4BD3njMuwOnQz+3"
+TEAM_ID = 96
+DEFAULT_SEASONS = 3
 
 
-def fetch_json(url: str) -> dict:
-    req = Request(url, headers={"Accept": "application/json", "User-Agent": "BBNStats-DailySync/1.0"})
+def fetch_json(path: str, params: dict | None = None) -> dict | list:
+    query = urlencode(params or {})
+    url = f"{API_BASE}{path}{'?' + query if query else ''}"
+    req = Request(
+        url,
+        headers={
+            "Accept": "application/json",
+            "Authorization": f"Bearer {API_KEY}",
+            "x-api-key": API_KEY,
+            "User-Agent": "BBNStats-DailySync/2.0",
+        },
+    )
+
     try:
-        with urlopen(req, timeout=30) as response:
+        with urlopen(req, timeout=45) as response:
             return json.loads(response.read().decode("utf-8"))
     except (URLError, HTTPError) as exc:
-        print(f"WARN: failed to fetch {url}: {exc}")
-        return {}
+        print(f"WARN: fetch failed for {url}: {exc}")
+        raise
 
 
-def to_stats_map(stats_payload: dict) -> dict:
-    out: dict[str, str] = {}
-    splits = (((stats_payload or {}).get("results") or {}).get("stats") or {}).get("splits") or []
-    for split in splits:
-        for stat in split.get("stats", []):
-            out[stat.get("name")] = stat.get("displayValue") or str(stat.get("value", "0"))
-    return out
+def first_success(calls: list[tuple[str, dict]]) -> dict | list:
+    errors: list[str] = []
+    for path, params in calls:
+        try:
+            return fetch_json(path, params)
+        except Exception as exc:  # noqa: BLE001
+            errors.append(str(exc))
+    raise RuntimeError(" | ".join(errors))
 
 
-def to_schedule_summary(schedule_payload: dict) -> dict:
-    events = (schedule_payload or {}).get("events") or []
-
-    wins = losses = 0
-    ap_wins = ap_losses = 0
-    conf_wins = conf_losses = 0
-
-    for event in events:
-        comp = ((event.get("competitions") or [{}])[0])
-        status = ((comp.get("status") or {}).get("type") or {})
-        if not status.get("completed"):
-            continue
-
-        competitors = comp.get("competitors") or []
-        us = next((c for c in competitors if ((c.get("team") or {}).get("id") == TEAM_ID)), None)
-        opp = next((c for c in competitors if ((c.get("team") or {}).get("id") != TEAM_ID)), None)
-        if not us or not opp:
-            continue
-
-        if us.get("winner") is True:
-            wins += 1
-        else:
-            losses += 1
-
-        opp_rank = int((((opp.get("curatedRank") or {}).get("current") or 0)))
-        if 1 <= opp_rank <= 25:
-            if us.get("winner") is True:
-                ap_wins += 1
-            else:
-                ap_losses += 1
-
-        group_name = (((comp.get("group") or {}).get("name")) or "").lower()
-        is_conf = "sec" in group_name or "conference" in group_name
-        if is_conf:
-            if us.get("winner") is True:
-                conf_wins += 1
-            else:
-                conf_losses += 1
-
-    total_games = wins + losses
-    win_pct = f"{(wins / total_games * 100):.1f}%" if total_games else "-"
-
-    return {
-        "Overall Record": f"{wins}-{losses}",
-        "Conference Standings": f"{conf_wins}-{conf_losses}",
-        "AP Poll": "-",
-        "KenPom": "-",
-        "NET Rankings": "-",
-        "Evan Miya": "-",
-        "Barttorvik": "-",
-        "Bracketology": "-",
-        "AP Top 25 Record": f"{ap_wins}-{ap_losses}",
-        "Win Percentage": win_pct,
-    }
-
-
-def build_stats_block(stats: dict) -> dict:
-    def item(value: str | float | int) -> dict:
-        return {"value": str(value), "rank": "-"}
-
-    avg_pts = float(stats.get("avgPoints", "0") or 0)
-    avg_pts_against = float(stats.get("avgPointsAgainst", "0") or 0)
-
-    return {
-        "Offensive Rating": item(stats.get("avgPoints", "0.0")),
-        "Defensive Rating": item(stats.get("avgPointsAgainst", "0.0")),
-        "Net Rating": item(f"{(avg_pts - avg_pts_against):.1f}"),
-        "Tempo": item(stats.get("possessionsPerGame", "0.0")),
-        "eFG%": item(str(stats.get("effectiveFieldGoalPct", "0.0")).replace("%", "")),
-        "TS%": item(str(stats.get("trueShootingPct", "0.0")).replace("%", "")),
-        "3P%": item(str(stats.get("threePointFieldGoalPct", "0.0")).replace("%", "")),
-        "2P%": item(str(stats.get("twoPointFieldGoalPct", "0.0")).replace("%", "")),
-        "FT%": item(str(stats.get("freeThrowPct", "0.0")).replace("%", "")),
-        "Offensive Rebound %": item(stats.get("offensiveReboundsPerGame", "0.0")),
-        "Defensive Rebound %": item(stats.get("defensiveReboundsPerGame", "0.0")),
-        "Assist %": item(stats.get("assistsPerGame", "0.0")),
-        "Turnover %": item(stats.get("turnoversPerGame", "0.0")),
-        "Steal %": item(stats.get("stealsPerGame", "0.0")),
-        "Block %": item(stats.get("blocksPerGame", "0.0")),
-    }
-
-
-def generate_update_json(seasons: list[int]) -> dict:
-    payload: dict[str, dict] = {}
-
-    for season in seasons:
-        stats_url = f"{BASE}/{TEAM_ID}/statistics?{urlencode({'season': season})}"
-        sched_url = f"{BASE}/{TEAM_ID}/schedule?{urlencode({'season': season})}"
-
-        stats_data = fetch_json(stats_url)
-        schedule_data = fetch_json(sched_url)
-
-        stats_map = to_stats_map(stats_data)
-        rankings = to_schedule_summary(schedule_data)
-
-        payload[str(season)] = {
-            "stats": build_stats_block(stats_map),
-            "rankings": rankings,
-            "updatedAt": dt.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
-        }
-
-    return payload
+def normalize_array(payload: dict | list) -> list:
+    if isinstance(payload, list):
+        return payload
+    if isinstance(payload, dict):
+        if isinstance(payload.get("data"), list):
+            return payload["data"]
+        if isinstance(payload.get("results"), list):
+            return payload["results"]
+    return []
 
 
 def infer_recent_seasons() -> list[int]:
     now = dt.datetime.utcnow()
-    # season is usually named by starting year
     current = now.year if now.month >= 7 else now.year - 1
     return [current - i for i in range(DEFAULT_SEASONS)]
 
 
+def season_payload(season: int) -> dict:
+    games_raw = first_success([
+        ("/games", {"season": season, "team": TEAM_ID}),
+        ("/games", {"year": season, "team": TEAM_ID}),
+        ("/team/games", {"season": season, "teamId": TEAM_ID}),
+    ])
+    roster_raw = first_success([
+        ("/roster", {"season": season, "team": TEAM_ID}),
+        ("/team/roster", {"season": season, "teamId": TEAM_ID}),
+        ("/players", {"season": season, "team": TEAM_ID}),
+    ])
+    player_stats_raw = first_success([
+        ("/stats/players", {"season": season, "team": TEAM_ID}),
+        ("/players/stats", {"season": season, "team": TEAM_ID}),
+    ])
+    team_stats_raw = first_success([
+        ("/stats/team", {"season": season, "team": TEAM_ID}),
+        ("/team/stats", {"season": season, "teamId": TEAM_ID}),
+    ])
+
+    return {
+        "games": normalize_array(games_raw),
+        "roster": normalize_array(roster_raw),
+        "playerStats": normalize_array(player_stats_raw),
+        "teamStats": team_stats_raw,
+        "updatedAt": dt.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+    }
+
+
 def main() -> None:
-    seasons = infer_recent_seasons()
-    data = generate_update_json(seasons)
+    output: dict[str, dict] = {}
+    failed: list[int] = []
+
+    for season in infer_recent_seasons():
+        try:
+            output[str(season)] = season_payload(season)
+            print(f"OK: season {season} cached")
+        except Exception as exc:  # noqa: BLE001
+            failed.append(season)
+            print(f"WARN: season {season} failed: {exc}")
+
+    if not output:
+        raise SystemExit("No seasons could be fetched; refusing to overwrite data/update.json")
 
     out_path = Path("data/update.json")
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote {out_path} for seasons: {', '.join(map(str, seasons))}")
+    out_path.write_text(json.dumps(output, indent=2) + "\n", encoding="utf-8")
+    print(f"Wrote {out_path} for seasons: {', '.join(output.keys())}")
+    if failed:
+        print(f"Skipped seasons: {', '.join(map(str, failed))}")
 
 
 if __name__ == "__main__":

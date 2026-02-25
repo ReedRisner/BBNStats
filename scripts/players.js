@@ -14,43 +14,49 @@ const setupSeason = () => {
 
 const render = (bundle) => {
   const statsMap = new Map(bundle.playerStats.map((p) => [p.name.toLowerCase(), p]));
-  state.rows = bundle.roster.map((player) => {
-    const hit = statsMap.get(player.name.toLowerCase()) || {};
-    return { ...player, ...hit };
-  }).sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
+  state.rows = bundle.roster.map((player) => ({ ...player, ...(statsMap.get(player.name.toLowerCase()) || {}) }))
+    .sort((a, b) => (b.ppg || 0) - (a.ppg || 0));
 
-  document.getElementById('sourceBadge').textContent = bundle.source === 'live-api' ? 'Live API' : 'Fallback data';
+  document.getElementById('sourceBadge').textContent = bundle.source;
   const tbody = document.getElementById('playersBody');
-  tbody.innerHTML = state.rows.map((p) => `
-    <tr>
-      <td><strong>#${p.number}</strong></td>
-      <td>${p.name}</td>
-      <td>${p.position}</td>
-      <td>${p.year}</td>
-      <td>${p.height}</td>
-      <td>${p.weight}</td>
-      <td>${(p.mpg || 0).toFixed(1)}</td>
-      <td>${(p.ppg || 0).toFixed(1)}</td>
-      <td>${(p.rpg || 0).toFixed(1)}</td>
-      <td>${(p.apg || 0).toFixed(1)}</td>
-    </tr>
-  `).join('');
+  if (!state.rows.length) {
+    tbody.innerHTML = '<tr><td colspan="10">No player rows were returned for this season yet.</td></tr>';
+  } else {
+    tbody.innerHTML = state.rows.map((p) => `
+      <tr>
+        <td><strong>#${p.number}</strong></td>
+        <td>${p.name}</td>
+        <td>${p.position}</td>
+        <td>${p.year}</td>
+        <td>${p.height}</td>
+        <td>${p.weight}</td>
+        <td>${(p.mpg || 0).toFixed(1)}</td>
+        <td>${(p.ppg || 0).toFixed(1)}</td>
+        <td>${(p.rpg || 0).toFixed(1)}</td>
+        <td>${(p.apg || 0).toFixed(1)}</td>
+      </tr>
+    `).join('');
+  }
 
   document.getElementById('rosterCount').textContent = String(state.rows.length);
 };
 
 const applyFilter = () => {
   const q = document.getElementById('playerFilter').value.trim().toLowerCase();
-  const rows = Array.from(document.querySelectorAll('#playersBody tr'));
-  rows.forEach((row) => {
+  Array.from(document.querySelectorAll('#playersBody tr')).forEach((row) => {
     row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
   });
 };
 
 const loadAndRender = async () => {
   document.getElementById('playersBody').innerHTML = '<tr><td colspan="10">Loading roster...</td></tr>';
-  const bundle = await loadSeasonBundle(state.season);
-  render(bundle);
+  try {
+    const bundle = await loadSeasonBundle(state.season);
+    render(bundle);
+  } catch (error) {
+    document.getElementById('sourceBadge').textContent = 'error';
+    document.getElementById('playersBody').innerHTML = `<tr><td colspan="10">Unable to load roster (${error.message}).</td></tr>`;
+  }
 };
 
 setupSeason();

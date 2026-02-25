@@ -23,11 +23,18 @@ const calcAverages = (games) => {
 const render = (bundle) => {
   const avg = calcAverages(bundle.games);
   const top = [...bundle.playerStats].sort((a, b) => (b.ppg || 0) - (a.ppg || 0)).slice(0, 8);
-  document.getElementById('sourceBadge').textContent = bundle.source === 'live-api' ? 'Live API' : 'Fallback data';
+  document.getElementById('sourceBadge').textContent = bundle.source;
   document.getElementById('ppg').textContent = avg.ppg.toFixed(1);
   document.getElementById('oppg').textContent = avg.oppg.toFixed(1);
   document.getElementById('margin').textContent = `${avg.margin >= 0 ? '+' : ''}${avg.margin.toFixed(1)}`;
-  document.getElementById('leaders').innerHTML = top.map((p) => `
+
+  const tbody = document.getElementById('leaders');
+  if (!top.length) {
+    tbody.innerHTML = '<tr><td colspan="5">No player production rows available for this season.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = top.map((p) => `
     <tr>
       <td>${p.name}</td>
       <td>${(p.ppg || 0).toFixed(1)}</td>
@@ -40,8 +47,13 @@ const render = (bundle) => {
 
 const loadAndRender = async () => {
   document.getElementById('leaders').innerHTML = '<tr><td colspan="5">Loading team stats...</td></tr>';
-  const bundle = await loadSeasonBundle(state.season);
-  render(bundle);
+  try {
+    const bundle = await loadSeasonBundle(state.season);
+    render(bundle);
+  } catch (error) {
+    document.getElementById('sourceBadge').textContent = 'error';
+    document.getElementById('leaders').innerHTML = `<tr><td colspan="5">Unable to load stats (${error.message}).</td></tr>`;
+  }
 };
 
 setupSeason();

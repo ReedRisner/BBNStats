@@ -14,13 +14,13 @@ const setupSeason = () => {
 
 const fillPlayerSelects = () => {
   const options = state.players
+    .slice()
     .sort((a, b) => (b.ppg || 0) - (a.ppg || 0))
     .map((p) => `<option value="${p.name}">${p.name}</option>`)
     .join('');
 
   ['playerA', 'playerB'].forEach((id) => {
-    const select = document.getElementById(id);
-    select.innerHTML = `<option value="">Select player</option>${options}`;
+    document.getElementById(id).innerHTML = `<option value="">Select player</option>${options}`;
   });
 };
 
@@ -45,14 +45,8 @@ const renderComparison = () => {
     const max = calcMax(av, bv);
     return `<tr>
       <td>${label}</td>
-      <td>
-        <div class="compare-value">${av.toFixed(1)}</div>
-        <div class="progress"><div class="progress-bar bg-primary" style="width:${(av / max) * 100}%"></div></div>
-      </td>
-      <td>
-        <div class="compare-value">${bv.toFixed(1)}</div>
-        <div class="progress"><div class="progress-bar bg-info" style="width:${(bv / max) * 100}%"></div></div>
-      </td>
+      <td><div class="compare-value">${av.toFixed(1)}</div><div class="progress"><div class="progress-bar bg-primary" style="width:${(av / max) * 100}%"></div></div></td>
+      <td><div class="compare-value">${bv.toFixed(1)}</div><div class="progress"><div class="progress-bar bg-info" style="width:${(bv / max) * 100}%"></div></div></td>
       <td>${av > bv ? a.name : bv > av ? b.name : 'Tie'}</td>
     </tr>`;
   }).join('');
@@ -60,11 +54,20 @@ const renderComparison = () => {
 
 const loadAndRender = async () => {
   document.getElementById('sourceBadge').textContent = 'Loading...';
-  const bundle = await loadSeasonBundle(state.season);
-  state.players = bundle.playerStats;
-  fillPlayerSelects();
-  document.getElementById('sourceBadge').textContent = bundle.source === 'live-api' ? 'Live API' : 'Fallback data';
-  renderComparison();
+  try {
+    const bundle = await loadSeasonBundle(state.season);
+    state.players = bundle.playerStats;
+    fillPlayerSelects();
+    document.getElementById('sourceBadge').textContent = bundle.source;
+    if (!state.players.length) {
+      document.getElementById('comparisonBody').innerHTML = '<tr><td colspan="4">No player stats available for comparison.</td></tr>';
+      return;
+    }
+    renderComparison();
+  } catch (error) {
+    document.getElementById('sourceBadge').textContent = 'error';
+    document.getElementById('comparisonBody').innerHTML = `<tr><td colspan="4">Unable to load comparison data (${error.message}).</td></tr>`;
+  }
 };
 
 document.getElementById('playerA').addEventListener('change', renderComparison);
