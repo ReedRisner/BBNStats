@@ -63,7 +63,7 @@
       }
     },
     "rankings": {
-      "Overall Record": "0-0",
+      "Overall Record": "22-11",
       "Conference Standings": "0-0",
       "AP Poll": "-",
       "KenPom": "-",
@@ -71,10 +71,10 @@
       "Evan Miya": "-",
       "Barttorvik": "-",
       "Bracketology": "-",
-      "AP Top 25 Record": "0-0",
-      "Win Percentage": "-"
+      "AP Top 25 Record": "8-5",
+      "Win Percentage": "66.7%"
     },
-    "updatedAt": "2026-02-24T23:38:39Z"
+    "updatedAt": "2026-02-25T00:38:27Z"
   },
   "2024": {
     "stats": {
@@ -140,7 +140,7 @@
       }
     },
     "rankings": {
-      "Overall Record": "0-0",
+      "Overall Record": "23-9",
       "Conference Standings": "0-0",
       "AP Poll": "-",
       "KenPom": "-",
@@ -148,9 +148,9 @@
       "Evan Miya": "-",
       "Barttorvik": "-",
       "Bracketology": "-",
-      "AP Top 25 Record": "0-0",
-      "Win Percentage": "-"
+      "AP Top 25 Record": "5-2",
+      "Win Percentage": "71.9%"
     },
-    "updatedAt": "2026-02-24T23:38:39Z"
+    "updatedAt": "2026-02-25T00:38:27Z"
   }
 }

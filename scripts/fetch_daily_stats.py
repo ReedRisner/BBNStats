@@ -79,6 +79,14 @@ def normalize_array(payload: dict | list) -> list:
             return payload["results"]
     return []
 
+def first_success(calls: list[tuple[str, dict]]) -> dict | list:
+    errors: list[str] = []
+    for path, params in calls:
+        try:
+            return fetch_json(path, params)
+        except Exception as exc:  # noqa: BLE001
+            errors.append(str(exc))
+    raise RuntimeError(" | ".join(errors))
 
 def infer_recent_seasons() -> list[int]:
     now = dt.datetime.utcnow()
@@ -161,6 +169,35 @@ def season_payload_from_espn(season: int) -> dict:
         "teamStats": stats,
         "updatedAt": dt.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
         "source": "espn-fallback",
+    }
+
+
+def season_payload(season: int) -> dict:
+    games_raw = first_success([
+        ("/games", {"season": season, "team": TEAM_ID}),
+        ("/games", {"year": season, "team": TEAM_ID}),
+        ("/team/games", {"season": season, "teamId": TEAM_ID}),
+    ])
+    roster_raw = first_success([
+        ("/roster", {"season": season, "team": TEAM_ID}),
+        ("/team/roster", {"season": season, "teamId": TEAM_ID}),
+        ("/players", {"season": season, "team": TEAM_ID}),
+    ])
+    player_stats_raw = first_success([
+        ("/stats/players", {"season": season, "team": TEAM_ID}),
+        ("/players/stats", {"season": season, "team": TEAM_ID}),
+    ])
+    team_stats_raw = first_success([
+        ("/stats/team", {"season": season, "team": TEAM_ID}),
+        ("/team/stats", {"season": season, "teamId": TEAM_ID}),
+    ])
+
+    return {
+        "games": normalize_array(games_raw),
+        "roster": normalize_array(roster_raw),
+        "playerStats": normalize_array(player_stats_raw),
+        "teamStats": team_stats_raw,
+        "updatedAt": dt.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
     }
 
 
