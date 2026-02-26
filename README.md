@@ -1,22 +1,15 @@
-# BBN Stats
+# BBNStats
 
-BBN Stats now uses the original multi-page site layout and loads live data directly from public ESPN team endpoints so the website updates automatically without checked-in JSON snapshots.
-
-## Live data sources
-
-- Team schedule/results: ESPN team schedule API
-- Team roster/search data: ESPN team roster API
-- Team stat cards and record summaries: ESPN statistics/team endpoints
+Next.js 14 app for Kentucky men's basketball stats.
 
 ## Local run
 
 ```bash
-python3 -m http.server 4173
+npm install
+npm run dev
 ```
 
-Open `http://localhost:4173`.
+## GitHub Pages fallback
 
-
-## Daily automation
-
-A scheduled GitHub Action now regenerates `data/update.json` every day using `scripts/fetch_daily_stats.py` and auto-commits changes.
+This repository includes a Pages workflow that publishes the `site/` directory as a fallback so the apex domain does not return a GitHub 404.
+The fallback instantly redirects visitors to `https://www.bbnstats.com/`.
