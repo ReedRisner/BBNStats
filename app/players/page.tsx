@@ -1,8 +1,8 @@
-import Link from 'next/link';
 import { cbbFetch } from '@/lib/api';
 import { resolveSeasonYear, TEAM } from '@/lib/constants';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 function buildPlayerRows(roster: any[], stats: any[], year: number) {
   const rowsFromRoster = roster.map((player: any) => {
@@ -40,27 +40,9 @@ export default async function PlayersPage({ searchParams }: { searchParams?: { y
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold text-uk-blue">Players</h1>
-      <div className="overflow-x-auto card">
-        <table className="min-w-full text-sm">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Pos</th>
-              <th>PPG</th>
-            </tr>
-          </thead>
-          <tbody>
-            {playerRows.map((player) => (
-              <tr key={player.playerId}>
-                <td>
-                  <Link href={player.href}>{player.name}</Link>
-                </td>
-                <td>{player.position}</td>
-                <td>{player.ppg}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="card">
+        <h2 className="mb-2 font-semibold">Players Snapshot (JSON)</h2>
+        <pre className="overflow-x-auto text-xs">{JSON.stringify({ year, rosterCount: roster.length, statsCount: stats.length, roster, stats }, null, 2)}</pre>
       </div>
     </div>
   );
