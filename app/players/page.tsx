@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { cbbFetch } from '@/lib/api';
-import { TEAM } from '@/lib/constants';
+import { getCurrentSeasonYear, TEAM } from '@/lib/constants';
 
 export const revalidate = 3600;
 
 export default async function PlayersPage() {
-  const year = new Date().getFullYear() + 1;
+  const year = getCurrentSeasonYear();
   const [roster, stats] = await Promise.all([
     cbbFetch<any[]>('/teams/roster', { team: TEAM, year }).catch(() => []),
     cbbFetch<any[]>('/stats/player/season', { team: TEAM, year }).catch(() => [])

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cbbFetch } from '@/lib/api';
+import { getCurrentSeasonYear } from '@/lib/constants';
 
 export async function GET(request: NextRequest) {
-  const year = new URL(request.url).searchParams.get('year') || String(new Date().getFullYear() + 1);
+  const year = new URL(request.url).searchParams.get('year') || String(getCurrentSeasonYear());
   try {
     const [kentucky, allTeams] = await Promise.all([
       cbbFetch('/stats/team/season', { team: 'Kentucky', year }),
