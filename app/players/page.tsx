@@ -25,6 +25,7 @@ async function fetchPlayersSnapshot(year: number) {
     cbbFetch<RosterResponse>('/teams/roster', { team: TEAM, season: year }).catch(() => []),
     cbbFetch<any[]>('/stats/player/season', { team: TEAM, year }).catch(() => [])
   ]);
+  const playerRows = buildPlayerRows(roster, stats, year);
 
   const rosterPlayers = normalizeRosterPlayers(rosterPayload);
 
