@@ -11,8 +11,7 @@ const NAV_ITEMS: Array<[string, string]> = [
   ['/team-stats', 'Team Stats'],
   ['/compare', 'Compare'],
   ['/lineups', 'Lineups'],
-  ['/recruiting', 'Recruiting'],
-  ['/draft-history', 'Draft History']
+  ['/recruiting', 'Recruiting']
 ];
 
 export function Navbar() {

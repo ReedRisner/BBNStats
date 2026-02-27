@@ -1,26 +1,53 @@
-import Link from 'next/link';
 import { cbbFetch } from '@/lib/api';
-import { resolveSeasonYear, TEAM } from '@/lib/constants';
+import { resolveSeasonYear, SEASONS, TEAM } from '@/lib/constants';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export default async function PlayersPage({ searchParams }: { searchParams?: { year?: string } }) {
-  const year = resolveSeasonYear(searchParams?.year);
+async function fetchPlayersSnapshot(year: number) {
   const [roster, stats] = await Promise.all([
     cbbFetch<any[]>('/teams/roster', { team: TEAM, year }).catch(() => []),
     cbbFetch<any[]>('/stats/player/season', { team: TEAM, year }).catch(() => [])
   ]);
 
+  return { year, roster, stats };
+}
+
+export default async function PlayersPage({ searchParams }: { searchParams?: { year?: string } }) {
+  const requestedYear = resolveSeasonYear(searchParams?.year);
+  let snapshot = await fetchPlayersSnapshot(requestedYear);
+
+  if (snapshot.roster.length === 0 && snapshot.stats.length === 0) {
+    for (const fallbackYear of SEASONS) {
+      if (fallbackYear === requestedYear) continue;
+      const candidate = await fetchPlayersSnapshot(fallbackYear);
+      if (candidate.roster.length > 0 || candidate.stats.length > 0) {
+        snapshot = candidate;
+        break;
+      }
+    }
+  }
+
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold text-uk-blue">Players</h1>
-      <div className="overflow-x-auto card">
-        <table className="min-w-full text-sm"><thead><tr><th>Name</th><th>Pos</th><th>PPG</th></tr></thead><tbody>
-          {roster.map((p: any) => {
-            const st = stats.find((s: any) => s.playerId === p.playerId);
-            return <tr key={p.playerId}><td><Link href={`/players/${p.playerId}?year=${year}`}>{p.firstName} {p.lastName}</Link></td><td>{p.position}</td><td>{((st?.points || 0) / (st?.gamesPlayed || 1)).toFixed(1)}</td></tr>;
-          })}
-        </tbody></table>
+      <div className="card">
+        <h2 className="mb-2 font-semibold">Players Snapshot (JSON)</h2>
+        <pre className="overflow-x-auto text-xs">
+          {JSON.stringify(
+            {
+              requestedYear,
+              dataYear: snapshot.year,
+              fallbackUsed: snapshot.year !== requestedYear,
+              rosterCount: snapshot.roster.length,
+              statsCount: snapshot.stats.length,
+              roster: snapshot.roster,
+              stats: snapshot.stats
+            },
+            null,
+            2
+          )}
+        </pre>
       </div>
     </div>
   );
