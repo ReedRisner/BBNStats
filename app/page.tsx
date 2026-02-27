@@ -1,5 +1,6 @@
 import { cbbFetch } from '@/lib/api';
 import { resolveSeasonYear, TEAM } from '@/lib/constants';
+import { pickSeasonEntry } from '@/lib/utils';
 
 export const revalidate = 300;
 
@@ -11,6 +12,7 @@ export default async function DashboardPage({ searchParams }: { searchParams?: {
     cbbFetch<any[]>('/stats/player/season', { team: TEAM, year }).catch(() => []),
     cbbFetch<any[]>('/stats/team/season', { team: TEAM, year }).catch(() => [])
   ]);
+  const selectedTeamStats = pickSeasonEntry(teamStats, year);
 
   return (
     <div className="space-y-4">
@@ -22,7 +24,7 @@ export default async function DashboardPage({ searchParams }: { searchParams?: {
       </div>
       <section className="card">
         <h2 className="mb-2 font-semibold">Team Snapshot</h2>
-        <pre className="overflow-x-auto text-xs">{JSON.stringify(teamStats[0] || {}, null, 2)}</pre>
+        <pre className="overflow-x-auto text-xs">{JSON.stringify(selectedTeamStats || {}, null, 2)}</pre>
       </section>
     </div>
   );
