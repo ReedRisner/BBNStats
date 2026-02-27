@@ -1,10 +1,10 @@
 import { cbbFetch } from '@/lib/api';
-import { TEAM } from '@/lib/constants';
+import { getCurrentSeasonYear, TEAM } from '@/lib/constants';
 
 export const revalidate = 300;
 
 export default async function DashboardPage() {
-  const year = new Date().getFullYear() + 1;
+  const year = getCurrentSeasonYear();
   const [games, rankings, players, teamStats] = await Promise.all([
     cbbFetch<any[]>('/games', { team: TEAM, year }).catch(() => []),
     cbbFetch<any[]>('/rankings', { team: TEAM, year }).catch(() => []),
