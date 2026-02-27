@@ -30,6 +30,27 @@ async function fetchPlayersSnapshot(year: number): Promise<PlayersSnapshot> {
     cbbFetch<RosterResponse>('/teams/roster', { team: TEAM, season: year }).catch(() => []),
     cbbFetch<any[]>('/stats/player/season', { team: TEAM, year }).catch(() => [])
   ]);
+  const playerRows = buildPlayerRows(roster, stats, year);
+
+  const rosterPlayers = normalizeRosterPlayers(rosterPayload);
+
+  return { year, rosterPayload, rosterPlayers, stats };
+}
+
+export default async function PlayersPage({ searchParams }: { searchParams?: { year?: string } }) {
+  const requestedYear = resolveSeasonYear(searchParams?.year);
+  let snapshot = await fetchPlayersSnapshot(requestedYear);
+
+  if (snapshot.rosterPlayers.length === 0 && snapshot.stats.length === 0) {
+    for (const fallbackYear of SEASONS) {
+      if (fallbackYear === requestedYear) continue;
+      const candidate = await fetchPlayersSnapshot(fallbackYear);
+      if (candidate.rosterPlayers.length > 0 || candidate.stats.length > 0) {
+        snapshot = candidate;
+        break;
+      }
+    }
+  }
 
   return {
     year,
