@@ -1,26 +1,86 @@
-import Link from 'next/link';
 import { cbbFetch } from '@/lib/api';
-import { resolveSeasonYear, TEAM } from '@/lib/constants';
+import { resolveSeasonYear, SEASONS, TEAM } from '@/lib/constants';
 
-export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-export default async function PlayersPage({ searchParams }: { searchParams?: { year?: string } }) {
-  const year = resolveSeasonYear(searchParams?.year);
-  const [roster, stats] = await Promise.all([
-    cbbFetch<any[]>('/teams/roster', { team: TEAM, year }).catch(() => []),
+type RosterResponse = Array<{
+  season?: number;
+  players?: any[];
+}>;
+
+type PlayersSnapshot = {
+  year: number;
+  rosterPayload: RosterResponse;
+  rosterPlayers: any[];
+  stats: any[];
+};
+
+function normalizeRosterPlayers(rosterPayload: RosterResponse): any[] {
+  if (!Array.isArray(rosterPayload)) return [];
+
+  const nestedPlayers = rosterPayload.flatMap((entry) => (Array.isArray(entry?.players) ? entry.players : []));
+  if (nestedPlayers.length > 0) return nestedPlayers;
+
+  return rosterPayload as any[];
+}
+
+async function fetchPlayersSnapshot(year: number): Promise<PlayersSnapshot> {
+  const [rosterPayload, stats] = await Promise.all([
+    cbbFetch<RosterResponse>('/teams/roster', { team: TEAM, season: year }).catch(() => []),
     cbbFetch<any[]>('/stats/player/season', { team: TEAM, year }).catch(() => [])
   ]);
+
+  return {
+    year,
+    rosterPayload,
+    rosterPlayers: normalizeRosterPlayers(rosterPayload),
+    stats
+  };
+}
+
+async function resolveSnapshotForYear(requestedYear: number): Promise<PlayersSnapshot> {
+  const requestedSnapshot = await fetchPlayersSnapshot(requestedYear);
+  if (requestedSnapshot.rosterPlayers.length > 0 || requestedSnapshot.stats.length > 0) {
+    return requestedSnapshot;
+  }
+
+  for (const fallbackYear of SEASONS) {
+    if (fallbackYear === requestedYear) continue;
+    const candidate = await fetchPlayersSnapshot(fallbackYear);
+    if (candidate.rosterPlayers.length > 0 || candidate.stats.length > 0) {
+      return candidate;
+    }
+  }
+
+  return requestedSnapshot;
+}
+
+export default async function PlayersPage({ searchParams }: { searchParams?: { year?: string } }) {
+  const requestedYear = resolveSeasonYear(searchParams?.year);
+  const snapshot = await resolveSnapshotForYear(requestedYear);
 
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-bold text-uk-blue">Players</h1>
-      <div className="overflow-x-auto card">
-        <table className="min-w-full text-sm"><thead><tr><th>Name</th><th>Pos</th><th>PPG</th></tr></thead><tbody>
-          {roster.map((p: any) => {
-            const st = stats.find((s: any) => s.playerId === p.playerId);
-            return <tr key={p.playerId}><td><Link href={`/players/${p.playerId}?year=${year}`}>{p.firstName} {p.lastName}</Link></td><td>{p.position}</td><td>{((st?.points || 0) / (st?.gamesPlayed || 1)).toFixed(1)}</td></tr>;
-          })}
-        </tbody></table>
+      <div className="card">
+        <h2 className="mb-2 font-semibold">Players Snapshot (JSON)</h2>
+        <pre className="overflow-x-auto text-xs">
+          {JSON.stringify(
+            {
+              requestedYear,
+              dataYear: snapshot.year,
+              fallbackUsed: snapshot.year !== requestedYear,
+              rosterCount: snapshot.rosterPlayers.length,
+              statsCount: snapshot.stats.length,
+              roster: snapshot.rosterPlayers,
+              stats: snapshot.stats,
+              rosterRaw: snapshot.rosterPayload
+            },
+            null,
+            2
+          )}
+        </pre>
       </div>
     </div>
   );
